@@ -1,0 +1,226 @@
+body {
+    font-family: Georgia, "Times New Roman", serif;
+    line-height: 1.45;
+    margin: 0;
+    color: #222;
+    background: #fff;
+}
+
+.wrap {
+    max-width: 52rem;
+    margin: 0 auto;
+    padding: 1rem 1.25rem 2rem;
+}
+
+header h1 {
+    font-size: 1.5rem;
+    margin: 0 0 0.25rem;
+}
+
+header p {
+    margin: 0 0 1rem;
+    color: #555;
+}
+
+.week-nav {
+    display: flex;
+    justify-content: center;
+    gap: 0.35rem;
+    flex-wrap: wrap;
+    margin: 1rem 0;
+}
+
+.week-nav a,
+.week-nav button,
+.week-nav span.day-nav__day {
+    display: inline-block;
+    min-width: 2.25rem;
+    padding: 0.45rem 0.55rem;
+    text-align: center;
+    text-decoration: none;
+    color: #222;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    background: #fff;
+    font-family: inherit;
+    cursor: pointer;
+}
+
+.week-nav a:hover,
+.week-nav button:hover,
+.week-nav a.is-active,
+.week-nav button.is-active {
+    background: #222;
+    color: #fff;
+    border-color: #222;
+}
+
+.pick {
+    background: #f7f7f7;
+    border-left: 4px solid #c00;
+    padding: 0.75rem 1rem;
+    margin: 1rem 0;
+}
+
+.swipe-hint {
+    font-size: 0.85rem;
+    color: #666;
+    text-align: center;
+    margin: 0 0 0.75rem;
+}
+
+.meta {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.error {
+    color: #b00020;
+}
+
+.day-panel h3 {
+    margin-top: 0;
+}
+
+.day-panel p {
+    margin: 0 0 1rem;
+}
+
+.week-carousel {
+    position: relative;
+}
+
+.week-carousel__viewport {
+    overflow: hidden;
+    touch-action: pan-y;
+    cursor: grab;
+}
+
+.week-carousel__viewport a {
+    cursor: pointer;
+}
+
+.week-carousel__viewport.is-animating {
+    transition: height 0.28s ease;
+}
+
+.week-carousel.is-dragging .week-carousel__viewport {
+    cursor: grabbing;
+    user-select: none;
+}
+
+.week-carousel__track {
+    display: flex;
+    will-change: transform;
+}
+
+.week-carousel__track.is-animating {
+    transition: transform 0.28s ease;
+}
+
+.day-panel {
+    flex: 0 0 100%;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .week-carousel__track.is-animating {
+        transition: none;
+    }
+}
+
+.venue-week-link {
+    font-size: 0.85rem;
+    font-weight: normal;
+}
+
+.venue-page .wrap {
+    max-width: 36rem;
+    padding: 0.75rem 1rem 1.5rem;
+}
+
+.venue-page__header {
+    margin-bottom: 0.25rem;
+}
+
+.venue-page__header .meta {
+    margin: 0;
+}
+
+.venue-page .week-nav {
+    margin: 0.5rem 0 0.75rem;
+}
+
+.venue-week__block {
+    margin: 0;
+}
+
+.venue-week__block .event-line__date {
+    display: inline-block;
+    font-family: ui-monospace, "SFMono-Regular", Menlo, Monaco, Consolas, monospace;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
+.venue-week__block .event-line__dow {
+    display: inline-block;
+    width: 3ch;
+}
+
+.venue-week__block .event-line__dom {
+    display: inline-block;
+    width: 2ch;
+    text-align: right;
+}
+
+.venue-block .event-line {
+    display: block;
+}
+
+.event-filter {
+    margin: 1rem 0;
+}
+
+.event-filter.is-empty {
+    display: none;
+}
+
+.event-filter__label {
+    margin: 0 0 0.5rem;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.event-filter__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+}
+
+.event-filter__tag,
+.event-filter__clear {
+    border: 1px solid #ccc;
+    border-radius: 999px;
+    background: #fff;
+    padding: 0.3rem 0.7rem;
+    font-size: 0.85rem;
+    font-family: inherit;
+    cursor: pointer;
+}
+
+.event-filter__tag.is-active {
+    background: #222;
+    color: #fff;
+    border-color: #222;
+}
+
+.event-filter__clear {
+    border-style: dashed;
+}
+
+.event-line.is-filtered-out,
+.venue-block.is-filtered-out {
+    display: none;
+}
