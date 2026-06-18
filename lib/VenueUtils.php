@@ -60,4 +60,62 @@ class VenueUtils
 
         return $schedule;
     }
+
+    /**
+     * @param array<string, mixed> $week
+     * @return list<array{venue: array<string, mixed>, schedule: list<array{day: array<string, mixed>, venue: array<string, mixed>, events: list<array<string, mixed>>}>}>
+     */
+    public static function venuesForWeek(array $week): array
+    {
+        $venues = [];
+        $indexBySlug = [];
+
+        foreach ($week['days'] as $day) {
+            foreach ($day['venues'] as $venue) {
+                $slug = (string) ($venue['slug'] ?? self::slug((string) $venue['name']));
+
+                if (!isset($indexBySlug[$slug])) {
+                    $indexBySlug[$slug] = count($venues);
+                    $venues[] = [
+                        'venue' => $venue,
+                        'schedule' => [],
+                    ];
+                } else {
+                    $venues[$indexBySlug[$slug]]['venue'] = self::mergeVenue(
+                        $venues[$indexBySlug[$slug]]['venue'],
+                        $venue
+                    );
+                }
+
+                $events = $venue['events'] ?? [];
+                if ($events === []) {
+                    continue;
+                }
+
+                $venues[$indexBySlug[$slug]]['schedule'][] = [
+                    'day' => $day,
+                    'venue' => $venue,
+                    'events' => $events,
+                ];
+            }
+        }
+
+        return $venues;
+    }
+
+    /**
+     * @param array<string, mixed> $existing
+     * @param array<string, mixed> $incoming
+     * @return array<string, mixed>
+     */
+    private static function mergeVenue(array $existing, array $incoming): array
+    {
+        foreach (['name', 'url', 'phone', 'note', 'slug'] as $key) {
+            if (empty($existing[$key]) && !empty($incoming[$key])) {
+                $existing[$key] = $incoming[$key];
+            }
+        }
+
+        return $existing;
+    }
 }

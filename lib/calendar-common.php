@@ -126,3 +126,25 @@ function parseTagsParam(?string $raw): array
 
     return array_values(array_unique($tags));
 }
+
+/**
+ * @return string
+ */
+function parseFindParam(?string $raw): string
+{
+    if ($raw === null) {
+        return '';
+    }
+
+    $query = trim($raw);
+
+    return strlen($query) >= 2 ? $query : '';
+}
+
+/**
+ * @return 'day'|'week'
+ */
+function parseViewParam(?string $raw): string
+{
+    return $raw === 'week' ? 'week' : 'day';
+}

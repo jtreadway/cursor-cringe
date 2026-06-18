@@ -1,7 +1,7 @@
 {
     "weekStart": "20260622",
     "sourceFile": "20260615-noTag.txt",
-    "generatedAt": "2026-06-17T23:41:27-04:00",
+    "generatedAt": "2026-06-18T12:23:19-04:00",
     "days": [
         {
             "anchor": "Mon",
@@ -155,6 +155,7 @@
                             "parens": "(7pm sign up)",
                             "time": "7-11pm",
                             "tags": [
+                                "open mic",
                                 "comedy"
                             ],
                             "schemaType": "ComedyEvent"
@@ -265,6 +266,7 @@
                             "display": "Ric Boals Blues Jam 7pm",
                             "time": "7pm",
                             "tags": [
+                                "open mic",
                                 "music"
                             ],
                             "schemaType": "MusicEvent"
@@ -415,6 +417,7 @@
                             "parens": "(6pm sign-ups)",
                             "time": "7-9pm",
                             "tags": [
+                                "open mic",
                                 "music"
                             ],
                             "schemaType": "MusicEvent"
@@ -561,6 +564,7 @@
                             "display": "Jam Central Ohio Bluegrass Jam 6-9pm",
                             "time": "6-9pm",
                             "tags": [
+                                "open mic",
                                 "music"
                             ],
                             "schemaType": "MusicEvent"
@@ -608,9 +612,9 @@
                             "prefix": "The Art of the Cowrite",
                             "parens": "(free, rsvp)",
                             "tags": [
-                                "music"
+                                "unknown"
                             ],
-                            "schemaType": "MusicEvent"
+                            "schemaType": "Event"
                         }
                     ]
                 },
@@ -876,6 +880,7 @@
                             "time": "10pm",
                             "postfix": "-2am",
                             "tags": [
+                                "open mic",
                                 "music"
                             ],
                             "schemaType": "MusicEvent"
@@ -986,9 +991,10 @@
                             "time": "8pm",
                             "postfix": "-1am",
                             "tags": [
-                                "unknown"
+                                "open mic",
+                                "music"
                             ],
-                            "schemaType": "Event"
+                            "schemaType": "MusicEvent"
                         }
                     ]
                 },
@@ -1186,9 +1192,10 @@
                             "display": "Music Open Mic 8pm",
                             "time": "8pm",
                             "tags": [
-                                "unknown"
+                                "open mic",
+                                "music"
                             ],
-                            "schemaType": "Event"
+                            "schemaType": "MusicEvent"
                         }
                     ]
                 },
@@ -1399,6 +1406,7 @@
                             "display": "Jazz Jam Session 8-11pm",
                             "time": "8-11pm",
                             "tags": [
+                                "open mic",
                                 "music"
                             ],
                             "schemaType": "MusicEvent"
@@ -1454,9 +1462,9 @@
                             "parens": "(free, 5:30pm signup)",
                             "time": "6-9pm",
                             "tags": [
-                                "dj"
+                                "unknown"
                             ],
-                            "schemaType": "MusicEvent"
+                            "schemaType": "Event"
                         }
                     ]
                 },
@@ -1602,6 +1610,7 @@
                             "parens": "(free)",
                             "time": "7pm",
                             "tags": [
+                                "open mic",
                                 "comedy"
                             ],
                             "schemaType": "ComedyEvent"
@@ -1668,10 +1677,10 @@
                             "parens": "($19.73, all ages)",
                             "time": "7pm",
                             "tags": [
-                                "music",
+                                "open mic",
                                 "comedy"
                             ],
-                            "schemaType": "MusicEvent"
+                            "schemaType": "ComedyEvent"
                         }
                     ]
                 },
@@ -2245,10 +2254,9 @@
                             "display": "Open Mic 5:30-7pm",
                             "time": "5:30-7pm",
                             "tags": [
-                                "dj",
-                                "visual arts"
+                                "unknown"
                             ],
-                            "schemaType": "MusicEvent"
+                            "schemaType": "Event"
                         }
                     ]
                 },
@@ -2317,6 +2325,7 @@
                             "title": "Poetry Open Mic",
                             "display": "Poetry Open Mic",
                             "tags": [
+                                "open mic",
                                 "spoken word"
                             ],
                             "schemaType": "TheaterEvent"
@@ -2621,7 +2630,7 @@
                             "title": "New Standard Soul Jam 8 PM",
                             "display": "New Standard Soul Jam 8 PM",
                             "tags": [
-                                "music",
+                                "open mic",
                                 "dj"
                             ],
                             "schemaType": "MusicEvent"
@@ -2782,6 +2791,7 @@
                             "prefix": "Rough Drafts",
                             "time": "7pm",
                             "tags": [
+                                "open mic",
                                 "comedy"
                             ],
                             "schemaType": "ComedyEvent"
@@ -2836,6 +2846,7 @@
                             "display": "Open Mic Comedy with Def Goldblum & the ICC 8pm",
                             "time": "8pm",
                             "tags": [
+                                "open mic",
                                 "comedy"
                             ],
                             "schemaType": "ComedyEvent"
@@ -3926,9 +3937,10 @@
                             "parens": "($11.55)",
                             "time": "7-11pm",
                             "tags": [
+                                "variety",
                                 "dj"
                             ],
-                            "schemaType": "MusicEvent"
+                            "schemaType": "Event"
                         }
                     ]
                 },
@@ -4093,7 +4105,8 @@
                             "parens": "($10)",
                             "time": "7pm",
                             "tags": [
-                                "drag"
+                                "drag",
+                                "variety"
                             ],
                             "schemaType": "TheaterEvent"
                         }
@@ -4149,7 +4162,7 @@
                             "display": "Two $oup Variety Show 7pm",
                             "time": "7pm",
                             "tags": [
-                                "unknown"
+                                "variety"
                             ],
                             "schemaType": "Event"
                         }
@@ -4665,6 +4678,7 @@
                             "display": "Indie Comedy Collective Open Mic 9pm",
                             "time": "9pm",
                             "tags": [
+                                "open mic",
                                 "music",
                                 "comedy"
                             ],
@@ -5794,6 +5808,7 @@
                             "time": "10am",
                             "postfix": "-3pm",
                             "tags": [
+                                "open mic",
                                 "music"
                             ],
                             "schemaType": "MusicEvent"
@@ -6482,9 +6497,9 @@
                             "prefix": "Rhythmode",
                             "time": "9pm",
                             "tags": [
-                                "music"
+                                "unknown"
                             ],
-                            "schemaType": "MusicEvent"
+                            "schemaType": "Event"
                         }
                     ]
                 },
@@ -7250,6 +7265,7 @@
                             "parens": "($10, musicians free, byob)",
                             "time": "6-11pm",
                             "tags": [
+                                "open mic",
                                 "music"
                             ],
                             "schemaType": "MusicEvent"
@@ -7371,6 +7387,7 @@
                             "display": "Rick Collura's Blues Jam 3-7pm",
                             "time": "3-7pm",
                             "tags": [
+                                "open mic",
                                 "music"
                             ],
                             "schemaType": "MusicEvent"
@@ -7419,10 +7436,9 @@
                             "display": "Open Mic! Hosted by Brian Clash 5-7pm",
                             "time": "5-7pm",
                             "tags": [
-                                "dj",
-                                "visual arts"
+                                "unknown"
                             ],
-                            "schemaType": "MusicEvent"
+                            "schemaType": "Event"
                         }
                     ]
                 },
@@ -7510,6 +7526,7 @@
                             "display": "Bluzcatz Blues Jam w/ Bill Lewandowski 6-9pm",
                             "time": "6-9pm",
                             "tags": [
+                                "open mic",
                                 "music"
                             ],
                             "schemaType": "MusicEvent"
@@ -7626,9 +7643,9 @@
                             "parens": "($25)",
                             "time": "8pm",
                             "tags": [
-                                "music"
+                                "unknown"
                             ],
-                            "schemaType": "MusicEvent"
+                            "schemaType": "Event"
                         }
                     ]
                 },
@@ -7898,7 +7915,8 @@
                             "prefix": "Sunday Transmissions",
                             "time": "3-7pm",
                             "tags": [
-                                "unknown"
+                                "open mic",
+                                "variety"
                             ],
                             "schemaType": "Event"
                         }
@@ -7916,7 +7934,7 @@
                             "parens": "(free)",
                             "time": "4pm",
                             "tags": [
-                                "unknown"
+                                "variety"
                             ],
                             "schemaType": "Event"
                         }

@@ -50,23 +50,32 @@ class EventClassifier
             }
         }
 
-        if ($matched === []) {
+        $tags = [];
+
+        if ($matched !== []) {
+            usort($matched, static fn (array $a, array $b): int => $a['priority'] <=> $b['priority']);
+
+            foreach ($matched as $match) {
+                $tags = array_merge($tags, $match['tags']);
+            }
+
+            $tags = array_values(array_unique($tags));
+        }
+
+        if (self::mentionsOpenMicOrJam($text)) {
+            $tags = self::resolveOpenMicTags($text, $tags);
+        }
+
+        if ($tags === []) {
             return [
                 'schemaType' => 'Event',
                 'tags' => [],
             ];
         }
 
-        usort($matched, static fn (array $a, array $b): int => $a['priority'] <=> $b['priority']);
-
-        $tags = [];
-        foreach ($matched as $match) {
-            $tags = array_merge($tags, $match['tags']);
-        }
-
         return [
-            'schemaType' => $matched[0]['schema'],
-            'tags' => array_values(array_unique($tags)),
+            'schemaType' => self::schemaForTags($tags),
+            'tags' => $tags,
         ];
     }
 
@@ -80,6 +89,7 @@ class EventClassifier
             $tags = array_merge($tags, $rule['tags']);
         }
 
+        $tags[] = 'open mic';
         $tags[] = 'unknown';
         sort($tags);
 
@@ -143,6 +153,41 @@ class EventClassifier
     }
 
     /**
+     * @param array<string, mixed> $week
+     * @return array<string, int>
+     */
+    public static function tagCountsForWeek(array $week): array
+    {
+        $counts = [];
+
+        foreach ($week['days'] ?? [] as $day) {
+            foreach (self::tagCountsForDay($day) as $tag => $count) {
+                $counts[$tag] = ($counts[$tag] ?? 0) + $count;
+            }
+        }
+
+        ksort($counts);
+
+        return $counts;
+    }
+
+    /**
+     * @param array<string, mixed> $week
+     */
+    public static function eventCountForWeek(array $week): int
+    {
+        $total = 0;
+
+        foreach ($week['days'] ?? [] as $day) {
+            foreach ($day['venues'] ?? [] as $venue) {
+                $total += count($venue['events'] ?? []);
+            }
+        }
+
+        return $total;
+    }
+
+    /**
      * @param list<array{day: array<string, mixed>, venue: array<string, mixed>, events: list<array<string, mixed>>}> $schedule
      * @return array<string, int>
      */
@@ -199,7 +244,98 @@ class EventClassifier
 
     private static function keywordMatches(string $text, string $keyword): bool
     {
-        return strpos($text, strtolower($keyword)) !== false;
+        $keyword = strtolower($keyword);
+
+        if ($keyword === 'jam') {
+            return preg_match('/\bjam\b/', $text) === 1;
+        }
+
+        return strpos($text, $keyword) !== false;
+    }
+
+    private static function mentionsOpenMicOrJam(string $text): bool
+    {
+        return preg_match('/\bopen[\s-]?mic\b/i', $text) === 1
+            || preg_match('/\bjam\b/', $text) === 1;
+    }
+
+    /**
+     * @param list<string> $existingTags
+     * @return list<string>
+     */
+    private static function resolveOpenMicTags(string $text, array $existingTags): array
+    {
+        if (self::isVarietyOpenMic($text)) {
+            return array_values(array_unique(array_merge(
+                ['open mic', 'variety'],
+                self::detectOpenMicSubtypes($text)
+            )));
+        }
+
+        $subtypes = self::detectOpenMicSubtypes($text);
+        if ($subtypes === []) {
+            $subtypes = array_values(array_filter(
+                $existingTags,
+                static fn (string $tag): bool => in_array($tag, ['comedy', 'spoken word', 'music'], true)
+            ));
+        }
+
+        if ($subtypes !== []) {
+            return array_values(array_unique(array_merge(['open mic'], $subtypes)));
+        }
+
+        $nonOpenMicTags = array_values(array_filter(
+            $existingTags,
+            static fn (string $tag): bool => $tag !== 'open mic'
+        ));
+
+        if (preg_match('/\bjam\b/', $text) && $nonOpenMicTags !== []) {
+            return array_values(array_unique(array_merge(['open mic'], $nonOpenMicTags)));
+        }
+
+        return ['unknown'];
+    }
+
+    private static function isVarietyOpenMic(string $text): bool
+    {
+        if (preg_match('/\bvariety\b/i', $text) !== 1) {
+            return false;
+        }
+
+        return preg_match('/\bopen[\s-]?mic\b/i', $text) === 1
+            || preg_match('/\bopen\s+stage\b/i', $text) === 1
+            || preg_match('/\bjam\b/', $text) === 1;
+    }
+
+    /**
+     * @return list<string>
+     */
+    private static function detectOpenMicSubtypes(string $text): array
+    {
+        $tags = [];
+
+        if (preg_match(
+            '/\b(open[\s-]?mic\s+comedy|comedy\s+open[\s-]?mic|booked\s+comedy\s+open[\s-]?mic|rough\s+drafts)\b/i',
+            $text
+        )) {
+            $tags[] = 'comedy';
+        }
+
+        if (preg_match(
+            '/\b(poetry\s+open[\s-]?mic|open[\s-]?mic\b[^.]{0,40}\bpoetry\b|poetry\s+thing|village\s+poetry)\b/i',
+            $text
+        )) {
+            $tags[] = 'spoken word';
+        }
+
+        if (preg_match(
+            '/\b(music\s+open\s*mic|acoustic\s+open\s*mic|new\s+music\s+showcase)\b/i',
+            $text
+        )) {
+            $tags[] = 'music';
+        }
+
+        return array_values(array_unique($tags));
     }
 
     private static function matchesFestival(string $text): bool

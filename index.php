@@ -6,6 +6,7 @@ require_once __DIR__ . '/lib/calendar-common.php';
 require_once __DIR__ . '/lib/WeekRenderer.php';
 require_once __DIR__ . '/lib/CalendarSeo.php';
 require_once __DIR__ . '/lib/EventClassifier.php';
+require_once __DIR__ . '/lib/WeekByVenueRenderer.php';
 
 $weeksDir = __DIR__ . '/weeks';
 $available = availableWeeks($weeksDir);
@@ -13,6 +14,10 @@ $tz = showCalendarTimezone();
 $today = calendarToday($tz);
 $selectedDate = $today->format('Ymd');
 $activeTags = parseTagsParam(isset($_GET['tags']) ? (string) $_GET['tags'] : null);
+$findQuery = parseFindParam(isset($_GET['find']) ? (string) $_GET['find'] : null);
+$viewMode = isset($_GET['view'])
+    ? parseViewParam((string) $_GET['view'])
+    : parseViewParam(isset($_COOKIE['cringe_view']) ? (string) $_COOKIE['cringe_view'] : null);
 
 if (isset($_GET['date']) && preg_match('/^\d{8}$/', $_GET['date'])) {
     $selectedDate = $_GET['date'];
@@ -33,6 +38,7 @@ $nextWeekDate = $selectedDayDt->modify('+7 days')->format('Ymd');
 $weekHeader = weekHeader($thisWeek);
 $hasWeek = is_readable($weekPath);
 $dayPanels = '';
+$weekByVenueHtml = '';
 $startDayIndex = 0;
 $selectedDay = null;
 $pageTitle = 'Cringe Calendar POC';
@@ -41,6 +47,7 @@ $canonicalUrl = CalendarSeo::pageUrl($selectedDate);
 $jsonLd = null;
 $availableTags = [];
 $tagCounts = [];
+$totalEventCount = 0;
 
 if ($hasWeek) {
     $weekData = WeekRenderer::loadWeek($weekPath);
@@ -51,17 +58,36 @@ if ($hasWeek) {
     $pageDescription = CalendarSeo::metaDescription($selectedDay);
     $canonicalUrl = CalendarSeo::pageUrl($selectedDate);
     $jsonLd = CalendarSeo::jsonLd($selectedDay, $canonicalUrl);
-    $tagCounts = EventClassifier::tagCountsForDay($selectedDay);
-    $availableTags = array_keys($tagCounts);
+
+    if ($viewMode === 'week') {
+        $pageTitle = 'Columbus Live Music — ' . $weekHeader;
+        $pageDescription = 'Live music and events in Columbus, Ohio for the week of ' . $weekHeader . '.';
+        $tagCounts = EventClassifier::tagCountsForWeek($weekData);
+        $totalEventCount = EventClassifier::eventCountForWeek($weekData);
+        $availableTags = array_keys($tagCounts);
+    } else {
+        $tagCounts = EventClassifier::tagCountsForDay($selectedDay);
+        $availableTags = array_keys($tagCounts);
+        foreach ($selectedDay['venues'] ?? [] as $venue) {
+            $totalEventCount += count($venue['events'] ?? []);
+        }
+    }
+
     $activeTags = array_values(array_intersect($activeTags, $availableTags));
 
-    foreach ($weekData['days'] as $day) {
-        $dayPanels .= WeekRenderer::postProcess(WeekRenderer::renderDayPanel($day, $thisWeek));
+    if ($viewMode === 'week') {
+        $weekByVenueHtml = WeekByVenueRenderer::render($weekData, $thisWeek);
+    } else {
+        foreach ($weekData['days'] as $day) {
+            $dayPanels .= WeekRenderer::postProcess(WeekRenderer::renderDayPanel($day, $thisWeek));
+        }
     }
 }
 
 $dayLabels = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
 $tagsQuery = $activeTags !== [] ? '&tags=' . rawurlencode(implode(',', $activeTags)) : '';
+$findQueryParam = $findQuery !== '' ? '&find=' . rawurlencode($findQuery) : '';
+$viewQuery = $viewMode === 'week' ? '&view=week' : '';
 
 ?><!DOCTYPE html>
 <html lang="en">
@@ -82,22 +108,30 @@ $tagsQuery = $activeTags !== [] ? '&tags=' . rawurlencode(implode(',', $activeTa
     <script type="application/ld+json"><?= json_encode($jsonLd, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?></script>
     <?php endif; ?>
     <script>if ('scrollRestoration' in history) { history.scrollRestoration = 'manual'; }</script>
-    <link rel="stylesheet" href="assets/week-view.css">
+    <link rel="stylesheet" href="assets/week-view.css?v=<?= (int) filemtime(__DIR__ . '/assets/week-view.css') ?>">
 </head>
-<body>
+<body class="<?= $viewMode === 'week' ? 'view-week' : 'view-day' ?>">
 <div class="wrap">
     <header>
         <h1>Live Shows Calendar</h1>
         <p class="meta">JSON proof of concept — <?= htmlspecialchars($weekHeader, ENT_QUOTES, 'UTF-8') ?></p>
     </header>
 
+    <?php if ($hasWeek): ?>
+        <?php include __DIR__ . '/partials/view-toggle.php'; ?>
+    <?php endif; ?>
+
     <nav class="week-nav" aria-label="Week navigation">
-        <a href="?date=<?= htmlspecialchars($prevWeekDate, ENT_QUOTES, 'UTF-8') ?><?= htmlspecialchars($tagsQuery, ENT_QUOTES, 'UTF-8') ?>" title="Previous week" rel="prev">Prev<br>week</a>
+        <a href="?date=<?= htmlspecialchars($prevWeekDate, ENT_QUOTES, 'UTF-8') ?><?= htmlspecialchars($tagsQuery . $findQueryParam . $viewQuery, ENT_QUOTES, 'UTF-8') ?>" title="Previous week" rel="prev">Prev<br>week</a>
         <?php if ($hasWeek && isset($weekData)): ?>
             <?php foreach ($weekData['days'] as $index => $day): ?>
                 <?php
                 $isActive = $index === $startDayIndex;
-                $dayHref = '?date=' . rawurlencode((string) $day['date']) . $tagsQuery;
+                $dayDate = (string) $day['date'];
+                $dayHref = '?date=' . rawurlencode($dayDate) . $tagsQuery . $findQueryParam;
+                if ($viewMode === 'week') {
+                    $dayHref .= $viewQuery;
+                }
                 ?>
                 <a
                     href="<?= htmlspecialchars($dayHref, ENT_QUOTES, 'UTF-8') ?>"
@@ -111,7 +145,7 @@ $tagsQuery = $activeTags !== [] ? '&tags=' . rawurlencode(implode(',', $activeTa
                 <span class="day-nav__day"><?= htmlspecialchars($label, ENT_QUOTES, 'UTF-8') ?></span>
             <?php endforeach; ?>
         <?php endif; ?>
-        <a href="?date=<?= htmlspecialchars($nextWeekDate, ENT_QUOTES, 'UTF-8') ?><?= htmlspecialchars($tagsQuery, ENT_QUOTES, 'UTF-8') ?>" title="Next week" rel="next">Next<br>week</a>
+        <a href="?date=<?= htmlspecialchars($nextWeekDate, ENT_QUOTES, 'UTF-8') ?><?= htmlspecialchars($tagsQuery . $findQueryParam . $viewQuery, ENT_QUOTES, 'UTF-8') ?>" title="Next week" rel="next">Next<br>week</a>
     </nav>
 
     <?php if ($hasWeek): ?>
@@ -121,10 +155,12 @@ $tagsQuery = $activeTags !== [] ? '&tags=' . rawurlencode(implode(',', $activeTa
     <p class="pick">Proof of concept: week content is loaded from <code>weeks/<?= htmlspecialchars($thisWeek, ENT_QUOTES, 'UTF-8') ?>.json</code>. Generate fresh JSON with <code>php generate.php</code> or <a href="generate.php">generate.php</a>. Regression-test with <code>php verify.php</code> or <a href="verify.php">verify.php</a>.</p>
 
     <?php if ($hasWeek): ?>
+        <?php if ($viewMode === 'day'): ?>
         <p class="swipe-hint">Swipe or drag left/right to change day</p>
         <div
             class="week-carousel"
             data-week-carousel
+            data-view-mode="day"
             data-start-index="<?= (int) $startDayIndex ?>"
             data-boundary-prev-day="<?= htmlspecialchars($boundaryPrevDay, ENT_QUOTES, 'UTF-8') ?>"
             data-boundary-next-day="<?= htmlspecialchars($boundaryNextDay, ENT_QUOTES, 'UTF-8') ?>"
@@ -138,12 +174,17 @@ $tagsQuery = $activeTags !== [] ? '&tags=' . rawurlencode(implode(',', $activeTa
                 </div>
             </div>
         </div>
+        <?php else: ?>
+        <?= $weekByVenueHtml ?>
+        <?php endif; ?>
     <?php else: ?>
         <p class="error">No JSON found for week <?= htmlspecialchars($thisWeek, ENT_QUOTES, 'UTF-8') ?>. Run <code>php generate.php</code> first.</p>
     <?php endif; ?>
 </div>
 
 <?php if ($hasWeek): ?>
+<script src="assets/calendar-prefs.js" defer></script>
+<script src="assets/venue-favorites.js" defer></script>
 <script src="assets/week-carousel.js" defer></script>
 <script src="assets/event-filter.js" defer></script>
 <?php endif; ?>

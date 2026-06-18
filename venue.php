@@ -22,6 +22,7 @@ $hasWeek = is_readable($weekPath) && $venueSlug !== '';
 $venueName = '';
 $schedule = [];
 $activeTags = parseTagsParam(isset($_GET['tags']) ? (string) $_GET['tags'] : null);
+$findQuery = parseFindParam(isset($_GET['find']) ? (string) $_GET['find'] : null);
 $prevWeekDate = DateTimeImmutable::createFromFormat('Ymd', $selectedDate, showCalendarTimezone())
     ->modify('-7 days')
     ->format('Ymd');
@@ -33,6 +34,7 @@ $venueHtml = '';
 $pageTitle = 'Venue calendar';
 $availableTags = [];
 $tagCounts = [];
+$totalEventCount = 0;
 
 if ($hasWeek) {
     $weekData = WeekRenderer::loadWeek($weekPath);
@@ -43,6 +45,9 @@ if ($hasWeek) {
     $pageTitle = $venueName . ' — ' . $weekHeader;
     $tagCounts = EventClassifier::tagCountsForSchedule($schedule);
     $availableTags = array_keys($tagCounts);
+    foreach ($schedule as $entry) {
+        $totalEventCount += count($entry['events']);
+    }
     $activeTags = array_values(array_intersect($activeTags, $availableTags));
 }
 
@@ -50,9 +55,13 @@ $backUrl = 'index.php?date=' . rawurlencode($selectedDate);
 if ($activeTags !== []) {
     $backUrl .= '&tags=' . rawurlencode(implode(',', $activeTags));
 }
+if ($findQuery !== '') {
+    $backUrl .= '&find=' . rawurlencode($findQuery);
+}
 
 $venueQuery = 'venue=' . rawurlencode($venueSlug) . '&date=';
 $tagsQuery = $activeTags !== [] ? '&tags=' . rawurlencode(implode(',', $activeTags)) : '';
+$findQueryParam = $findQuery !== '' ? '&find=' . rawurlencode($findQuery) : '';
 
 ?><!DOCTYPE html>
 <html lang="en">
@@ -60,7 +69,7 @@ $tagsQuery = $activeTags !== [] ? '&tags=' . rawurlencode(implode(',', $activeTa
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8') ?></title>
-    <link rel="stylesheet" href="assets/week-view.css">
+    <link rel="stylesheet" href="assets/week-view.css?v=<?= (int) filemtime(__DIR__ . '/assets/week-view.css') ?>">
 </head>
 <body class="venue-page">
 <div class="wrap">
@@ -69,9 +78,9 @@ $tagsQuery = $activeTags !== [] ? '&tags=' . rawurlencode(implode(',', $activeTa
     </header>
 
     <nav class="week-nav" aria-label="Week navigation">
-        <a href="venue.php?<?= htmlspecialchars($venueQuery . $prevWeekDate . $tagsQuery, ENT_QUOTES, 'UTF-8') ?>" rel="prev">Prev<br>week</a>
+        <a href="venue.php?<?= htmlspecialchars($venueQuery . $prevWeekDate . $tagsQuery . $findQueryParam, ENT_QUOTES, 'UTF-8') ?>" rel="prev">Prev<br>week</a>
         <span class="day-nav__day is-active"><?= htmlspecialchars($weekHeader, ENT_QUOTES, 'UTF-8') ?></span>
-        <a href="venue.php?<?= htmlspecialchars($venueQuery . $nextWeekDate . $tagsQuery, ENT_QUOTES, 'UTF-8') ?>" rel="next">Next<br>week</a>
+        <a href="venue.php?<?= htmlspecialchars($venueQuery . $nextWeekDate . $tagsQuery . $findQueryParam, ENT_QUOTES, 'UTF-8') ?>" rel="next">Next<br>week</a>
     </nav>
 
     <?php if ($hasWeek && $venue !== null): ?>
@@ -87,6 +96,8 @@ $tagsQuery = $activeTags !== [] ? '&tags=' . rawurlencode(implode(',', $activeTa
 </div>
 
 <?php if ($hasWeek && $venue !== null): ?>
+<script src="assets/calendar-prefs.js" defer></script>
+<script src="assets/venue-favorites.js" defer></script>
 <script src="assets/event-filter.js" defer></script>
 <?php endif; ?>
 </body>

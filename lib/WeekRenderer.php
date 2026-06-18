@@ -62,7 +62,7 @@ class WeekRenderer
         $anchor = (string) $day['anchor'];
         $date = (string) $day['date'];
 
-        $output = '<article class="day-panel" data-day-anchor="' . $anchor . '" data-date="' . $date . '">' . "\n";
+        $output = '<article class="day-panel" id="day-' . $date . '" data-day-anchor="' . $anchor . '" data-date="' . $date . '">' . "\n";
         $output .= self::renderDayBodyForPanel($day, $weekStart);
         $output .= "</article>\n";
 
@@ -92,6 +92,9 @@ class WeekRenderer
         $dateShort = (string) $day['dateShort'];
 
         $output = "\t<h3>" . $dateLabel . "</h3>\n\n";
+
+        require_once __DIR__ . '/VenueScopeToggle.php';
+        $output .= "\t" . VenueScopeToggle::markup();
 
         foreach ($day['venues'] as $venue) {
             $output .= self::renderVenueForPanel($venue, $dateShort, $weekStart);
@@ -124,6 +127,8 @@ class WeekRenderer
     {
         require_once __DIR__ . '/EventClassifier.php';
         require_once __DIR__ . '/VenueUtils.php';
+        require_once __DIR__ . '/EventDateRenderer.php';
+        require_once __DIR__ . '/VenueFavorite.php';
 
         $name = (string) $venue['name'];
         $slug = (string) ($venue['slug'] ?? VenueUtils::slug($name));
@@ -131,9 +136,11 @@ class WeekRenderer
 
         if (!empty($venue['url'])) {
             $url = (string) $venue['url'];
-            $output = "\t<p class=\"venue-block\" data-venue-slug=\"{$slug}\"><b><a href=\"{$url}\" target=\"_blank\">{$name}</a></b>";
+            $output = "\t<p class=\"venue-block\" data-venue-slug=\"{$slug}\">" . VenueFavorite::buttonMarkup();
+            $output .= '<b><a href="' . $url . '" target="_blank">' . $name . '</a></b>';
         } else {
-            $output = "\t<p class=\"venue-block\" data-venue-slug=\"{$slug}\"><b>{$name}</b>";
+            $output = "\t<p class=\"venue-block\" data-venue-slug=\"{$slug}\">" . VenueFavorite::buttonMarkup();
+            $output .= '<b>' . $name . '</b>';
         }
 
         $hasPhone = !empty($venue['phone']);
@@ -158,8 +165,8 @@ class WeekRenderer
 
         foreach ($events as $event) {
             $tags = EventClassifier::tagsForEvent($event);
-            $tagAttr = $tags !== [] ? ' data-tags="' . htmlspecialchars(implode(' ', $tags), ENT_QUOTES, 'UTF-8') . '"' : '';
-            $output .= "\t<span class=\"event-line\"{$tagAttr}><b>{$dateShort}:</b> " . self::renderEvent($event) . "</span>\n";
+            $tagAttr = $tags !== [] ? ' data-tags="' . htmlspecialchars(implode(',', $tags), ENT_QUOTES, 'UTF-8') . '"' : '';
+            $output .= "\t<span class=\"event-line\"{$tagAttr}>" . EventDateRenderer::renderShort($dateShort) . ' ' . self::renderEvent($event) . "</span>\n";
         }
 
         $output .= "</p>\n\n";

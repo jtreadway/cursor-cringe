@@ -43,6 +43,13 @@ return [
         'tags' => ['game night'],
     ],
 
+    'variety' => [
+        'priority' => 5,
+        'schema' => 'Event',
+        'keywords' => ['variety show', 'variety open mic'],
+        'tags' => ['variety'],
+    ],
+
     'music' => [
         'priority' => 10,
         'schema' => 'MusicEvent',
@@ -50,7 +57,7 @@ return [
             'band', 'live', 'concert', 'tour', 'release', 'album', 'ep release',
             'record release', 'singer', 'songwriter', 'jazz', 'blues', 'punk',
             'metal', 'indie', 'folk', 'acoustic', 'orchestra', 'ensemble', 'choir',
-            'set', 'jam', 'tribute', 'cover band', 'bluegrass',
+            'set', 'tribute', 'cover band', 'bluegrass',
         ],
         'tags' => ['music'],
     ],

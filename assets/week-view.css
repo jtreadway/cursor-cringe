@@ -50,7 +50,36 @@ header p {
 .week-nav a:hover,
 .week-nav button:hover,
 .week-nav a.is-active,
-.week-nav button.is-active {
+.week-nav button.is-active,
+.view-toggle__option.is-active {
+    background: #222;
+    color: #fff;
+    border-color: #222;
+}
+
+.view-toggle {
+    display: flex;
+    justify-content: center;
+    gap: 0.35rem;
+    margin: 0 0 0.75rem;
+}
+
+.view-toggle__option {
+    display: inline-block;
+    min-width: 3.5rem;
+    padding: 0.45rem 0.75rem;
+    text-align: center;
+    text-decoration: none;
+    text-transform: lowercase;
+    color: #222;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    background: #fff;
+    font-family: inherit;
+}
+
+.view-toggle__option:hover {
     background: #222;
     color: #fff;
     border-color: #222;
@@ -94,11 +123,26 @@ header p {
 .week-carousel__viewport {
     overflow: hidden;
     touch-action: pan-y;
-    cursor: grab;
+    cursor: default;
 }
 
 .week-carousel__viewport a {
     cursor: pointer;
+}
+
+.week-carousel__viewport .venue-favorite,
+.week-carousel__viewport .venue-favorite:hover,
+.week-carousel__viewport .venue-favorite:focus,
+.week-carousel__viewport .venue-favorite__icon,
+.week-carousel__viewport .venue-favorite__shape {
+    cursor: default !important;
+}
+
+.week-carousel.is-dragging .venue-favorite,
+.week-carousel.is-dragging .venue-favorite:hover,
+.week-carousel.is-dragging .venue-favorite__icon,
+.week-carousel.is-dragging .venue-favorite__shape {
+    cursor: default !important;
 }
 
 .week-carousel__viewport.is-animating {
@@ -106,7 +150,6 @@ header p {
 }
 
 .week-carousel.is-dragging .week-carousel__viewport {
-    cursor: grabbing;
     user-select: none;
 }
 
@@ -123,6 +166,41 @@ header p {
     flex: 0 0 100%;
     min-width: 0;
     box-sizing: border-box;
+}
+
+.view-week .wrap {
+    max-width: 36rem;
+}
+
+.week-by-venue {
+    margin: 0;
+}
+
+.view-week .week-by-venue .venue-week__block {
+    display: block;
+    margin: 0 0 1.25rem;
+}
+
+.view-week .week-by-venue .venue-week__block:last-child {
+    margin-bottom: 0;
+}
+
+.event-line__date {
+    display: inline-block;
+    font-family: ui-monospace, "SFMono-Regular", Menlo, Monaco, Consolas, monospace;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
+.event-line__dow {
+    display: inline-block;
+    width: 3ch;
+}
+
+.event-line__dom {
+    display: inline-block;
+    width: 2ch;
+    text-align: right;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -157,24 +235,6 @@ header p {
     margin: 0;
 }
 
-.venue-week__block .event-line__date {
-    display: inline-block;
-    font-family: ui-monospace, "SFMono-Regular", Menlo, Monaco, Consolas, monospace;
-    font-weight: 700;
-    font-variant-numeric: tabular-nums;
-}
-
-.venue-week__block .event-line__dow {
-    display: inline-block;
-    width: 3ch;
-}
-
-.venue-week__block .event-line__dom {
-    display: inline-block;
-    width: 2ch;
-    text-align: right;
-}
-
 .venue-block .event-line {
     display: block;
 }
@@ -183,8 +243,111 @@ header p {
     margin: 1rem 0;
 }
 
-.event-filter.is-empty {
+.venue-scope-toggle {
+    margin: 0 0 1rem;
+}
+
+.venue-scope-toggle__control {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    box-shadow: none;
+    font: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    color: inherit;
+    text-align: left;
+    cursor: default;
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+.venue-scope-toggle__heart {
+    display: block;
+    width: 1em;
+    height: 1em;
+    flex: none;
+}
+
+.venue-block .venue-favorite {
+    display: inline-block;
+    box-sizing: content-box;
+    padding: 0.15em;
+    margin: -0.15em 0.1em -0.15em -0.15em;
+    line-height: 0;
+    cursor: default !important;
+    vertical-align: -0.12em;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.venue-block .venue-favorite:hover,
+.venue-block .venue-favorite__icon,
+.venue-block .venue-favorite__shape {
+    cursor: default !important;
+}
+
+.venue-block .venue-favorite__icon {
+    display: block;
+    width: 1em;
+    height: 1em;
+    max-width: 1em;
+    max-height: 1em;
+    overflow: hidden;
+    flex: none;
+}
+
+.venue-block .venue-favorite__shape {
+    fill: #ccc;
+}
+
+.venue-block .venue-favorite:hover .venue-favorite__shape {
+    fill: #aaa;
+}
+
+.venue-block .venue-favorite.is-favorite .venue-favorite__shape {
+    fill: #e00;
+}
+
+.venue-block .venue-favorite.is-favorite:hover .venue-favorite__shape {
+    fill: #c00;
+}
+
+.venue-block .venue-favorite:focus {
+    outline: none;
+}
+
+.venue-block .venue-favorite:focus-visible {
+    outline: 1px dotted #666;
+    outline-offset: 2px;
+}
+
+.event-filter__types.is-empty {
     display: none;
+}
+
+.event-filter__find-wrap {
+    margin-bottom: 0.75rem;
+}
+
+.event-filter__find {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.45rem 0.65rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-family: inherit;
+}
+
+.event-filter__find:focus {
+    outline: 2px solid #222;
+    outline-offset: 1px;
 }
 
 .event-filter__label {
@@ -199,8 +362,7 @@ header p {
     gap: 0.35rem;
 }
 
-.event-filter__tag,
-.event-filter__clear {
+.event-filter__tag {
     border: 1px solid #ccc;
     border-radius: 999px;
     background: #fff;
@@ -214,10 +376,6 @@ header p {
     background: #222;
     color: #fff;
     border-color: #222;
-}
-
-.event-filter__clear {
-    border-style: dashed;
 }
 
 .event-line.is-filtered-out,

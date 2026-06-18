@@ -22,8 +22,15 @@ class WeekCarousel {
         this.prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         this.boundaryPrevDay = root.dataset.boundaryPrevDay || '';
         this.boundaryNextDay = root.dataset.boundaryNextDay || '';
+        this.isWeekView = root.dataset.viewMode === 'week';
 
         this.stripLegacyHash();
+
+        if (this.isWeekView) {
+            window.scrollTo(0, 0);
+            return;
+        }
+
         this.bindNav();
         this.bindPointer();
         this.bindKeyboard();
@@ -136,7 +143,7 @@ class WeekCarousel {
                 return;
             }
 
-            if (event.target.closest('a')) {
+            if (event.target.closest('a, button, [data-venue-favorite], .venue-favorite, [data-filter-favorites-only], .venue-scope-toggle__control')) {
                 return;
             }
 
@@ -208,6 +215,14 @@ class WeekCarousel {
 
         this.viewport.addEventListener('pointerup', endPointer);
         this.viewport.addEventListener('pointercancel', endPointer);
+
+        this.viewport.addEventListener('mousemove', (event) => {
+            if (event.target.closest('.venue-favorite, [data-venue-favorite], [data-filter-favorites-only], .venue-scope-toggle__control')) {
+                this.viewport.style.cursor = 'default';
+            } else if (!this.dragging) {
+                this.viewport.style.removeProperty('cursor');
+            }
+        });
     }
 
     offsetForIndex(index) {

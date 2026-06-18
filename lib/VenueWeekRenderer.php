@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/EventClassifier.php';
+require_once __DIR__ . '/EventDateRenderer.php';
+require_once __DIR__ . '/VenueFavorite.php';
 
 class VenueWeekRenderer
 {
@@ -10,17 +12,20 @@ class VenueWeekRenderer
      * @param array<string, mixed> $venue
      * @param list<array{day: array<string, mixed>, venue: array<string, mixed>, events: list<array<string, mixed>>}> $schedule
      */
-    public static function render(array $venue, array $schedule): string
+    public static function render(array $venue, array $schedule, string $weekStart = ''): string
     {
         $name = (string) ($venue['name'] ?? '');
         $slug = (string) ($venue['slug'] ?? '');
+        $tag = $weekStart !== '' ? 'div' : 'p';
 
         if (!empty($venue['url'])) {
             $url = (string) $venue['url'];
-            $output = '<p class="venue-block venue-week__block" data-venue-slug="' . htmlspecialchars($slug, ENT_QUOTES, 'UTF-8') . '">';
+            $output = '<' . $tag . ' class="venue-block venue-week__block" data-venue-slug="' . htmlspecialchars($slug, ENT_QUOTES, 'UTF-8') . '">';
+            $output .= VenueFavorite::buttonMarkup();
             $output .= '<b><a href="' . htmlspecialchars($url, ENT_QUOTES, 'UTF-8') . '" target="_blank">' . htmlspecialchars($name, ENT_QUOTES, 'UTF-8') . '</a></b>';
         } else {
-            $output = '<p class="venue-block venue-week__block" data-venue-slug="' . htmlspecialchars($slug, ENT_QUOTES, 'UTF-8') . '">';
+            $output = '<' . $tag . ' class="venue-block venue-week__block" data-venue-slug="' . htmlspecialchars($slug, ENT_QUOTES, 'UTF-8') . '">';
+            $output .= VenueFavorite::buttonMarkup();
             $output .= '<b>' . htmlspecialchars($name, ENT_QUOTES, 'UTF-8') . '</b>';
         }
 
@@ -39,11 +44,16 @@ class VenueWeekRenderer
             $output .= '<br>' . htmlspecialchars($note, ENT_QUOTES, 'UTF-8');
         }
 
+        if ($weekStart !== '') {
+            $venueWeekHref = 'venue.php?venue=' . rawurlencode($slug) . '&date=' . rawurlencode($weekStart);
+            $output .= ' <a class="venue-week-link" href="' . htmlspecialchars($venueWeekHref, ENT_QUOTES, 'UTF-8') . '">all week</a>';
+        }
+
         $output .= "<br>\n";
 
         if ($schedule === []) {
             $output .= '<span class="meta">No events listed for this venue this week.</span>';
-            $output .= "</p>\n";
+            $output .= '</' . $tag . ">\n";
 
             return $output;
         }
@@ -53,29 +63,21 @@ class VenueWeekRenderer
             $dateShort = (string) $entry['day']['dateShort'];
             foreach ($entry['events'] as $event) {
                 $tags = EventClassifier::tagsForEvent($event);
-                $tagAttr = $tags !== [] ? ' data-tags="' . htmlspecialchars(implode(' ', $tags), ENT_QUOTES, 'UTF-8') . '"' : '';
-                $lines[] = '<span class="event-line"' . $tagAttr . '>' . self::renderDateShort($dateShort) . ' '
+                $tagAttr = $tags !== [] ? ' data-tags="' . htmlspecialchars(implode(',', $tags), ENT_QUOTES, 'UTF-8') . '"' : '';
+                $lines[] = '<span class="event-line"' . $tagAttr . '>' . EventDateRenderer::renderShort($dateShort) . ' '
                     . self::renderEvent($event) . '</span>';
             }
         }
 
         $output .= implode("\n", $lines);
-        $output .= "</p>\n";
 
-        return $output;
-    }
-
-    private static function renderDateShort(string $dateShort): string
-    {
-        if (preg_match('/^(\w{3}) (\d{1,2})$/', $dateShort, $matches)) {
-            return '<span class="event-line__date"><span class="event-line__dow">'
-                . htmlspecialchars($matches[1], ENT_QUOTES, 'UTF-8')
-                . '</span> <span class="event-line__dom">'
-                . htmlspecialchars($matches[2], ENT_QUOTES, 'UTF-8')
-                . '</span>:</span>';
+        if ($weekStart !== '') {
+            $output .= "\n<br>\n";
         }
 
-        return '<span class="event-line__date">' . htmlspecialchars($dateShort, ENT_QUOTES, 'UTF-8') . ':</span>';
+        $output .= '</' . $tag . ">\n";
+
+        return $output;
     }
 
     /**
