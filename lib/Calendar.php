@@ -111,6 +111,20 @@ class Calendar
         return $this->errors;
     }
 
+    /**
+     * @return list<array{venue: array<string, string>, events?: list<array<string, string>>}>
+     */
+    public function getParsedListings(): array
+    {
+        $listings = [];
+
+        foreach ($this->listings as $listing) {
+            $listings[] = $this->parseListing($listing);
+        }
+
+        return $listings;
+    }
+
     /** @var list<string> */
     private array $errors = [];
 

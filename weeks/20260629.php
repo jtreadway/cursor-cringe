@@ -293,9 +293,6 @@
 	<p><b><a href="https://clintonvillebooks.com" target="_blank">Clintonville Books</a></b><br>
 	<b>Wed 1:</b> Clintonville Books welcomes Christopher Sunami 6:30-7:30pm</p>
 
-	<p><b>Clintonville Books welcomes Christopher Sunami</b><br>
-	<b>Wed 1:</b> Clintonville Books welcomes Christopher Sunami 6:30-7:30pm</p>
-
 	<p><b><a href="https://www.instagram.com/crookedcanohio/" target="_blank">Crooked Can</a></b> - 614-219-1500<br>
 	<b>Wed 1:</b> Cole Biedenharn 6-9pm</p>
 
@@ -890,9 +887,6 @@
 	<b>Sun 5:</b> Ballz Bingo & Boys with Amanda Sue 9pm</p>
 
 	<p><b><a href="https://clintonvillebooks.com" target="_blank">Clintonville Books</a></b><br>
-	<b>Sun 5:</b> Shorties Book Club: Automatic Noodle by Annalee Newitz 1-2pm</p>
-
-	<p><b>Clintonville Books welcomes Christopher Sunami</b><br>
 	<b>Sun 5:</b> Shorties Book Club: Automatic Noodle by Annalee Newitz 1-2pm</p>
 
 	<p><b><a href="https://www.combustionbrewing.com/" target="_blank">Combustion Brewery & Taproom (Clintonville)</a></b> - 614-914-5112<br>

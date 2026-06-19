@@ -4,7 +4,7 @@ class WeekCarousel {
         this.viewport = root.querySelector('.week-carousel__viewport');
         this.track = root.querySelector('.week-carousel__track');
         this.panels = Array.from(root.querySelectorAll('.day-panel'));
-        this.navButtons = Array.from(document.querySelectorAll('.week-nav [data-day-index]'));
+        this.navButtons = Array.from(document.querySelectorAll('.day-nav [data-day-index]'));
         this.slideCount = this.panels.length;
         this.index = Math.min(
             Math.max(parseInt(root.dataset.startIndex || '0', 10), 0),
@@ -143,7 +143,7 @@ class WeekCarousel {
                 return;
             }
 
-            if (event.target.closest('a, button, [data-venue-favorite], .venue-favorite, [data-filter-favorites-only], .venue-scope-toggle__control')) {
+            if (event.target.closest('a, button, [data-venue-favorite], .venue-favorite, [data-filter-my-venues], [data-filter-favorites-only], .venue-scope-toggle__control')) {
                 return;
             }
 
@@ -217,7 +217,7 @@ class WeekCarousel {
         this.viewport.addEventListener('pointercancel', endPointer);
 
         this.viewport.addEventListener('mousemove', (event) => {
-            if (event.target.closest('.venue-favorite, [data-venue-favorite], [data-filter-favorites-only], .venue-scope-toggle__control')) {
+            if (event.target.closest('.venue-favorite, [data-venue-favorite], [data-filter-my-venues], [data-filter-favorites-only], .venue-scope-toggle__control')) {
                 this.viewport.style.cursor = 'default';
             } else if (!this.dragging) {
                 this.viewport.style.removeProperty('cursor');
@@ -300,6 +300,8 @@ class WeekCarousel {
         } else {
             history.replaceState(null, '', url.toString());
         }
+
+        document.dispatchEvent(new CustomEvent('calendar:urlchange'));
 
         document.title = panel.querySelector('h3')?.textContent?.trim()
             ? `Columbus Live Music — ${panel.querySelector('h3').textContent.trim()}`

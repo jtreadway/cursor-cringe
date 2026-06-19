@@ -93,9 +93,6 @@ class WeekRenderer
 
         $output = "\t<h3>" . $dateLabel . "</h3>\n\n";
 
-        require_once __DIR__ . '/VenueScopeToggle.php';
-        $output .= "\t" . VenueScopeToggle::markup();
-
         foreach ($day['venues'] as $venue) {
             $output .= self::renderVenueForPanel($venue, $dateShort, $weekStart);
         }

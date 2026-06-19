@@ -1,0 +1,1273 @@
+{
+    "generatedAt": "2026-06-18T23:17:30-04:00",
+    "lastSourceFile": "20260615-noTag.txt",
+    "venueCount": 211,
+    "venues": [
+        {
+            "name": "934 Gallery",
+            "slugs": [
+                "934-gallery"
+            ]
+        },
+        {
+            "name": "A&R Music Bar",
+            "slugs": [
+                "a-r-music-bar"
+            ]
+        },
+        {
+            "name": "A.W.O.L.",
+            "slugs": [
+                "a-w-o-l"
+            ]
+        },
+        {
+            "name": "Ace of Cups",
+            "slugs": [
+                "ace-of-cups"
+            ]
+        },
+        {
+            "name": "The Attic",
+            "slugs": [
+                "the-attic"
+            ]
+        },
+        {
+            "name": "Axis Nightclub",
+            "slugs": [
+                "axis-nightclub"
+            ]
+        },
+        {
+            "name": "Bada Bean Bada Booze (Italian Village)",
+            "slugs": [
+                "bada-bean-bada-booze-italian-village"
+            ]
+        },
+        {
+            "name": "Bada Bean Bada Booze (Quarry Trails)",
+            "slugs": [
+                "bada-bean-bada-booze-quarry-trails"
+            ]
+        },
+        {
+            "name": "Barcelona",
+            "slugs": [
+                "barcelona"
+            ]
+        },
+        {
+            "name": "Basement",
+            "slugs": [
+                "basement"
+            ]
+        },
+        {
+            "name": "Beeline",
+            "slugs": [
+                "beeline"
+            ]
+        },
+        {
+            "name": "Beer Barrel (Easton)",
+            "slugs": [
+                "beer-barrel-easton"
+            ]
+        },
+        {
+            "name": "Bexley Jazz in the Park",
+            "slugs": [
+                "bexley-jazz-in-the-park"
+            ]
+        },
+        {
+            "name": "Bexley Public Library",
+            "slugs": [
+                "bexley-public-library"
+            ]
+        },
+        {
+            "name": "Bicentennial Park",
+            "slugs": [
+                "bicentennial-park"
+            ]
+        },
+        {
+            "name": "Black Swan Bar & Grill",
+            "slugs": [
+                "black-swan-bar-grill"
+            ]
+        },
+        {
+            "name": "Blue Danube",
+            "slugs": [
+                "blue-danube"
+            ]
+        },
+        {
+            "name": "Bluegrass Musicians Supply",
+            "slugs": [
+                "bluegrass-musicians-supply"
+            ]
+        },
+        {
+            "name": "Bluestone",
+            "slugs": [
+                "bluestone"
+            ]
+        },
+        {
+            "name": "Bobcat Sports Bar",
+            "slugs": [
+                "bobcat-sports-bar"
+            ]
+        },
+        {
+            "name": "Bodi",
+            "slugs": [
+                "bodi"
+            ]
+        },
+        {
+            "name": "Boulevard Presbyterian Church",
+            "slugs": [
+                "boulevard-presbyterian-church"
+            ]
+        },
+        {
+            "name": "Budd Dairy Food Hall",
+            "slugs": [
+                "budd-dairy-food-hall"
+            ]
+        },
+        {
+            "name": "Buffalo Wild Wings (Grove City)",
+            "slugs": [
+                "buffalo-wild-wings-grove-city"
+            ]
+        },
+        {
+            "name": "Burnzie's Old Trail",
+            "slugs": [
+                "burnzie-s-old-trail"
+            ]
+        },
+        {
+            "name": "Byrne's Pub",
+            "slugs": [
+                "byrne-s-pub"
+            ]
+        },
+        {
+            "name": "Caddy's Delight",
+            "slugs": [
+                "caddy-s-delight"
+            ]
+        },
+        {
+            "name": "Cafe Bourbon Street",
+            "slugs": [
+                "cafe-bourbon-street"
+            ]
+        },
+        {
+            "name": "The Canabar",
+            "slugs": [
+                "the-canabar"
+            ]
+        },
+        {
+            "name": "Cavan's Irish Pub",
+            "slugs": [
+                "cavan-s-irish-pub"
+            ]
+        },
+        {
+            "name": "The Cave",
+            "slugs": [
+                "the-cave"
+            ]
+        },
+        {
+            "name": "City Tavern",
+            "slugs": [
+                "city-tavern"
+            ]
+        },
+        {
+            "name": "Clintonville Books",
+            "slugs": [
+                "clintonville-books"
+            ]
+        },
+        {
+            "name": "Clintonville Books welcomes Christopher Sunami",
+            "slugs": [
+                "clintonville-books-welcomes-christopher-sunami"
+            ]
+        },
+        {
+            "name": "Clintonville Community Resource Center",
+            "slugs": [
+                "clintonville-community-resource-center"
+            ]
+        },
+        {
+            "name": "Columbus Commons",
+            "slugs": [
+                "columbus-commons"
+            ]
+        },
+        {
+            "name": "Columbus Mennonite Church",
+            "slugs": [
+                "columbus-mennonite-church"
+            ]
+        },
+        {
+            "name": "Columbus Metropolitan Library (Dublin)",
+            "slugs": [
+                "columbus-metropolitan-library-dublin"
+            ]
+        },
+        {
+            "name": "Columbus Metropolitan Library (Gahanna)",
+            "slugs": [
+                "columbus-metropolitan-library-gahanna"
+            ]
+        },
+        {
+            "name": "Columbus Metropolitan Library (Hilliard)",
+            "slugs": [
+                "columbus-metropolitan-library-hilliard"
+            ]
+        },
+        {
+            "name": "Columbus Metropolitan Library (Main)",
+            "slugs": [
+                "columbus-metropolitan-library-main"
+            ]
+        },
+        {
+            "name": "Columbus Metropolitan Library (Marion-Franklin)",
+            "slugs": [
+                "columbus-metropolitan-library-marion-franklin"
+            ]
+        },
+        {
+            "name": "Columbus Metropolitan Library (Whetstone)",
+            "slugs": [
+                "columbus-metropolitan-library-whetstone"
+            ]
+        },
+        {
+            "name": "Columbus Museum of Art",
+            "slugs": [
+                "columbus-museum-of-art"
+            ]
+        },
+        {
+            "name": "Combustion Brewery & Taproom (Clintonville)",
+            "slugs": [
+                "combustion-brewery-taproom-clintonville"
+            ]
+        },
+        {
+            "name": "Comfest (Goodale Park)",
+            "slugs": [
+                "comfest-goodale-park"
+            ]
+        },
+        {
+            "name": "Crazee Mule Pub & Grill",
+            "slugs": [
+                "crazee-mule-pub-grill"
+            ]
+        },
+        {
+            "name": "Creekside Blues & Jazz Festival",
+            "slugs": [
+                "creekside-blues-jazz-festival"
+            ]
+        },
+        {
+            "name": "Crescent Lounge",
+            "slugs": [
+                "crescent-lounge"
+            ]
+        },
+        {
+            "name": "Crooked Can",
+            "slugs": [
+                "crooked-can"
+            ]
+        },
+        {
+            "name": "Cure 614",
+            "slugs": [
+                "cure-614"
+            ]
+        },
+        {
+            "name": "Dafuque on High",
+            "slugs": [
+                "dafuque-on-high"
+            ]
+        },
+        {
+            "name": "The Daily Bar",
+            "slugs": [
+                "the-daily-bar"
+            ]
+        },
+        {
+            "name": "The Dallas at Milo",
+            "slugs": [
+                "the-dallas-at-milo"
+            ]
+        },
+        {
+            "name": "Daniel Crease Multicultural Center",
+            "slugs": [
+                "daniel-crease-multicultural-center"
+            ]
+        },
+        {
+            "name": "Dick's Den",
+            "slugs": [
+                "dick-s-den"
+            ]
+        },
+        {
+            "name": "Dirty Dungarees",
+            "slugs": [
+                "dirty-dungarees"
+            ]
+        },
+        {
+            "name": "District West",
+            "slugs": [
+                "district-west"
+            ]
+        },
+        {
+            "name": "Dolphin Lounge",
+            "slugs": [
+                "dolphin-lounge"
+            ]
+        },
+        {
+            "name": "Donatos Basement/Club D (OSU)",
+            "slugs": [
+                "donatos-basement-club-d-osu"
+            ]
+        },
+        {
+            "name": "Doo Dah Parade (Goodale Park Gazebo)",
+            "slugs": [
+                "doo-dah-parade-goodale-park-gazebo"
+            ]
+        },
+        {
+            "name": "Double Eagle Spirits & Sports",
+            "slugs": [
+                "double-eagle-spirits-sports"
+            ]
+        },
+        {
+            "name": "Drexel Theatre",
+            "slugs": [
+                "drexel-theatre"
+            ]
+        },
+        {
+            "name": "Dublin Coffman High School",
+            "slugs": [
+                "dublin-coffman-high-school"
+            ]
+        },
+        {
+            "name": "Duecento IV",
+            "slugs": [
+                "duecento-iv"
+            ]
+        },
+        {
+            "name": "Ecstatic Dance",
+            "slugs": [
+                "ecstatic-dance"
+            ]
+        },
+        {
+            "name": "Edison Brewing Company",
+            "slugs": [
+                "edison-brewing-company"
+            ]
+        },
+        {
+            "name": "Eldorado's Food & Spirits",
+            "slugs": [
+                "eldorado-s-food-spirits"
+            ]
+        },
+        {
+            "name": "Eupouria",
+            "slugs": [
+                "eupouria"
+            ]
+        },
+        {
+            "name": "Fadó Irish Pub",
+            "slugs": [
+                "fad-irish-pub"
+            ]
+        },
+        {
+            "name": "Fifteen32 Social",
+            "slugs": [
+                "fifteen32-social"
+            ]
+        },
+        {
+            "name": "Fives Up High",
+            "slugs": [
+                "fives-up-high"
+            ]
+        },
+        {
+            "name": "Flint Station",
+            "slugs": [
+                "flint-station"
+            ]
+        },
+        {
+            "name": "Gabby's Tavern",
+            "slugs": [
+                "gabby-s-tavern"
+            ]
+        },
+        {
+            "name": "Galla Park Steak",
+            "slugs": [
+                "galla-park-steak"
+            ]
+        },
+        {
+            "name": "The Gallery at Champions",
+            "slugs": [
+                "the-gallery-at-champions"
+            ]
+        },
+        {
+            "name": "Gatsby's Bar and Grill",
+            "slugs": [
+                "gatsby-s-bar-and-grill"
+            ]
+        },
+        {
+            "name": "Genoa Park",
+            "slugs": [
+                "genoa-park"
+            ]
+        },
+        {
+            "name": "Germania Singing and Sport Society",
+            "slugs": [
+                "germania-singing-and-sport-society"
+            ]
+        },
+        {
+            "name": "Giammarco's Italian Restaurant",
+            "slugs": [
+                "giammarco-s-italian-restaurant"
+            ]
+        },
+        {
+            "name": "Ginger Rabbit Jazz Lounge",
+            "slugs": [
+                "ginger-rabbit-jazz-lounge"
+            ]
+        },
+        {
+            "name": "Giuseppe's Ritrovo",
+            "slugs": [
+                "giuseppe-s-ritrovo"
+            ]
+        },
+        {
+            "name": "Global Gallery Coffee House",
+            "slugs": [
+                "global-gallery-coffee-house"
+            ]
+        },
+        {
+            "name": "Goodale Park",
+            "slugs": [
+                "goodale-park"
+            ]
+        },
+        {
+            "name": "Grandview Heights Public Library",
+            "slugs": [
+                "grandview-heights-public-library"
+            ]
+        },
+        {
+            "name": "Grandview Theatre",
+            "slugs": [
+                "grandview-theatre"
+            ]
+        },
+        {
+            "name": "Grange Insurance Audubon Center",
+            "slugs": [
+                "grange-insurance-audubon-center"
+            ]
+        },
+        {
+            "name": "Gravity Columbus",
+            "slugs": [
+                "gravity-columbus"
+            ]
+        },
+        {
+            "name": "Gresso's",
+            "slugs": [
+                "gresso-s"
+            ]
+        },
+        {
+            "name": "Half Baked Brew (Short North)",
+            "slugs": [
+                "half-baked-brew-short-north"
+            ]
+        },
+        {
+            "name": "Harry Buffalo (Westerville)",
+            "slugs": [
+                "harry-buffalo-westerville"
+            ]
+        },
+        {
+            "name": "The Hashtag Comedy Co.",
+            "slugs": [
+                "the-hashtag-comedy-co"
+            ]
+        },
+        {
+            "name": "Heritage Park",
+            "slugs": [
+                "heritage-park"
+            ]
+        },
+        {
+            "name": "Hey Hey Bar & Grill",
+            "slugs": [
+                "hey-hey-bar-grill"
+            ]
+        },
+        {
+            "name": "High Beck Tavern",
+            "slugs": [
+                "high-beck-tavern"
+            ]
+        },
+        {
+            "name": "Hillard Civic & Cultural Arts Center",
+            "slugs": [
+                "hillard-civic-cultural-arts-center"
+            ]
+        },
+        {
+            "name": "Hillard's Station Park",
+            "slugs": [
+                "hillard-s-station-park"
+            ]
+        },
+        {
+            "name": "HillGarten",
+            "slugs": [
+                "hillgarten"
+            ]
+        },
+        {
+            "name": "Historic Crew Stadium",
+            "slugs": [
+                "historic-crew-stadium"
+            ]
+        },
+        {
+            "name": "Hofbrauhaus",
+            "slugs": [
+                "hofbrauhaus"
+            ]
+        },
+        {
+            "name": "Hollywood Casino",
+            "slugs": [
+                "hollywood-casino"
+            ]
+        },
+        {
+            "name": "Honest Friend Brewing",
+            "slugs": [
+                "honest-friend-brewing"
+            ]
+        },
+        {
+            "name": "Huntington Park",
+            "slugs": [
+                "huntington-park"
+            ]
+        },
+        {
+            "name": "India Oak Grill",
+            "slugs": [
+                "india-oak-grill"
+            ]
+        },
+        {
+            "name": "Jeffrey Mansion Carriage House",
+            "slugs": [
+                "jeffrey-mansion-carriage-house"
+            ]
+        },
+        {
+            "name": "Junto Hotel",
+            "slugs": [
+                "junto-hotel"
+            ]
+        },
+        {
+            "name": "Kafe Kerouac",
+            "slugs": [
+                "kafe-kerouac"
+            ]
+        },
+        {
+            "name": "Kemba Live",
+            "slugs": [
+                "kemba-live"
+            ]
+        },
+        {
+            "name": "King Arts Complex",
+            "slugs": [
+                "king-arts-complex"
+            ]
+        },
+        {
+            "name": "The King of Clubs",
+            "slugs": [
+                "the-king-of-clubs"
+            ]
+        },
+        {
+            "name": "King-Lincoln Bronzeville",
+            "slugs": [
+                "king-lincoln-bronzeville"
+            ]
+        },
+        {
+            "name": "Kingdom Image Arts Performing Center",
+            "slugs": [
+                "kingdom-image-arts-performing-center"
+            ]
+        },
+        {
+            "name": "Land Grant Brewing Co.",
+            "slugs": [
+                "land-grant-brewing-co"
+            ]
+        },
+        {
+            "name": "Leap-N-Lizard's",
+            "slugs": [
+                "leap-n-lizard-s"
+            ]
+        },
+        {
+            "name": "Ledo's Lounge",
+            "slugs": [
+                "ledo-s-lounge"
+            ]
+        },
+        {
+            "name": "The Library Bar",
+            "slugs": [
+                "the-library-bar"
+            ]
+        },
+        {
+            "name": "Lincoln Theatre",
+            "slugs": [
+                "lincoln-theatre"
+            ]
+        },
+        {
+            "name": "The Lion (Bexley)",
+            "slugs": [
+                "the-lion-bexley"
+            ]
+        },
+        {
+            "name": "Little Grand Market",
+            "slugs": [
+                "little-grand-market"
+            ]
+        },
+        {
+            "name": "Local Cantina (Brewery District)",
+            "slugs": [
+                "local-cantina-brewery-district"
+            ]
+        },
+        {
+            "name": "Local Cantina (Upper Arlington)",
+            "slugs": [
+                "local-cantina-upper-arlington"
+            ]
+        },
+        {
+            "name": "Lucky's Grille & Sports Pub",
+            "slugs": [
+                "lucky-s-grille-sports-pub"
+            ]
+        },
+        {
+            "name": "MadLab",
+            "slugs": [
+                "madlab"
+            ]
+        },
+        {
+            "name": "Mainline Bar & Courtyard",
+            "slugs": [
+                "mainline-bar-courtyard"
+            ]
+        },
+        {
+            "name": "Mickey's (Grandview)",
+            "slugs": [
+                "mickey-s-grandview"
+            ]
+        },
+        {
+            "name": "Mid City Garage",
+            "slugs": [
+                "mid-city-garage"
+            ]
+        },
+        {
+            "name": "MJ Event Venue",
+            "slugs": [
+                "mj-event-venue"
+            ]
+        },
+        {
+            "name": "Natalie's Grandview",
+            "slugs": [
+                "natalie-s-grandview"
+            ]
+        },
+        {
+            "name": "The Nest Theatre",
+            "slugs": [
+                "the-nest-theatre"
+            ]
+        },
+        {
+            "name": "Newport Music Hall",
+            "slugs": [
+                "newport-music-hall"
+            ]
+        },
+        {
+            "name": "North High Brewing (Dublin)",
+            "slugs": [
+                "north-high-brewing-dublin"
+            ]
+        },
+        {
+            "name": "North Market (Bridge Park)",
+            "slugs": [
+                "north-market-bridge-park"
+            ]
+        },
+        {
+            "name": "North Market (Downtown)",
+            "slugs": [
+                "north-market-downtown"
+            ]
+        },
+        {
+            "name": "Northstar Cafe (Easton)",
+            "slugs": [
+                "northstar-cafe-easton"
+            ]
+        },
+        {
+            "name": "Oddfellows",
+            "slugs": [
+                "oddfellows"
+            ]
+        },
+        {
+            "name": "Ohio Statehouse",
+            "slugs": [
+                "ohio-statehouse"
+            ]
+        },
+        {
+            "name": "Ohio Tap Room",
+            "slugs": [
+                "ohio-tap-room"
+            ]
+        },
+        {
+            "name": "Ohio Theatre",
+            "slugs": [
+                "ohio-theatre"
+            ]
+        },
+        {
+            "name": "Old North Arcade",
+            "slugs": [
+                "old-north-arcade"
+            ]
+        },
+        {
+            "name": "The Olde Oak",
+            "slugs": [
+                "the-olde-oak"
+            ]
+        },
+        {
+            "name": "The Oracle",
+            "slugs": [
+                "the-oracle"
+            ]
+        },
+        {
+            "name": "OSU School of Music",
+            "slugs": [
+                "osu-school-of-music"
+            ]
+        },
+        {
+            "name": "Otherworld",
+            "slugs": [
+                "otherworld"
+            ]
+        },
+        {
+            "name": "Park Street Tavern",
+            "slugs": [
+                "park-street-tavern"
+            ]
+        },
+        {
+            "name": "Parsons North Brewing Co.",
+            "slugs": [
+                "parsons-north-brewing-co"
+            ]
+        },
+        {
+            "name": "Pickle Social Club Mill Run",
+            "slugs": [
+                "pickle-social-club-mill-run"
+            ]
+        },
+        {
+            "name": "Pierogi Mountain",
+            "slugs": [
+                "pierogi-mountain"
+            ]
+        },
+        {
+            "name": "Pint House (Short North)",
+            "slugs": [
+                "pint-house-short-north"
+            ]
+        },
+        {
+            "name": "The Pizzuti",
+            "slugs": [
+                "the-pizzuti"
+            ]
+        },
+        {
+            "name": "The Point on Main",
+            "slugs": [
+                "the-point-on-main"
+            ]
+        },
+        {
+            "name": "Prince of Peace Lutheran Church",
+            "slugs": [
+                "prince-of-peace-lutheran-church"
+            ]
+        },
+        {
+            "name": "Rafter's Beer Pub",
+            "slugs": [
+                "rafter-s-beer-pub"
+            ]
+        },
+        {
+            "name": "Rambling House Music Bar",
+            "slugs": [
+                "rambling-house-music-bar"
+            ]
+        },
+        {
+            "name": "Raven",
+            "slugs": [
+                "raven"
+            ]
+        },
+        {
+            "name": "Red, White & BOOM! (Downtown)",
+            "slugs": [
+                "red-white-boom-downtown"
+            ]
+        },
+        {
+            "name": "The Refectory",
+            "slugs": [
+                "the-refectory"
+            ]
+        },
+        {
+            "name": "Rehab Tavern",
+            "slugs": [
+                "rehab-tavern"
+            ]
+        },
+        {
+            "name": "Reynolds Municipal Park",
+            "slugs": [
+                "reynolds-municipal-park"
+            ]
+        },
+        {
+            "name": "Rich Street Records",
+            "slugs": [
+                "rich-street-records"
+            ]
+        },
+        {
+            "name": "Riffe Center Davidson Theatre",
+            "slugs": [
+                "riffe-center-davidson-theatre"
+            ]
+        },
+        {
+            "name": "Rock Syndicate",
+            "slugs": [
+                "rock-syndicate"
+            ]
+        },
+        {
+            "name": "Rumba Cafe",
+            "slugs": [
+                "rumba-cafe"
+            ]
+        },
+        {
+            "name": "Rumours Bar",
+            "slugs": [
+                "rumours-bar"
+            ]
+        },
+        {
+            "name": "Santos",
+            "slugs": [
+                "santos"
+            ]
+        },
+        {
+            "name": "Saucy Brew Works",
+            "slugs": [
+                "saucy-brew-works"
+            ]
+        },
+        {
+            "name": "Savor Pint",
+            "slugs": [
+                "savor-pint"
+            ]
+        },
+        {
+            "name": "Schiller Park",
+            "slugs": [
+                "schiller-park"
+            ]
+        },
+        {
+            "name": "Schottenstein Center",
+            "slugs": [
+                "schottenstein-center"
+            ]
+        },
+        {
+            "name": "Seventh Son Brewing",
+            "slugs": [
+                "seventh-son-brewing"
+            ]
+        },
+        {
+            "name": "Shadowbox Live",
+            "slugs": [
+                "shadowbox-live"
+            ]
+        },
+        {
+            "name": "Shakers Public House",
+            "slugs": [
+                "shakers-public-house"
+            ]
+        },
+        {
+            "name": "Shamrock Club Of Columbus",
+            "slugs": [
+                "shamrock-club-of-columbus"
+            ]
+        },
+        {
+            "name": "Short North Church",
+            "slugs": [
+                "short-north-church"
+            ]
+        },
+        {
+            "name": "Signatures Mill Stone Tavern",
+            "slugs": [
+                "signatures-mill-stone-tavern"
+            ]
+        },
+        {
+            "name": "Skully's",
+            "slugs": [
+                "skully-s"
+            ]
+        },
+        {
+            "name": "Slammers Bar & Pizza Kitchen",
+            "slugs": [
+                "slammers-bar-pizza-kitchen"
+            ]
+        },
+        {
+            "name": "Soul 2 Go Cafe (Downtown)",
+            "slugs": [
+                "soul-2-go-cafe-downtown"
+            ]
+        },
+        {
+            "name": "Southern Theatre",
+            "slugs": [
+                "southern-theatre"
+            ]
+        },
+        {
+            "name": "Spacebar",
+            "slugs": [
+                "spacebar"
+            ]
+        },
+        {
+            "name": "Standard Live",
+            "slugs": [
+                "standard-live"
+            ]
+        },
+        {
+            "name": "Stories on High",
+            "slugs": [
+                "stories-on-high"
+            ]
+        },
+        {
+            "name": "Streaming/Online Events",
+            "slugs": [
+                "streaming-online-events"
+            ]
+        },
+        {
+            "name": "Streetlight Guild",
+            "slugs": [
+                "streetlight-guild"
+            ]
+        },
+        {
+            "name": "The Summit Music Hall",
+            "slugs": [
+                "the-summit-music-hall"
+            ]
+        },
+        {
+            "name": "Sweeney's Walnut St. Tavern",
+            "slugs": [
+                "sweeney-s-walnut-st-tavern"
+            ]
+        },
+        {
+            "name": "Threes Above High",
+            "slugs": [
+                "threes-above-high"
+            ]
+        },
+        {
+            "name": "Timashev Recital Hall (OSU)",
+            "slugs": [
+                "timashev-recital-hall-osu"
+            ]
+        },
+        {
+            "name": "Topiary Park",
+            "slugs": [
+                "topiary-park"
+            ]
+        },
+        {
+            "name": "Torrence Road Summer Concerts",
+            "slugs": [
+                "torrence-road-summer-concerts"
+            ]
+        },
+        {
+            "name": "Townes Creative Studio",
+            "slugs": [
+                "townes-creative-studio"
+            ]
+        },
+        {
+            "name": "Two Dollar Radio Headquarters",
+            "slugs": [
+                "two-dollar-radio-headquarters"
+            ]
+        },
+        {
+            "name": "Understory",
+            "slugs": [
+                "understory"
+            ]
+        },
+        {
+            "name": "Union Cafe",
+            "slugs": [
+                "union-cafe"
+            ]
+        },
+        {
+            "name": "Upper Arlington Public Library (Miller Park)",
+            "slugs": [
+                "upper-arlington-public-library-miller-park"
+            ]
+        },
+        {
+            "name": "Upper Arlington Public Library (Tremont)",
+            "slugs": [
+                "upper-arlington-public-library-tremont"
+            ]
+        },
+        {
+            "name": "Used Kids",
+            "slugs": [
+                "used-kids"
+            ]
+        },
+        {
+            "name": "The Valley",
+            "slugs": [
+                "the-valley"
+            ]
+        },
+        {
+            "name": "Valley Dale Ballroom",
+            "slugs": [
+                "valley-dale-ballroom"
+            ]
+        },
+        {
+            "name": "Veil Bar",
+            "slugs": [
+                "veil-bar"
+            ]
+        },
+        {
+            "name": "Victory's Live",
+            "slugs": [
+                "victory-s-live"
+            ]
+        },
+        {
+            "name": "Walrus",
+            "slugs": [
+                "walrus"
+            ]
+        },
+        {
+            "name": "We Amplify Voices",
+            "slugs": [
+                "we-amplify-voices"
+            ]
+        },
+        {
+            "name": "Westgate Park",
+            "slugs": [
+                "westgate-park"
+            ]
+        },
+        {
+            "name": "Wild Goose Creative",
+            "slugs": [
+                "wild-goose-creative"
+            ]
+        },
+        {
+            "name": "WitchLab",
+            "slugs": [
+                "witchlab"
+            ]
+        },
+        {
+            "name": "Wolf's Ridge Brewing",
+            "slugs": [
+                "wolf-s-ridge-brewing"
+            ]
+        },
+        {
+            "name": "Woodland's Tavern",
+            "slugs": [
+                "woodland-s-tavern"
+            ]
+        },
+        {
+            "name": "World of Beer (Easton)",
+            "slugs": [
+                "world-of-beer-easton"
+            ]
+        },
+        {
+            "name": "Worthington Village Green",
+            "slugs": [
+                "worthington-village-green"
+            ]
+        },
+        {
+            "name": "The Yard at Easton",
+            "slugs": [
+                "the-yard-at-easton"
+            ]
+        },
+        {
+            "name": "Zaftig Brewing (Worthington)",
+            "slugs": [
+                "zaftig-brewing-worthington"
+            ]
+        }
+    ]
+}

@@ -1,6 +1,7 @@
 class VenueFavorites {
     constructor() {
-        this.favorites = CalendarPrefs.load().favorites;
+        const saved = CalendarPrefs.loadSaved();
+        this.favorites = CalendarPrefs.parseFavorites(saved.favorites);
         this.bindControls();
         this.syncButtons();
         VenueFavorites.instance = this;
@@ -39,18 +40,39 @@ class VenueFavorites {
 
     toggleFavorite(button) {
         const venue = button.closest('.venue-block');
-        const slug = venue?.dataset.venueSlug || '';
-        if (slug === '') {
+        const slugs = CalendarPrefs.venueSlugs(venue);
+        if (slugs.length === 0) {
             return;
         }
 
-        if (this.favorites.has(slug)) {
-            this.favorites.delete(slug);
+        const anyFavorite = slugs.some((slug) => this.favorites.has(slug));
+        if (anyFavorite) {
+            slugs.forEach((slug) => this.favorites.delete(slug));
         } else {
-            this.favorites.add(slug);
+            slugs.forEach((slug) => this.favorites.add(slug));
         }
 
-        CalendarPrefs.saveFavorites(this.favorites);
+        if (document.body.classList.contains('venue-page')) {
+            CalendarPrefs.saveFavoritesOnly(this.favorites);
+        } else {
+            CalendarPrefs.saveEngaged(this.favorites.size > 0);
+        }
+
+        this.syncButtons();
+        document.dispatchEvent(
+            new CustomEvent('calendar:favoriteschange', {
+                detail: { favorites: this.favorites },
+            })
+        );
+
+        if (!document.body.classList.contains('venue-page')) {
+            document.dispatchEvent(new CustomEvent('calendar:draftchange'));
+        }
+    }
+
+    setFavorites(favorites) {
+        this.favorites = favorites instanceof Set ? new Set(favorites) : CalendarPrefs.parseFavorites(favorites);
+        CalendarPrefs.saveEngaged(this.favorites.size > 0);
         this.syncButtons();
         document.dispatchEvent(
             new CustomEvent('calendar:favoriteschange', {
@@ -61,13 +83,13 @@ class VenueFavorites {
 
     syncButtons() {
         document.querySelectorAll('.venue-block').forEach((venue) => {
-            const slug = venue.dataset.venueSlug || '';
+            const slugs = CalendarPrefs.venueSlugs(venue);
             const button = venue.querySelector('[data-venue-favorite]');
-            if (!button) {
+            if (!button || slugs.length === 0) {
                 return;
             }
 
-            const isFavorite = slug !== '' && this.favorites.has(slug);
+            const isFavorite = slugs.some((slug) => this.favorites.has(slug));
             button.classList.toggle('is-favorite', isFavorite);
             const shape = button.querySelector('.venue-favorite__shape');
             if (shape) {

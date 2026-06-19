@@ -7,7 +7,7 @@ body {
 }
 
 .wrap {
-    max-width: 52rem;
+    max-width: 37.5rem;
     margin: 0 auto;
     padding: 1rem 1.25rem 2rem;
 }
@@ -22,7 +22,8 @@ header p {
     color: #555;
 }
 
-.week-nav {
+.calendar-nav,
+.day-nav {
     display: flex;
     justify-content: center;
     gap: 0.35rem;
@@ -30,44 +31,17 @@ header p {
     margin: 1rem 0;
 }
 
-.week-nav a,
-.week-nav button,
-.week-nav span.day-nav__day {
+.day-nav {
+    margin-top: 0;
+}
+
+.calendar-nav a,
+.day-nav a,
+.calendar-nav span,
+.day-nav span {
     display: inline-block;
     min-width: 2.25rem;
     padding: 0.45rem 0.55rem;
-    text-align: center;
-    text-decoration: none;
-    color: #222;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 0.9rem;
-    background: #fff;
-    font-family: inherit;
-    cursor: pointer;
-}
-
-.week-nav a:hover,
-.week-nav button:hover,
-.week-nav a.is-active,
-.week-nav button.is-active,
-.view-toggle__option.is-active {
-    background: #222;
-    color: #fff;
-    border-color: #222;
-}
-
-.view-toggle {
-    display: flex;
-    justify-content: center;
-    gap: 0.35rem;
-    margin: 0 0 0.75rem;
-}
-
-.view-toggle__option {
-    display: inline-block;
-    min-width: 3.5rem;
-    padding: 0.45rem 0.75rem;
     text-align: center;
     text-decoration: none;
     text-transform: lowercase;
@@ -77,9 +51,22 @@ header p {
     font-size: 0.9rem;
     background: #fff;
     font-family: inherit;
+    cursor: pointer;
 }
 
-.view-toggle__option:hover {
+.calendar-nav__week {
+    min-width: 4.75rem;
+}
+
+.calendar-nav__layout {
+    min-width: 4.75rem;
+}
+
+.calendar-nav a:hover,
+.day-nav a:hover,
+.calendar-nav a.is-active,
+.day-nav a.is-active,
+.day-nav__day.is-active {
     background: #222;
     color: #fff;
     border-color: #222;
@@ -168,17 +155,16 @@ header p {
     box-sizing: border-box;
 }
 
-.view-week .wrap {
-    max-width: 36rem;
-}
-
 .week-by-venue {
     margin: 0;
 }
 
 .view-week .week-by-venue .venue-week__block {
-    display: block;
     margin: 0 0 1.25rem;
+}
+
+.view-week .week-by-venue .venue-week__block.is-filtered-out {
+    display: none;
 }
 
 .view-week .week-by-venue .venue-week__block:last-child {
@@ -215,7 +201,6 @@ header p {
 }
 
 .venue-page .wrap {
-    max-width: 36rem;
     padding: 0.75rem 1rem 1.5rem;
 }
 
@@ -227,7 +212,7 @@ header p {
     margin: 0;
 }
 
-.venue-page .week-nav {
+.venue-page .calendar-nav {
     margin: 0.5rem 0 0.75rem;
 }
 
@@ -241,36 +226,68 @@ header p {
 
 .event-filter {
     margin: 1rem 0;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: #f7f7f7;
 }
 
-.venue-scope-toggle {
-    margin: 0 0 1rem;
+.event-filter.is-empty {
+    display: none;
 }
 
-.venue-scope-toggle__control {
-    display: inline-flex;
+.event-filter__toggle {
+    display: flex;
     align-items: center;
-    gap: 0.35rem;
-    margin: 0;
-    padding: 0;
+    justify-content: space-between;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 0.65rem 0.85rem;
     border: 0;
-    background: none;
-    box-shadow: none;
-    font: inherit;
-    font-size: inherit;
-    line-height: inherit;
-    color: inherit;
+    border-radius: 6px;
+    background: transparent;
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: normal;
+    color: #222;
+    cursor: pointer;
     text-align: left;
-    cursor: default;
-    appearance: none;
-    -webkit-appearance: none;
+    text-transform: lowercase;
 }
 
-.venue-scope-toggle__heart {
-    display: block;
-    width: 1em;
-    height: 1em;
-    flex: none;
+.event-filter__toggle:hover {
+    background: #efefef;
+}
+
+.event-filter__toggle-label {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.event-filter.has-active-filters .event-filter__toggle-label {
+    color: #111;
+}
+
+.event-filter__toggle-icon {
+    display: inline-block;
+    width: 0.55rem;
+    height: 0.55rem;
+    border-right: 2px solid #666;
+    border-bottom: 2px solid #666;
+    transform: rotate(45deg);
+    transition: transform 0.2s ease;
+    margin-top: -0.15rem;
+}
+
+.event-filter.is-open .event-filter__toggle-icon {
+    transform: rotate(225deg);
+    margin-top: 0.1rem;
+}
+
+.event-filter__panel {
+    padding: 0.75rem 0.85rem 0.85rem;
+    border-top: 1px solid #e0e0e0;
 }
 
 .venue-block .venue-favorite {
@@ -350,16 +367,99 @@ header p {
     outline-offset: 1px;
 }
 
-.event-filter__label {
-    margin: 0 0 0.5rem;
-    font-size: 0.9rem;
-    color: #666;
+.event-filter__venue-scope {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.event-filter__venue-scope-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    flex: 1;
+    min-width: 0;
+}
+
+.event-filter__venue-scope-pills .event-filter__tag {
+    border-color: #7eb8da;
+    background: #fff;
+    color: #164e63;
+}
+
+.event-filter__venue-scope-pills .event-filter__tag:hover {
+    background: #e0f2fe;
+    border-color: #0284c7;
+}
+
+.event-filter__venue-scope-pills .event-filter__tag.is-active {
+    background: #0284c7;
+    border-color: #0284c7;
+    color: #fff;
+}
+
+.event-filter__manage-venues {
+    flex-shrink: 0;
+    border: 1px solid #7eb8da;
+    border-radius: 4px;
+    background: #fff;
+    color: #164e63;
+    padding: 0.3rem 0.65rem;
+    font-size: 0.85rem;
+    font-family: inherit;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.event-filter__manage-venues:hover {
+    background: #e0f2fe;
+    border-color: #0284c7;
 }
 
 .event-filter__tags {
     display: flex;
     flex-wrap: wrap;
     gap: 0.35rem;
+}
+
+.event-filter__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.35rem;
+    margin-top: 0.75rem;
+}
+
+.event-filter__action {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: #fff;
+    padding: 0.45rem 0.75rem;
+    font-size: 0.9rem;
+    font-family: inherit;
+    text-transform: lowercase;
+    cursor: pointer;
+}
+
+.event-filter__action--clear:hover {
+    background: #f7f7f7;
+}
+
+.event-filter__action--save {
+    background: #222;
+    color: #fff;
+    border-color: #222;
+}
+
+.event-filter__action--save:disabled {
+    opacity: 0.45;
+    cursor: default;
+}
+
+.event-filter__action--save:not(:disabled):hover {
+    background: #000;
+    border-color: #000;
 }
 
 .event-filter__tag {
@@ -372,13 +472,67 @@ header p {
     cursor: pointer;
 }
 
-.event-filter__tag.is-active {
-    background: #222;
+.event-filter__type-tags .event-filter__tag {
+    border-color: #d4a574;
+    background: #fff;
+    color: #5c4a32;
+}
+
+.event-filter__type-tags .event-filter__tag:hover {
+    background: #fef3c7;
+    border-color: #b45309;
+}
+
+.event-filter__type-tags .event-filter__tag.is-active {
+    background: #b45309;
     color: #fff;
-    border-color: #222;
+    border-color: #b45309;
 }
 
 .event-line.is-filtered-out,
 .venue-block.is-filtered-out {
     display: none;
+}
+
+.venues-page__header h1 {
+    margin: 0 0 0.35rem;
+    font-size: 1.35rem;
+}
+
+.venues-manage__toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin: 1rem 0 0.75rem;
+}
+
+.venues-manage__summary {
+    margin: 0;
+    color: #555;
+    font-size: 0.9rem;
+}
+
+.venues-manage__actions {
+    margin-top: 0;
+}
+
+.venues-manage {
+    margin-top: 0.5rem;
+}
+
+.venue-manage__row {
+    margin: 0.35rem 0;
+    padding: 0.35rem 0;
+    border-bottom: 1px solid #eee;
+    font-size: 1rem;
+    line-height: 1.4;
+}
+
+.venue-manage__row:last-child {
+    border-bottom: none;
+}
+
+.venues-manage__empty {
+    color: #666;
 }

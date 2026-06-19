@@ -5,6 +5,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/EventClassifier.php';
 require_once __DIR__ . '/EventDateRenderer.php';
 require_once __DIR__ . '/VenueFavorite.php';
+require_once __DIR__ . '/VenueUtils.php';
 
 class VenueWeekRenderer
 {
@@ -15,7 +16,7 @@ class VenueWeekRenderer
     public static function render(array $venue, array $schedule, string $weekStart = ''): string
     {
         $name = (string) ($venue['name'] ?? '');
-        $slug = (string) ($venue['slug'] ?? '');
+        $slug = (string) ($venue['slug'] ?? VenueUtils::slug((string) ($venue['name'] ?? '')));
         $tag = $weekStart !== '' ? 'div' : 'p';
 
         if (!empty($venue['url'])) {
@@ -70,10 +71,6 @@ class VenueWeekRenderer
         }
 
         $output .= implode("\n", $lines);
-
-        if ($weekStart !== '') {
-            $output .= "\n<br>\n";
-        }
 
         $output .= '</' . $tag . ">\n";
 

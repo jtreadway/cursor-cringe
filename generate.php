@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/lib/Calendar.php';
+require_once __DIR__ . '/lib/CalendarLinter.php';
+require_once __DIR__ . '/lib/VenuesIndex.php';
 
 /**
  * Generate one JSON file per week from a cringe.com-style -noTag text file.
@@ -36,13 +38,14 @@ function findLatestSourceFile(string $dataDir): ?string
 }
 
 /**
- * @return array{ok: bool, source: string, files: list<string>, errors: list<string>, weeks: list<array<string, mixed>>}
+ * @return array{ok: bool, source: string, files: list<string>, venuesIndex: string, errors: list<string>, lintWarnings: list<array{code: string, message: string}>, weeks: list<array<string, mixed>>}
  */
-function generateWeekJson(string $sourcePath, string $outputDir): array
+function generateWeekJson(string $sourcePath, string $outputDir, string $venuesIndexPath): array
 {
     $calendar = new Calendar($sourcePath);
     $weeks = $calendar->getWeeks();
     $errors = $calendar->getErrors();
+    $lintWarnings = CalendarLinter::lintListings($calendar->getParsedListings());
 
     if (!is_dir($outputDir) && !mkdir($outputDir, 0755, true) && !is_dir($outputDir)) {
         throw new RuntimeException("Unable to create output directory: {$outputDir}");
@@ -72,11 +75,15 @@ function generateWeekJson(string $sourcePath, string $outputDir): array
         $written[] = $outPath;
     }
 
+    VenuesIndex::updateFromWeeks($venuesIndexPath, $weeks, basename($sourcePath));
+
     return [
         'ok' => true,
         'source' => $sourcePath,
         'files' => $written,
+        'venuesIndex' => $venuesIndexPath,
         'errors' => $errors,
+        'lintWarnings' => $lintWarnings,
         'weeks' => $weeks,
     ];
 }
@@ -120,15 +127,31 @@ function respondBrowser(array $result): void
     }
     echo '</ul>';
 
+    if (!empty($result['venuesIndex'])) {
+        $venuesHref = htmlspecialchars((string) $result['venuesIndex'], ENT_QUOTES, 'UTF-8');
+        echo '<p>Updated venues index: <a href="' . $venuesHref . '"><code>' . $venuesHref . '</code></a></p>';
+    }
+
     if ($errors !== []) {
-        echo '<h2>Warnings</h2><ul class="error">';
+        echo '<h2>Parser warnings</h2><ul class="error">';
         foreach ($errors as $error) {
             echo '<li>' . htmlspecialchars($error, ENT_QUOTES, 'UTF-8') . '</li>';
         }
         echo '</ul>';
     }
 
-    echo '<p>Verify output against golden HTML with <a href="verify.php">verify.php</a> or <code>php verify.php</code>.</p>';
+    $lintWarnings = $result['lintWarnings'] ?? [];
+    if ($lintWarnings !== []) {
+        echo '<h2>Lint warnings</h2><p>These may be intentional duplicate listings — review the source file.</p><ul class="error">';
+        foreach ($lintWarnings as $warning) {
+            $code = htmlspecialchars($warning['code'], ENT_QUOTES, 'UTF-8');
+            $message = htmlspecialchars($warning['message'], ENT_QUOTES, 'UTF-8');
+            echo '<li><code>' . $code . '</code> — ' . $message . '</li>';
+        }
+        echo '</ul>';
+    }
+
+    echo '<p>Verify output against golden PHP partials with <a href="verify.php">verify.php</a> or <code>php verify.php</code>.</p>';
     echo '<p>Run again with <code>?file=data/YYYYMMDD-noTag.txt</code> or <code>?format=json</code> for raw JSON.</p>';
     echo '</body></html>';
 }
@@ -138,6 +161,7 @@ function main(array $argv): int
     $baseDir = __DIR__;
     $dataDir = $baseDir . '/data';
     $outputDir = $baseDir . '/weeks';
+    $venuesIndexPath = $baseDir . '/venues.json';
 
     $sourceArg = null;
     if (PHP_SAPI === 'cli') {
@@ -177,7 +201,7 @@ function main(array $argv): int
     }
 
     try {
-        $result = generateWeekJson($sourcePath, $outputDir);
+        $result = generateWeekJson($sourcePath, $outputDir, $venuesIndexPath);
     } catch (Throwable $e) {
         $message = $e->getMessage();
         if (PHP_SAPI === 'cli') {
@@ -194,10 +218,17 @@ function main(array $argv): int
         foreach ($result['files'] as $file) {
             echo "  {$file}\n";
         }
+        echo "  {$result['venuesIndex']}\n";
         if ($result['errors'] !== []) {
-            fwrite(STDERR, "\nWarnings:\n");
+            fwrite(STDERR, "\nParser warnings:\n");
             foreach ($result['errors'] as $error) {
                 fwrite(STDERR, "  {$error}\n");
+            }
+        }
+        if ($result['lintWarnings'] !== []) {
+            fwrite(STDERR, "\nLint warnings (may be intentional):\n");
+            foreach ($result['lintWarnings'] as $warning) {
+                fwrite(STDERR, "  [{$warning['code']}] {$warning['message']}\n");
             }
         }
         return 0;

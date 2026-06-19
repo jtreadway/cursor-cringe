@@ -188,6 +188,187 @@ class EventClassifier
     }
 
     /**
+     * @param array<string, mixed> $week
+     */
+    public static function venueCountForWeek(array $week): int
+    {
+        $slugs = [];
+
+        foreach ($week['days'] ?? [] as $day) {
+            foreach ($day['venues'] ?? [] as $venue) {
+                if (count($venue['events'] ?? []) === 0) {
+                    continue;
+                }
+
+                $slug = (string) ($venue['slug'] ?? '');
+                if ($slug !== '') {
+                    $slugs[$slug] = true;
+                }
+            }
+        }
+
+        return count($slugs);
+    }
+
+    /**
+     * @param array<string, mixed> $day
+     */
+    public static function venueCountForDay(array $day): int
+    {
+        $count = 0;
+
+        foreach ($day['venues'] ?? [] as $venue) {
+            if (count($venue['events'] ?? []) > 0) {
+                $count++;
+            }
+        }
+
+        return $count;
+    }
+
+    /**
+     * @param array<string, mixed> $week
+     * @param list<string> $slugs
+     */
+    public static function venueCountForWeekSlugs(array $week, array $slugs): int
+    {
+        if ($slugs === []) {
+            return 0;
+        }
+
+        $allowed = array_flip($slugs);
+        $seen = [];
+
+        foreach ($week['days'] ?? [] as $day) {
+            foreach ($day['venues'] ?? [] as $venue) {
+                if (count($venue['events'] ?? []) === 0) {
+                    continue;
+                }
+
+                $slug = (string) ($venue['slug'] ?? '');
+                if ($slug !== '' && isset($allowed[$slug])) {
+                    $seen[$slug] = true;
+                }
+            }
+        }
+
+        return count($seen);
+    }
+
+    /**
+     * @param array<string, mixed> $day
+     * @param list<string> $slugs
+     */
+    public static function venueCountForDaySlugs(array $day, array $slugs): int
+    {
+        if ($slugs === []) {
+            return 0;
+        }
+
+        $allowed = array_flip($slugs);
+        $count = 0;
+
+        foreach ($day['venues'] ?? [] as $venue) {
+            if (count($venue['events'] ?? []) === 0) {
+                continue;
+            }
+
+            $slug = (string) ($venue['slug'] ?? '');
+            if ($slug !== '' && isset($allowed[$slug])) {
+                $count++;
+            }
+        }
+
+        return $count;
+    }
+
+    /**
+     * @param array<string, mixed> $week
+     * @param list<string> $slugs
+     * @return array<string, int>
+     */
+    public static function tagCountsForWeekSlugs(array $week, array $slugs): array
+    {
+        if ($slugs === []) {
+            return [];
+        }
+
+        $allowed = array_flip($slugs);
+        $counts = [];
+
+        foreach ($week['days'] ?? [] as $day) {
+            foreach ($day['venues'] ?? [] as $venue) {
+                $slug = (string) ($venue['slug'] ?? '');
+                if ($slug === '' || !isset($allowed[$slug])) {
+                    continue;
+                }
+
+                foreach ($venue['events'] ?? [] as $event) {
+                    foreach (self::tagsForEvent($event) as $tag) {
+                        $counts[$tag] = ($counts[$tag] ?? 0) + 1;
+                    }
+                }
+            }
+        }
+
+        ksort($counts);
+
+        return $counts;
+    }
+
+    /**
+     * @param array<string, mixed> $week
+     * @param list<string> $slugs
+     */
+    public static function eventCountForWeekSlugs(array $week, array $slugs): int
+    {
+        if ($slugs === []) {
+            return 0;
+        }
+
+        $allowed = array_flip($slugs);
+        $total = 0;
+
+        foreach ($week['days'] ?? [] as $day) {
+            foreach ($day['venues'] ?? [] as $venue) {
+                $slug = (string) ($venue['slug'] ?? '');
+                if ($slug === '' || !isset($allowed[$slug])) {
+                    continue;
+                }
+
+                $total += count($venue['events'] ?? []);
+            }
+        }
+
+        return $total;
+    }
+
+    /**
+     * @param array<string, mixed> $day
+     * @param list<string> $slugs
+     */
+    public static function eventCountForDaySlugs(array $day, array $slugs): int
+    {
+        if ($slugs === []) {
+            return 0;
+        }
+
+        $allowed = array_flip($slugs);
+        $total = 0;
+
+        foreach ($day['venues'] ?? [] as $venue) {
+            $slug = (string) ($venue['slug'] ?? '');
+            if ($slug === '' || !isset($allowed[$slug])) {
+                continue;
+            }
+
+            $total += count($venue['events'] ?? []);
+        }
+
+        return $total;
+    }
+
+    /**
      * @param list<array{day: array<string, mixed>, venue: array<string, mixed>, events: list<array<string, mixed>>}> $schedule
      * @return array<string, int>
      */

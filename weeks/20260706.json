@@ -1,7 +1,7 @@
 {
     "weekStart": "20260706",
     "sourceFile": "20260615-noTag.txt",
-    "generatedAt": "2026-06-18T12:23:19-04:00",
+    "generatedAt": "2026-06-18T23:17:30-04:00",
     "days": [
         {
             "anchor": "Mon",
@@ -5204,6 +5204,26 @@
                     ]
                 },
                 {
+                    "name": "Heritage Park",
+                    "slug": "heritage-park",
+                    "url": "https://www.westervillechamber.com/music-arts-festival/",
+                    "phone": "614-882-8917",
+                    "events": [
+                        {
+                            "dateShort": "Sat 11",
+                            "title": "Westerville Area Chamber Music & Arts Festival",
+                            "display": "Westerville Area Chamber Music & Arts Festival ($2 ages 10+) 10am -8pm",
+                            "parens": "($2 ages 10+)",
+                            "time": "10am",
+                            "postfix": "-8pm",
+                            "tags": [
+                                "festival"
+                            ],
+                            "schemaType": "Festival"
+                        }
+                    ]
+                },
+                {
                     "name": "Junto Hotel",
                     "slug": "junto-hotel",
                     "url": "https://thejuntohotel.com/",
@@ -5692,26 +5712,6 @@
                     ]
                 },
                 {
-                    "name": "Heritage Park",
-                    "slug": "heritage-park",
-                    "url": "https://www.westervillechamber.com/music-arts-festival/",
-                    "phone": "614-882-8917",
-                    "events": [
-                        {
-                            "dateShort": "Sat 11",
-                            "title": "Westerville Area Chamber Music & Arts Festival",
-                            "display": "Westerville Area Chamber Music & Arts Festival ($2 ages 10+) 10am -8pm",
-                            "parens": "($2 ages 10+)",
-                            "time": "10am",
-                            "postfix": "-8pm",
-                            "tags": [
-                                "festival"
-                            ],
-                            "schemaType": "Festival"
-                        }
-                    ]
-                },
-                {
                     "name": "Wild Goose Creative",
                     "slug": "wild-goose-creative",
                     "url": "http://wildgoosecreative.com",
@@ -6099,6 +6099,26 @@
                                 "unknown"
                             ],
                             "schemaType": "Event"
+                        }
+                    ]
+                },
+                {
+                    "name": "Heritage Park",
+                    "slug": "heritage-park",
+                    "url": "https://www.westervillechamber.com/music-arts-festival/",
+                    "phone": "614-882-8917",
+                    "events": [
+                        {
+                            "dateShort": "Sun 12",
+                            "title": "Westerville Area Chamber Music & Arts Festival",
+                            "display": "Westerville Area Chamber Music & Arts Festival ($2 ages 10+) 10am -4pm",
+                            "parens": "($2 ages 10+)",
+                            "time": "10am",
+                            "postfix": "-4pm",
+                            "tags": [
+                                "festival"
+                            ],
+                            "schemaType": "Festival"
                         }
                     ]
                 },
@@ -6565,26 +6585,6 @@
                                 "music"
                             ],
                             "schemaType": "MusicEvent"
-                        }
-                    ]
-                },
-                {
-                    "name": "Heritage Park",
-                    "slug": "heritage-park",
-                    "url": "https://www.westervillechamber.com/music-arts-festival/",
-                    "phone": "614-882-8917",
-                    "events": [
-                        {
-                            "dateShort": "Sun 12",
-                            "title": "Westerville Area Chamber Music & Arts Festival",
-                            "display": "Westerville Area Chamber Music & Arts Festival ($2 ages 10+) 10am -4pm",
-                            "parens": "($2 ages 10+)",
-                            "time": "10am",
-                            "postfix": "-4pm",
-                            "tags": [
-                                "festival"
-                            ],
-                            "schemaType": "Festival"
                         }
                     ]
                 },

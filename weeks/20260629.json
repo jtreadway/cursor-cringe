@@ -1,7 +1,7 @@
 {
     "weekStart": "20260629",
     "sourceFile": "20260615-noTag.txt",
-    "generatedAt": "2026-06-18T12:23:19-04:00",
+    "generatedAt": "2026-06-18T23:17:30-04:00",
     "days": [
         {
             "anchor": "Mon",
@@ -1772,22 +1772,6 @@
                     "name": "Clintonville Books",
                     "slug": "clintonville-books",
                     "url": "https://clintonvillebooks.com",
-                    "events": [
-                        {
-                            "dateShort": "Wed 1",
-                            "title": "Clintonville Books welcomes Christopher Sunami",
-                            "display": "Clintonville Books welcomes Christopher Sunami 6:30-7:30pm",
-                            "time": "6:30-7:30pm",
-                            "tags": [
-                                "unknown"
-                            ],
-                            "schemaType": "Event"
-                        }
-                    ]
-                },
-                {
-                    "name": "Clintonville Books welcomes Christopher Sunami",
-                    "slug": "clintonville-books-welcomes-christopher-sunami",
                     "events": [
                         {
                             "dateShort": "Wed 1",
@@ -5462,23 +5446,6 @@
                     "name": "Clintonville Books",
                     "slug": "clintonville-books",
                     "url": "https://clintonvillebooks.com",
-                    "events": [
-                        {
-                            "dateShort": "Sun 5",
-                            "title": "Automatic Noodle by Annalee Newitz",
-                            "display": "Shorties Book Club: Automatic Noodle by Annalee Newitz 1-2pm",
-                            "prefix": "Shorties Book Club",
-                            "time": "1-2pm",
-                            "tags": [
-                                "unknown"
-                            ],
-                            "schemaType": "Event"
-                        }
-                    ]
-                },
-                {
-                    "name": "Clintonville Books welcomes Christopher Sunami",
-                    "slug": "clintonville-books-welcomes-christopher-sunami",
                     "events": [
                         {
                             "dateShort": "Sun 5",

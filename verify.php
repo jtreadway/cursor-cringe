@@ -5,7 +5,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/lib/WeekRenderer.php';
 
 /**
- * Regression-test JSON week files against golden HTML from the live calendar pipeline.
+ * Regression-test JSON week files against golden PHP partials from the live calendar pipeline.
  *
  * CLI:
  *   php verify.php
@@ -113,12 +113,12 @@ function verifyWeeks(array $jsonFiles, bool $verbose): array
 
     foreach ($jsonFiles as $jsonPath) {
         $weekId = basename($jsonPath, '.json');
-        $htmlPath = dirname($jsonPath) . '/' . $weekId . '.html';
+        $goldenPath = dirname($jsonPath) . '/' . $weekId . '.php';
 
         $result = [
             'week' => $weekId,
             'json' => $jsonPath,
-            'html' => $htmlPath,
+            'golden' => $goldenPath,
             'ok' => false,
             'message' => '',
             'lineDiffs' => 0,
@@ -130,16 +130,16 @@ function verifyWeeks(array $jsonFiles, bool $verbose): array
             'diffs' => [],
         ];
 
-        if (!is_readable($htmlPath)) {
-            $result['message'] = "Missing golden HTML: {$htmlPath}";
+        if (!is_readable($goldenPath)) {
+            $result['message'] = "Missing golden PHP partial: {$goldenPath}";
             $results[] = $result;
             continue;
         }
 
         $rendered = WeekRenderer::renderWeek(WeekRenderer::loadWeek($jsonPath));
-        $expected = file_get_contents($htmlPath);
+        $expected = file_get_contents($goldenPath);
         if ($expected === false) {
-            $result['message'] = "Unable to read golden HTML: {$htmlPath}";
+            $result['message'] = "Unable to read golden PHP partial: {$goldenPath}";
             $results[] = $result;
             continue;
         }
@@ -208,7 +208,7 @@ function respondCli(array $report, bool $verbose): int
 
     echo PHP_EOL;
     echo $report['ok']
-        ? "All {$report['passed']} week file(s) match golden HTML.\n"
+        ? "All {$report['passed']} week file(s) match golden PHP partials.\n"
         : "{$report['passed']}/{$report['checked']} week file(s) passed.\n";
 
     return $report['ok'] ? 0 : 1;

@@ -851,6 +851,9 @@
 	<p><b><a href="https://www.harrybuffalo.com/locations/westerville/" target="_blank">Harry Buffalo (Westerville)</a></b> - 614-794-1600<br>
 	<b>Sat 11:</b> Full Moon Fever - Tom Petty Tribute</p>
 
+	<p><b><a href="https://www.westervillechamber.com/music-arts-festival/" target="_blank">Heritage Park</a></b> - 614-882-8917<br>
+	<b>Sat 11:</b> Westerville Area Chamber Music & Arts Festival ($2 ages 10+) 10am-8pm</p>
+
 	<p><b><a href="https://thejuntohotel.com/" target="_blank">Junto Hotel</a></b> - 614-607-6700<br>
 	<b>Sat 11:</b> Saturday Morning Vinyasa 10am</p>
 
@@ -927,9 +930,6 @@
 	<p><b><a href="http://www.thewalruscolumbus.com/" target="_blank">Walrus</a></b> - 614-817-1710<br>
 	<b>Sat 11:</b> Live music</p>
 
-	<p><b><a href="https://www.westervillechamber.com/music-arts-festival/" target="_blank">Heritage Park</a></b> - 614-882-8917<br>
-	<b>Sat 11:</b> Westerville Area Chamber Music & Arts Festival ($2 ages 10+) 10am-8pm</p>
-
 	<p><b><a href="http://wildgoosecreative.com" target="_blank">Wild Goose Creative</a></b> - 614-859-9453<br>
 	<b>Sat 11:</b> Community Arts Incubator 2-4pm</p>
 
@@ -993,6 +993,9 @@
 
 	<p><b><a href="https://www.halfbakedbrew.com/" target="_blank">Half Baked Brew (Short North)</a></b> - 614-670-4020<br>
 	<b>Sun 12:</b> Fornite Sundays 4:20pm</p>
+
+	<p><b><a href="https://www.westervillechamber.com/music-arts-festival/" target="_blank">Heritage Park</a></b> - 614-882-8917<br>
+	<b>Sun 12:</b> Westerville Area Chamber Music & Arts Festival ($2 ages 10+) 10am-4pm</p>
 
 	<p><b><a href="https://www.hofbrauhauscolumbus.com/ -" target="_blank">Hofbrauhaus</a></b> - 614-294-2437<br>
 	<b>Sun 12:</b> Dave Sabatka 5-8pm</p>
@@ -1067,9 +1070,6 @@
 
 	<p><b><a href="https://www.facebook.com/groups/898818554628010/" target="_blank">Torrence Road Summer Concerts</a></b><br>
 	<b>Sun 12:</b> The Ramblin' Bluegrass Ensemble 6-8pm</p>
-
-	<p><b><a href="https://www.westervillechamber.com/music-arts-festival/" target="_blank">Heritage Park</a></b> - 614-882-8917<br>
-	<b>Sun 12:</b> Westerville Area Chamber Music & Arts Festival ($2 ages 10+) 10am-4pm</p>
 
 	<p><b><a href="https://witchlab.com/" target="_blank">WitchLab</a></b> - 614-725-2666<br>
 	<b>Sun 12:</b> Learning the Tarot - a 3 Part Course 1-4pm</p>
