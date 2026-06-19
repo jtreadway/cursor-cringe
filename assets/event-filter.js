@@ -180,6 +180,8 @@ class EventFilter {
         this.syncFromUrl();
         this.syncAvailableTags();
         this.apply();
+        const params = new URLSearchParams(window.location.search);
+        this.togglePanel(params.get('filter') === 'open');
     }
 
     syncFromUrl() {
@@ -212,6 +214,20 @@ class EventFilter {
         this.root.classList.toggle('is-open', open);
         this.panel.hidden = !open;
         this.toggleButton.setAttribute('aria-expanded', open ? 'true' : 'false');
+        this.syncFilterOpenInUrl(open);
+    }
+
+    syncFilterOpenInUrl(open) {
+        const url = new URL(window.location.href);
+
+        if (open) {
+            url.searchParams.set('filter', 'open');
+        } else {
+            url.searchParams.delete('filter');
+        }
+
+        history.replaceState(null, '', url.toString());
+        document.dispatchEvent(new CustomEvent('calendar:urlchange'));
     }
 
     manageVenues() {
@@ -335,7 +351,7 @@ class EventFilter {
     venueSearchText(venue) {
         const meta = venue.cloneNode(true);
         meta.querySelectorAll('.event-line').forEach((line) => line.remove());
-        meta.querySelectorAll('.venue-week-link').forEach((link) => link.remove());
+        meta.querySelectorAll('.venue-schedule-link').forEach((link) => link.remove());
         meta.querySelectorAll('.venue-favorite').forEach((button) => button.remove());
 
         return meta.textContent.toLowerCase();
@@ -579,6 +595,12 @@ class EventFilter {
             url.searchParams.set('prefs', 'neutral');
         } else {
             url.searchParams.delete('prefs');
+        }
+
+        if (this.root.classList.contains('is-open')) {
+            url.searchParams.set('filter', 'open');
+        } else {
+            url.searchParams.delete('filter');
         }
 
         history.replaceState(null, '', url.toString());

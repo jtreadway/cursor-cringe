@@ -17,10 +17,27 @@ if (isset($_GET['date']) && preg_match('/^\d{8}$/', $_GET['date'])) {
 }
 
 $thisWeek = mondayForDate($selectedDate);
-$weekPath = $weeksDir . '/' . $thisWeek . '.json';
-$hasWeek = is_readable($weekPath) && $venueSlug !== '';
-$venueName = '';
+$weekMondays = weekWindowForDate($selectedDate, $weeksDir);
+$windowStart = $weekMondays[0] ?? $thisWeek;
+$venueWeekSpan = venueWeekSpan();
+$prevWindowStart = adjacentWeekWindowStart($windowStart, $weeksDir, -1);
+$nextWindowStart = adjacentWeekWindowStart($windowStart, $weeksDir, 1);
+$prevWeekDate = $prevWindowStart ?? $windowStart;
+$nextWeekDate = $nextWindowStart ?? $windowStart;
+$lastWeekMonday = $weekMondays !== [] ? $weekMondays[array_key_last($weekMondays)] : $thisWeek;
+$weekHeader = weekRangeHeader($windowStart, $lastWeekMonday);
+$venueHtml = '';
+$pageTitle = 'Venue calendar';
+$availableTags = [];
+$tagCounts = [];
+$totalEventCount = 0;
+$favoriteEventCount = 0;
+$totalVenueCount = 0;
+$favoriteVenueCount = 0;
+$venue = null;
 $schedule = [];
+$hasWeek = $venueSlug !== '' && $weekMondays !== [];
+$favoriteSlugs = parseSlugListCookie(isset($_COOKIE['cringe_favorites']) ? (string) $_COOKIE['cringe_favorites'] : null);
 $activeTags = parseTagsParam(isset($_GET['tags']) ? (string) $_GET['tags'] : null);
 $findQuery = parseFindParam(isset($_GET['find']) ? (string) $_GET['find'] : null);
 $viewMode = isset($_GET['view'])
@@ -39,36 +56,32 @@ if (!preferencesExplicitInRequest()) {
     }
 }
 
-$prevWeekDate = DateTimeImmutable::createFromFormat('Ymd', $selectedDate, showCalendarTimezone())
-    ->modify('-7 days')
-    ->format('Ymd');
-$nextWeekDate = DateTimeImmutable::createFromFormat('Ymd', $selectedDate, showCalendarTimezone())
-    ->modify('+7 days')
-    ->format('Ymd');
-$weekHeader = weekHeader($thisWeek);
-$venueHtml = '';
-$pageTitle = 'Venue calendar';
-$availableTags = [];
-$tagCounts = [];
-$totalEventCount = 0;
-$favoriteEventCount = 0;
-$totalVenueCount = 0;
-$favoriteVenueCount = 0;
-$favoriteSlugs = parseSlugListCookie(isset($_COOKIE['cringe_favorites']) ? (string) $_COOKIE['cringe_favorites'] : null);
-
 if ($hasWeek) {
-    $weekData = WeekRenderer::loadWeek($weekPath);
-    $schedule = VenueUtils::weekScheduleForVenue($weekData, $venueSlug);
-    $venue = VenueUtils::findInWeek($weekData, $venueSlug);
+    foreach ($weekMondays as $monday) {
+        $weekData = WeekRenderer::loadWeek($weeksDir . '/' . $monday . '.json');
+        $foundVenue = VenueUtils::findInWeek($weekData, $venueSlug);
+
+        if ($foundVenue !== null) {
+            $venue = $foundVenue;
+        }
+
+        foreach (VenueUtils::weekScheduleForVenue($weekData, $venueSlug) as $entry) {
+            $schedule[] = $entry;
+        }
+    }
+}
+
+if ($venue !== null) {
     $venueName = (string) ($venue['name'] ?? $venueSlug);
     $venueHtml = VenueWeekRenderer::render($venue, $schedule);
     $pageTitle = $venueName . ' — ' . $weekHeader;
     $tagCounts = EventClassifier::tagCountsForSchedule($schedule);
     $availableTags = array_keys($tagCounts);
+
     foreach ($schedule as $entry) {
         $totalEventCount += count($entry['events']);
     }
-    $activeTags = array_values(array_intersect($activeTags, $availableTags));
+
     $favoriteEventCount = in_array($venueSlug, $favoriteSlugs, true) ? $totalEventCount : 0;
     $totalVenueCount = $totalEventCount > 0 ? 1 : 0;
     $favoriteVenueCount = ($totalEventCount > 0 && in_array($venueSlug, $favoriteSlugs, true)) ? 1 : 0;
@@ -78,8 +91,9 @@ $tagsQuery = $activeTags !== [] ? '&tags=' . rawurlencode(implode(',', $activeTa
 $findQueryParam = $findQuery !== '' ? '&find=' . rawurlencode($findQuery) : '';
 $scopeQuery = scopeQueryForMode($scopeMode);
 $prefsQuery = prefsQueryForRequest();
+$filterQuery = filterQueryForRequest();
 $viewQuery = viewQueryForMode($viewMode);
-$navQuery = $tagsQuery . $findQueryParam . $scopeQuery . $prefsQuery;
+$navQuery = $tagsQuery . $findQueryParam . $scopeQuery . $prefsQuery . $filterQuery;
 $backUrl = 'index.php?date=' . rawurlencode($selectedDate) . $viewQuery . $navQuery;
 $venueQuery = 'venue=' . rawurlencode($venueSlug) . '&date=';
 $prevVenueHref = 'venue.php?' . $venueQuery . rawurlencode($prevWeekDate) . $navQuery;
@@ -106,6 +120,7 @@ $backLabel = $viewMode === 'week' ? '← Back to week view' : '← Back to day v
     </header>
 
     <nav class="calendar-nav" aria-label="Week navigation">
+        <?php if ($prevWindowStart !== null): ?>
         <a
             href="<?= htmlspecialchars($prevVenueHref, ENT_QUOTES, 'UTF-8') ?>"
             class="calendar-nav__week"
@@ -113,8 +128,12 @@ $backLabel = $viewMode === 'week' ? '← Back to week view' : '← Back to day v
             data-nav-date="<?= htmlspecialchars($prevWeekDate, ENT_QUOTES, 'UTF-8') ?>"
             data-nav-venue="<?= htmlspecialchars($venueSlug, ENT_QUOTES, 'UTF-8') ?>"
             rel="prev"
-        >prev week</a>
+        >prev</a>
+        <?php else: ?>
+        <span class="calendar-nav__week is-disabled" aria-hidden="true">prev</span>
+        <?php endif; ?>
         <span class="calendar-nav__layout is-active"><?= htmlspecialchars($weekHeader, ENT_QUOTES, 'UTF-8') ?></span>
+        <?php if ($nextWindowStart !== null): ?>
         <a
             href="<?= htmlspecialchars($nextVenueHref, ENT_QUOTES, 'UTF-8') ?>"
             class="calendar-nav__week"
@@ -122,7 +141,10 @@ $backLabel = $viewMode === 'week' ? '← Back to week view' : '← Back to day v
             data-nav-date="<?= htmlspecialchars($nextWeekDate, ENT_QUOTES, 'UTF-8') ?>"
             data-nav-venue="<?= htmlspecialchars($venueSlug, ENT_QUOTES, 'UTF-8') ?>"
             rel="next"
-        >next week</a>
+        >next</a>
+        <?php else: ?>
+        <span class="calendar-nav__week is-disabled" aria-hidden="true">next</span>
+        <?php endif; ?>
     </nav>
 
     <?php if ($hasWeek && $venue !== null): ?>
@@ -133,7 +155,7 @@ $backLabel = $viewMode === 'week' ? '← Back to week view' : '← Back to day v
     <?php elseif (!$hasWeek): ?>
         <p class="error">No calendar data for week <?= htmlspecialchars($thisWeek, ENT_QUOTES, 'UTF-8') ?>.</p>
     <?php else: ?>
-        <p class="error">Venue not found in this week.</p>
+        <p class="error">Venue not found in the next <?= (int) $venueWeekSpan ?> weeks.</p>
     <?php endif; ?>
 </div>
 

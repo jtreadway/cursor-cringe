@@ -92,7 +92,6 @@ if ($hasWeek) {
         }
     }
 
-    $activeTags = array_values(array_intersect($activeTags, $availableTags));
     $favoriteEventCount = $viewMode === 'week'
         ? EventClassifier::eventCountForWeekSlugs($weekData, $favoriteSlugs)
         : EventClassifier::eventCountForDaySlugs($selectedDay, $favoriteSlugs);
@@ -112,6 +111,7 @@ $tagsQuery = $activeTags !== [] ? '&tags=' . rawurlencode(implode(',', $activeTa
 $findQueryParam = $findQuery !== '' ? '&find=' . rawurlencode($findQuery) : '';
 $scopeQuery = scopeQueryForMode($scopeMode);
 $prefsQuery = prefsQueryForRequest();
+$filterQuery = filterQueryForRequest();
 $viewQuery = viewQueryForMode($viewMode);
 $bodyClasses = bodyClassForViewMode($viewMode);
 
@@ -151,7 +151,7 @@ $bodyClasses = bodyClassForViewMode($viewMode);
                 <?php
                 $isActive = $index === $startDayIndex;
                 $dayDate = (string) $day['date'];
-                $dayHref = '?date=' . rawurlencode($dayDate) . $tagsQuery . $findQueryParam . $scopeQuery . $prefsQuery . '&view=day';
+                $dayHref = '?date=' . rawurlencode($dayDate) . $tagsQuery . $findQueryParam . $scopeQuery . $prefsQuery . $filterQuery . '&view=day';
                 ?>
                 <a
                     href="<?= htmlspecialchars($dayHref, ENT_QUOTES, 'UTF-8') ?>"

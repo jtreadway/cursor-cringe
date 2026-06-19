@@ -1,5 +1,5 @@
 document.addEventListener('click', (event) => {
-    const link = event.target.closest('.venue-week-link, .venue-block a[href*="venue.php"]');
+    const link = event.target.closest('.venue-schedule-link, .venue-block a[href*="venue.php"]');
     if (!link) {
         return;
     }

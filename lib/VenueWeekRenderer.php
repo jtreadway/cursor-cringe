@@ -9,6 +9,22 @@ require_once __DIR__ . '/VenueUtils.php';
 
 class VenueWeekRenderer
 {
+    public const SCHEDULE_LINK_LABEL = '4-week schedule';
+
+    public static function scheduleLinkMarkup(string $href, string $venueName = ''): string
+    {
+        $label = $venueName !== ''
+            ? self::SCHEDULE_LINK_LABEL . ' for ' . $venueName
+            : self::SCHEDULE_LINK_LABEL;
+
+        return ' <a class="venue-schedule-link" href="' . htmlspecialchars($href, ENT_QUOTES, 'UTF-8') . '"'
+            . ' aria-label="' . htmlspecialchars($label, ENT_QUOTES, 'UTF-8') . '"'
+            . ' title="' . htmlspecialchars($label, ENT_QUOTES, 'UTF-8') . '">'
+            . '<svg class="venue-schedule-link__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false">'
+            . '<path fill="currentColor" d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 16H5V10h14v10zM5 8V6h14v2H5zm2 4h2v2H7v-2zm4 0h2v2h-2v-2zm4 0h2v2h-2v-2zm-8 4h2v2H7v-2zm4 0h2v2h-2v-2zm4 0h2v2h-2v-2z"/>'
+            . '</svg></a>';
+    }
+
     /**
      * @param array<string, mixed> $venue
      * @param list<array{day: array<string, mixed>, venue: array<string, mixed>, events: list<array<string, mixed>>}> $schedule
@@ -45,15 +61,13 @@ class VenueWeekRenderer
             $output .= '<br>' . htmlspecialchars($note, ENT_QUOTES, 'UTF-8');
         }
 
-        if ($weekStart !== '') {
-            $venueWeekHref = 'venue.php?venue=' . rawurlencode($slug) . '&date=' . rawurlencode($weekStart);
-            $output .= ' <a class="venue-week-link" href="' . htmlspecialchars($venueWeekHref, ENT_QUOTES, 'UTF-8') . '">all week</a>';
-        }
-
         $output .= "<br>\n";
 
         if ($schedule === []) {
-            $output .= '<span class="meta">No events listed for this venue this week.</span>';
+            $emptyMessage = $weekStart !== ''
+                ? 'No events listed for this venue this week.'
+                : 'No events listed for this venue in the next 4 weeks.';
+            $output .= '<span class="meta">' . $emptyMessage . '</span>';
             $output .= '</' . $tag . ">\n";
 
             return $output;

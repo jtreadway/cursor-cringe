@@ -1,8 +1,14 @@
 {
-    "generatedAt": "2026-06-18T23:17:30-04:00",
+    "generatedAt": "2026-06-19T00:32:52-04:00",
     "lastSourceFile": "20260615-noTag.txt",
-    "venueCount": 211,
+    "venueCount": 297,
     "venues": [
+        {
+            "name": "1854 Parsons Ave",
+            "slugs": [
+                "1854-parsons-ave"
+            ]
+        },
         {
             "name": "934 Gallery",
             "slugs": [
@@ -25,6 +31,18 @@
             "name": "Ace of Cups",
             "slugs": [
                 "ace-of-cups"
+            ]
+        },
+        {
+            "name": "Apt B.",
+            "slugs": [
+                "apt-b"
+            ]
+        },
+        {
+            "name": "Art Haus Unlimited",
+            "slugs": [
+                "art-haus-unlimited"
             ]
         },
         {
@@ -100,6 +118,12 @@
             ]
         },
         {
+            "name": "Blu Note Jazz Cafe",
+            "slugs": [
+                "blu-note-jazz-cafe"
+            ]
+        },
+        {
             "name": "Blue Danube",
             "slugs": [
                 "blue-danube"
@@ -130,9 +154,27 @@
             ]
         },
         {
+            "name": "Bottoms Up Coffee",
+            "slugs": [
+                "bottoms-up-coffee"
+            ]
+        },
+        {
             "name": "Boulevard Presbyterian Church",
             "slugs": [
                 "boulevard-presbyterian-church"
+            ]
+        },
+        {
+            "name": "Breakaway Music Festival (Historic Crew Stadium)",
+            "slugs": [
+                "breakaway-music-festival-historic-crew-stadium"
+            ]
+        },
+        {
+            "name": "Broad Street Presbyterian Church",
+            "slugs": [
+                "broad-street-presbyterian-church"
             ]
         },
         {
@@ -178,6 +220,18 @@
             ]
         },
         {
+            "name": "Canzani Center (CCAD)",
+            "slugs": [
+                "canzani-center-ccad"
+            ]
+        },
+        {
+            "name": "Casa Cacao",
+            "slugs": [
+                "casa-cacao"
+            ]
+        },
+        {
             "name": "Cavan's Irish Pub",
             "slugs": [
                 "cavan-s-irish-pub"
@@ -214,6 +268,18 @@
             ]
         },
         {
+            "name": "Clintonville Woman's Club",
+            "slugs": [
+                "clintonville-woman-s-club"
+            ]
+        },
+        {
+            "name": "Columbus Children's Theatre",
+            "slugs": [
+                "columbus-children-s-theatre"
+            ]
+        },
+        {
             "name": "Columbus Commons",
             "slugs": [
                 "columbus-commons"
@@ -223,6 +289,12 @@
             "name": "Columbus Mennonite Church",
             "slugs": [
                 "columbus-mennonite-church"
+            ]
+        },
+        {
+            "name": "Columbus Metropolitan Library (Barnett)",
+            "slugs": [
+                "columbus-metropolitan-library-barnett"
             ]
         },
         {
@@ -244,6 +316,12 @@
             ]
         },
         {
+            "name": "Columbus Metropolitan Library (Main Branch)",
+            "slugs": [
+                "columbus-metropolitan-library-main-branch"
+            ]
+        },
+        {
             "name": "Columbus Metropolitan Library (Main)",
             "slugs": [
                 "columbus-metropolitan-library-main"
@@ -256,9 +334,27 @@
             ]
         },
         {
+            "name": "Columbus Metropolitan Library (New Albany)",
+            "slugs": [
+                "columbus-metropolitan-library-new-albany"
+            ]
+        },
+        {
+            "name": "Columbus Metropolitan Library (South High)",
+            "slugs": [
+                "columbus-metropolitan-library-south-high"
+            ]
+        },
+        {
             "name": "Columbus Metropolitan Library (Whetstone)",
             "slugs": [
                 "columbus-metropolitan-library-whetstone"
+            ]
+        },
+        {
+            "name": "Columbus Metropolitan Library (Whitehall)",
+            "slugs": [
+                "columbus-metropolitan-library-whitehall"
             ]
         },
         {
@@ -277,6 +373,12 @@
             "name": "Comfest (Goodale Park)",
             "slugs": [
                 "comfest-goodale-park"
+            ]
+        },
+        {
+            "name": "COSI (Center of Science and Industry)",
+            "slugs": [
+                "cosi-center-of-science-and-industry"
             ]
         },
         {
@@ -346,9 +448,21 @@
             ]
         },
         {
+            "name": "Discovery District",
+            "slugs": [
+                "discovery-district"
+            ]
+        },
+        {
             "name": "District West",
             "slugs": [
                 "district-west"
+            ]
+        },
+        {
+            "name": "Dodge Park",
+            "slugs": [
+                "dodge-park"
             ]
         },
         {
@@ -373,6 +487,12 @@
             "name": "Double Eagle Spirits & Sports",
             "slugs": [
                 "double-eagle-spirits-sports"
+            ]
+        },
+        {
+            "name": "Downtown Riverfront",
+            "slugs": [
+                "downtown-riverfront"
             ]
         },
         {
@@ -430,6 +550,24 @@
             ]
         },
         {
+            "name": "First Community Church",
+            "slugs": [
+                "first-community-church"
+            ]
+        },
+        {
+            "name": "First Congregational Church",
+            "slugs": [
+                "first-congregational-church"
+            ]
+        },
+        {
+            "name": "First Unitarian Church",
+            "slugs": [
+                "first-unitarian-church"
+            ]
+        },
+        {
             "name": "Fives Up High",
             "slugs": [
                 "fives-up-high"
@@ -439,6 +577,30 @@
             "name": "Flint Station",
             "slugs": [
                 "flint-station"
+            ]
+        },
+        {
+            "name": "Forum",
+            "slugs": [
+                "forum"
+            ]
+        },
+        {
+            "name": "Fours on High",
+            "slugs": [
+                "fours-on-high"
+            ]
+        },
+        {
+            "name": "Franklin Park",
+            "slugs": [
+                "franklin-park"
+            ]
+        },
+        {
+            "name": "Fri 5: UKG Session: Mend_Ng, Rudera, Grayo",
+            "slugs": [
+                "fri-5-ukg-session-mend-ng-rudera-grayo"
             ]
         },
         {
@@ -457,6 +619,12 @@
             "name": "The Gallery at Champions",
             "slugs": [
                 "the-gallery-at-champions"
+            ]
+        },
+        {
+            "name": "Garden Theater/Short North Stage",
+            "slugs": [
+                "garden-theater-short-north-stage"
             ]
         },
         {
@@ -526,6 +694,12 @@
             ]
         },
         {
+            "name": "Graves Piano",
+            "slugs": [
+                "graves-piano"
+            ]
+        },
+        {
             "name": "Gravity Columbus",
             "slugs": [
                 "gravity-columbus"
@@ -541,6 +715,12 @@
             "name": "Half Baked Brew (Short North)",
             "slugs": [
                 "half-baked-brew-short-north"
+            ]
+        },
+        {
+            "name": "Harmony Project",
+            "slugs": [
+                "harmony-project"
             ]
         },
         {
@@ -574,6 +754,12 @@
             ]
         },
         {
+            "name": "Highlands Presbyterian Church",
+            "slugs": [
+                "highlands-presbyterian-church"
+            ]
+        },
+        {
             "name": "Hillard Civic & Cultural Arts Center",
             "slugs": [
                 "hillard-civic-cultural-arts-center"
@@ -589,6 +775,18 @@
             "name": "HillGarten",
             "slugs": [
                 "hillgarten"
+            ]
+        },
+        {
+            "name": "Hilliard Presbyterian Church",
+            "slugs": [
+                "hilliard-presbyterian-church"
+            ]
+        },
+        {
+            "name": "Hilliard Station Sixth Grade School",
+            "slugs": [
+                "hilliard-station-sixth-grade-school"
             ]
         },
         {
@@ -616,15 +814,39 @@
             ]
         },
         {
+            "name": "House of Cai",
+            "slugs": [
+                "house-of-cai"
+            ]
+        },
+        {
             "name": "Huntington Park",
             "slugs": [
                 "huntington-park"
             ]
         },
         {
+            "name": "Huntington Recital Hall (Capital University)",
+            "slugs": [
+                "huntington-recital-hall-capital-university"
+            ]
+        },
+        {
             "name": "India Oak Grill",
             "slugs": [
                 "india-oak-grill"
+            ]
+        },
+        {
+            "name": "Java Central",
+            "slugs": [
+                "java-central"
+            ]
+        },
+        {
+            "name": "Jazz Academy",
+            "slugs": [
+                "jazz-academy"
             ]
         },
         {
@@ -655,6 +877,12 @@
             "name": "King Arts Complex",
             "slugs": [
                 "king-arts-complex"
+            ]
+        },
+        {
+            "name": "King Ave United Methodist Church",
+            "slugs": [
+                "king-ave-united-methodist-church"
             ]
         },
         {
@@ -694,6 +922,12 @@
             ]
         },
         {
+            "name": "Level One Barcade",
+            "slugs": [
+                "level-one-barcade"
+            ]
+        },
+        {
             "name": "The Library Bar",
             "slugs": [
                 "the-library-bar"
@@ -703,6 +937,12 @@
             "name": "Lincoln Theatre",
             "slugs": [
                 "lincoln-theatre"
+            ]
+        },
+        {
+            "name": "Linworth United Methodist Church",
+            "slugs": [
+                "linworth-united-methodist-church"
             ]
         },
         {
@@ -730,6 +970,12 @@
             ]
         },
         {
+            "name": "Long Street Studio",
+            "slugs": [
+                "long-street-studio"
+            ]
+        },
+        {
             "name": "Lucky's Grille & Sports Pub",
             "slugs": [
                 "lucky-s-grille-sports-pub"
@@ -745,6 +991,30 @@
             "name": "Mainline Bar & Courtyard",
             "slugs": [
                 "mainline-bar-courtyard"
+            ]
+        },
+        {
+            "name": "McConnell Arts Center",
+            "slugs": [
+                "mcconnell-arts-center"
+            ]
+        },
+        {
+            "name": "McCoy Center",
+            "slugs": [
+                "mccoy-center"
+            ]
+        },
+        {
+            "name": "Mees Hall (Capital University)",
+            "slugs": [
+                "mees-hall-capital-university"
+            ]
+        },
+        {
+            "name": "Mershon Auditorium at Wexner Center",
+            "slugs": [
+                "mershon-auditorium-at-wexner-center"
             ]
         },
         {
@@ -772,6 +1042,18 @@
             ]
         },
         {
+            "name": "Nationwide Arena",
+            "slugs": [
+                "nationwide-arena"
+            ]
+        },
+        {
+            "name": "The Needle Exchange Records & Tapes",
+            "slugs": [
+                "the-needle-exchange-records-tapes"
+            ]
+        },
+        {
             "name": "The Nest Theatre",
             "slugs": [
                 "the-nest-theatre"
@@ -781,6 +1063,12 @@
             "name": "Newport Music Hall",
             "slugs": [
                 "newport-music-hall"
+            ]
+        },
+        {
+            "name": "North Broadway Church",
+            "slugs": [
+                "north-broadway-church"
             ]
         },
         {
@@ -814,6 +1102,12 @@
             ]
         },
         {
+            "name": "Ohio Black Expo Riverfront Culture Fest (Genoa Park)",
+            "slugs": [
+                "ohio-black-expo-riverfront-culture-fest-genoa-park"
+            ]
+        },
+        {
             "name": "Ohio Statehouse",
             "slugs": [
                 "ohio-statehouse"
@@ -832,6 +1126,18 @@
             ]
         },
         {
+            "name": "Ohio Union Performance Hall (OSU)",
+            "slugs": [
+                "ohio-union-performance-hall-osu"
+            ]
+        },
+        {
+            "name": "Old First Presbyterian Church",
+            "slugs": [
+                "old-first-presbyterian-church"
+            ]
+        },
+        {
             "name": "Old North Arcade",
             "slugs": [
                 "old-north-arcade"
@@ -841,6 +1147,12 @@
             "name": "The Olde Oak",
             "slugs": [
                 "the-olde-oak"
+            ]
+        },
+        {
+            "name": "Olde Towne East Community Gardens",
+            "slugs": [
+                "olde-towne-east-community-gardens"
             ]
         },
         {
@@ -856,9 +1168,27 @@
             ]
         },
         {
+            "name": "OSU Stadium",
+            "slugs": [
+                "osu-stadium"
+            ]
+        },
+        {
             "name": "Otherworld",
             "slugs": [
                 "otherworld"
+            ]
+        },
+        {
+            "name": "P3 Magic Theater",
+            "slugs": [
+                "p3-magic-theater"
+            ]
+        },
+        {
+            "name": "Palace Theatre",
+            "slugs": [
+                "palace-theatre"
             ]
         },
         {
@@ -871,6 +1201,12 @@
             "name": "Parsons North Brewing Co.",
             "slugs": [
                 "parsons-north-brewing-co"
+            ]
+        },
+        {
+            "name": "Pastimes (Crosswoods)",
+            "slugs": [
+                "pastimes-crosswoods"
             ]
         },
         {
@@ -934,6 +1270,12 @@
             ]
         },
         {
+            "name": "Reeb Avenue Center",
+            "slugs": [
+                "reeb-avenue-center"
+            ]
+        },
+        {
             "name": "The Refectory",
             "slugs": [
                 "the-refectory"
@@ -943,6 +1285,12 @@
             "name": "Rehab Tavern",
             "slugs": [
                 "rehab-tavern"
+            ]
+        },
+        {
+            "name": "Reliable on High",
+            "slugs": [
+                "reliable-on-high"
             ]
         },
         {
@@ -964,9 +1312,27 @@
             ]
         },
         {
+            "name": "Riffe Center Studio 1",
+            "slugs": [
+                "riffe-center-studio-1"
+            ]
+        },
+        {
+            "name": "Riffe Center Studio 2",
+            "slugs": [
+                "riffe-center-studio-2"
+            ]
+        },
+        {
             "name": "Rock Syndicate",
             "slugs": [
                 "rock-syndicate"
+            ]
+        },
+        {
+            "name": "Ruby Tuesday",
+            "slugs": [
+                "ruby-tuesday"
             ]
         },
         {
@@ -1006,9 +1372,33 @@
             ]
         },
         {
+            "name": "Schneider Conference Room (Capital University Student Union)",
+            "slugs": [
+                "schneider-conference-room-capital-university-student-union"
+            ]
+        },
+        {
             "name": "Schottenstein Center",
             "slugs": [
                 "schottenstein-center"
+            ]
+        },
+        {
+            "name": "Scioto Audubon",
+            "slugs": [
+                "scioto-audubon"
+            ]
+        },
+        {
+            "name": "Secret Studio",
+            "slugs": [
+                "secret-studio"
+            ]
+        },
+        {
+            "name": "Service Bar",
+            "slugs": [
+                "service-bar"
             ]
         },
         {
@@ -1060,6 +1450,12 @@
             ]
         },
         {
+            "name": "Sonic Temple (Historic Crew Stadium)",
+            "slugs": [
+                "sonic-temple-historic-crew-stadium"
+            ]
+        },
+        {
             "name": "Soul 2 Go Cafe (Downtown)",
             "slugs": [
                 "soul-2-go-cafe-downtown"
@@ -1078,9 +1474,33 @@
             ]
         },
         {
+            "name": "Speakeasy",
+            "slugs": [
+                "speakeasy"
+            ]
+        },
+        {
+            "name": "St. Joseph Cathedral",
+            "slugs": [
+                "st-joseph-cathedral"
+            ]
+        },
+        {
+            "name": "St. Stephens Episcopal",
+            "slugs": [
+                "st-stephens-episcopal"
+            ]
+        },
+        {
             "name": "Standard Live",
             "slugs": [
                 "standard-live"
+            ]
+        },
+        {
+            "name": "Steinbrenner Band Center (OSU)",
+            "slugs": [
+                "steinbrenner-band-center-osu"
             ]
         },
         {
@@ -1102,6 +1522,18 @@
             ]
         },
         {
+            "name": "Studio 35",
+            "slugs": [
+                "studio-35"
+            ]
+        },
+        {
+            "name": "Sullivant Hall, Barnett Theatre (OSU)",
+            "slugs": [
+                "sullivant-hall-barnett-theatre-osu"
+            ]
+        },
+        {
             "name": "The Summit Music Hall",
             "slugs": [
                 "the-summit-music-hall"
@@ -1117,6 +1549,12 @@
             "name": "Threes Above High",
             "slugs": [
                 "threes-above-high"
+            ]
+        },
+        {
+            "name": "Thurber Park",
+            "slugs": [
+                "thurber-park"
             ]
         },
         {
@@ -1156,9 +1594,21 @@
             ]
         },
         {
+            "name": "Undertow House Show",
+            "slugs": [
+                "undertow-house-show"
+            ]
+        },
+        {
             "name": "Union Cafe",
             "slugs": [
                 "union-cafe"
+            ]
+        },
+        {
+            "name": "Up Front at Shadowbox",
+            "slugs": [
+                "up-front-at-shadowbox"
             ]
         },
         {
@@ -1171,6 +1621,12 @@
             "name": "Upper Arlington Public Library (Tremont)",
             "slugs": [
                 "upper-arlington-public-library-tremont"
+            ]
+        },
+        {
+            "name": "Urban Arts Space",
+            "slugs": [
+                "urban-arts-space"
             ]
         },
         {
@@ -1198,6 +1654,12 @@
             ]
         },
         {
+            "name": "Victory Lap",
+            "slugs": [
+                "victory-lap"
+            ]
+        },
+        {
             "name": "Victory's Live",
             "slugs": [
                 "victory-s-live"
@@ -1216,9 +1678,45 @@
             ]
         },
         {
+            "name": "Weigel Auditorium (OSU)",
+            "slugs": [
+                "weigel-auditorium-osu"
+            ]
+        },
+        {
+            "name": "West Gate Lodge",
+            "slugs": [
+                "west-gate-lodge"
+            ]
+        },
+        {
+            "name": "Westgate Community Center",
+            "slugs": [
+                "westgate-community-center"
+            ]
+        },
+        {
             "name": "Westgate Park",
             "slugs": [
                 "westgate-park"
+            ]
+        },
+        {
+            "name": "Wexner Center Film/Video Theatre",
+            "slugs": [
+                "wexner-center-film-video-theatre"
+            ]
+        },
+        {
+            "name": "Wexner Center Galleries",
+            "slugs": [
+                "wexner-center-galleries"
+            ]
+        },
+        {
+            "name": "Wexner Center Performance Space",
+            "slugs": [
+                "wexner-center-performance-space"
             ]
         },
         {
@@ -1246,15 +1744,33 @@
             ]
         },
         {
+            "name": "Woody's Tavern/Ohio Union (OSU)",
+            "slugs": [
+                "woody-s-tavern-ohio-union-osu"
+            ]
+        },
+        {
             "name": "World of Beer (Easton)",
             "slugs": [
                 "world-of-beer-easton"
             ]
         },
         {
+            "name": "Worthington United Methodist Church",
+            "slugs": [
+                "worthington-united-methodist-church"
+            ]
+        },
+        {
             "name": "Worthington Village Green",
             "slugs": [
                 "worthington-village-green"
+            ]
+        },
+        {
+            "name": "WOSU Public Media",
+            "slugs": [
+                "wosu-public-media"
             ]
         },
         {

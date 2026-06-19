@@ -22,12 +22,16 @@ class VenueManageRenderer
             $slugs = $entry['slugs'];
             $primarySlug = $slugs[0] ?? '';
 
-            $output .= '<p class="venue-block venue-manage__row"';
+            $output .= '<button type="button" class="venue-block venue-manage__row"';
+            $output .= ' data-venue-favorite';
+            $output .= ' data-venue-name="' . htmlspecialchars($name, ENT_QUOTES, 'UTF-8') . '"';
             $output .= ' data-venue-slug="' . htmlspecialchars($primarySlug, ENT_QUOTES, 'UTF-8') . '"';
-            $output .= ' data-venue-slugs="' . htmlspecialchars(implode(',', $slugs), ENT_QUOTES, 'UTF-8') . '">';
-            $output .= VenueFavorite::buttonMarkup();
+            $output .= ' data-venue-slugs="' . htmlspecialchars(implode(',', $slugs), ENT_QUOTES, 'UTF-8') . '"';
+            $output .= ' aria-pressed="false"';
+            $output .= ' aria-label="Add ' . htmlspecialchars($name, ENT_QUOTES, 'UTF-8') . ' to favorites">';
+            $output .= VenueFavorite::iconMarkup();
             $output .= htmlspecialchars($name, ENT_QUOTES, 'UTF-8');
-            $output .= "</p>\n";
+            $output .= "</button>\n";
         }
 
         $output .= "</div>\n";

@@ -28,6 +28,92 @@ function weekHeader(string $mondayYmd): string
     return $monday->format('M j') . ' - ' . $sunday->format('M j, Y');
 }
 
+function venueWeekSpan(): int
+{
+    return 4;
+}
+
+function weekRangeHeader(string $firstMondayYmd, string $lastMondayYmd): string
+{
+    $firstMonday = DateTimeImmutable::createFromFormat('Ymd', $firstMondayYmd);
+    $lastMonday = DateTimeImmutable::createFromFormat('Ymd', $lastMondayYmd);
+
+    if ($firstMonday === false || $lastMonday === false) {
+        return weekHeader($firstMondayYmd);
+    }
+
+    $lastSunday = $lastMonday->modify('+6 days');
+
+    if ($firstMonday->format('Y') === $lastSunday->format('Y')) {
+        return $firstMonday->format('M j') . ' - ' . $lastSunday->format('M j, Y');
+    }
+
+    return $firstMonday->format('M j, Y') . ' - ' . $lastSunday->format('M j, Y');
+}
+
+/**
+ * @return list<string>
+ */
+function availableWeeksAscending(string $weeksDir): array
+{
+    $weeks = availableWeeks($weeksDir);
+    sort($weeks, SORT_STRING);
+
+    return $weeks;
+}
+
+/**
+ * A aligned window of up to $count weeks containing $selectedDateYmd.
+ *
+ * @return list<string>
+ */
+function weekWindowForDate(string $selectedDateYmd, string $weeksDir, ?int $count = null): array
+{
+    $count ??= venueWeekSpan();
+    $available = availableWeeksAscending($weeksDir);
+
+    if ($available === [] || $count < 1) {
+        return [];
+    }
+
+    $startMonday = mondayForDate($selectedDateYmd);
+    $index = count($available) - 1;
+
+    foreach ($available as $i => $ymd) {
+        if ($ymd >= $startMonday) {
+            $index = $i;
+            break;
+        }
+    }
+
+    $windowStartIndex = intdiv($index, $count) * $count;
+
+    return array_slice($available, $windowStartIndex, $count);
+}
+
+function adjacentWeekWindowStart(string $windowStartMonday, string $weeksDir, int $direction, ?int $span = null): ?string
+{
+    if ($direction === 0) {
+        return $windowStartMonday;
+    }
+
+    $span ??= venueWeekSpan();
+    $available = availableWeeksAscending($weeksDir);
+    $index = array_search($windowStartMonday, $available, true);
+
+    if ($index === false) {
+        return null;
+    }
+
+    $nextIndex = $index + ($direction * $span);
+
+    if ($nextIndex < 0 || $nextIndex >= count($available)) {
+        return null;
+    }
+
+    return $available[$nextIndex];
+}
+
 /**
  * @return list<string>
  */
@@ -176,6 +262,16 @@ function scopeQueryForMode(string $scopeMode): string
 function prefsQueryForRequest(): string
 {
     return isset($_GET['prefs']) && (string) $_GET['prefs'] === 'neutral' ? '&prefs=neutral' : '';
+}
+
+function filterPanelOpenInRequest(): bool
+{
+    return isset($_GET['filter']) && (string) $_GET['filter'] === 'open';
+}
+
+function filterQueryForRequest(): string
+{
+    return filterPanelOpenInRequest() ? '&filter=open' : '';
 }
 
 function preferencesExplicitInRequest(): bool

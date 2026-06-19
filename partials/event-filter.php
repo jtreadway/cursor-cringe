@@ -25,7 +25,7 @@ $scopeActive = $scopeMode === 'favorites';
 $findPlaceholder = 'Find text (2+ characters)';
 $filterHidden = $totalEventCount === 0 && $tagCounts === [];
 $filtersActive = !$allActive || $findQuery !== '' || $scopeActive;
-$filterOpen = $filtersActive;
+$filterOpen = $filtersActive || filterPanelOpenInRequest();
 
 if ($filterHidden) {
     return;

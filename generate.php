@@ -7,7 +7,10 @@ require_once __DIR__ . '/lib/CalendarLinter.php';
 require_once __DIR__ . '/lib/VenuesIndex.php';
 
 /**
- * Generate one JSON file per week from a cringe.com-style -noTag text file.
+ * Generate week JSON from cringe.com-style -noTag text files.
+ *
+ * With no file argument, processes every data/*-noTag.txt in date order.
+ * Newer snapshots overwrite overlapping weekStart values.
  *
  * CLI:
  *   php generate.php
@@ -20,8 +23,18 @@ require_once __DIR__ . '/lib/VenuesIndex.php';
 
 function findLatestSourceFile(string $dataDir): ?string
 {
+    $files = findAllSourceFiles($dataDir);
+
+    return $files === [] ? null : $files[array_key_last($files)];
+}
+
+/**
+ * @return list<string>
+ */
+function findAllSourceFiles(string $dataDir): array
+{
     if (!is_dir($dataDir)) {
-        return null;
+        return [];
     }
 
     $files = glob($dataDir . '/*-noTag.txt') ?: [];
@@ -29,12 +42,9 @@ function findLatestSourceFile(string $dataDir): ?string
         $files = glob($dataDir . '/*-noTag') ?: [];
     }
 
-    if ($files === []) {
-        return null;
-    }
+    sort($files, SORT_STRING);
 
-    rsort($files, SORT_STRING);
-    return $files[0];
+    return $files;
 }
 
 /**
@@ -88,6 +98,61 @@ function generateWeekJson(string $sourcePath, string $outputDir, string $venuesI
     ];
 }
 
+/**
+ * @return array{
+ *     ok: bool,
+ *     sources: list<string>,
+ *     source: string,
+ *     files: list<string>,
+ *     venuesIndex: string,
+ *     errors: list<string>,
+ *     lintWarnings: list<array{code: string, message: string, source?: string}>,
+ *     weeks: list<array<string, mixed>>
+ * }
+ */
+function generateAllWeekJson(string $dataDir, string $outputDir, string $venuesIndexPath): array
+{
+    $sources = findAllSourceFiles($dataDir);
+
+    if ($sources === []) {
+        throw new RuntimeException('No source file found. Add data/YYYYMMDD-noTag.txt or pass a file path.');
+    }
+
+    $written = [];
+    $errors = [];
+    $lintWarnings = [];
+    $weeks = [];
+
+    foreach ($sources as $sourcePath) {
+        $result = generateWeekJson($sourcePath, $outputDir, $venuesIndexPath);
+
+        foreach ($result['files'] as $file) {
+            $written[$file] = true;
+        }
+
+        foreach ($result['errors'] as $error) {
+            $errors[] = basename($sourcePath) . ': ' . $error;
+        }
+
+        foreach ($result['lintWarnings'] as $warning) {
+            $lintWarnings[] = $warning + ['source' => basename($sourcePath)];
+        }
+
+        $weeks = array_merge($weeks, $result['weeks']);
+    }
+
+    return [
+        'ok' => true,
+        'sources' => $sources,
+        'source' => $sources[array_key_last($sources)],
+        'files' => array_keys($written),
+        'venuesIndex' => $venuesIndexPath,
+        'errors' => $errors,
+        'lintWarnings' => $lintWarnings,
+        'weeks' => $weeks,
+    ];
+}
+
 function respondJson(array $payload, int $status = 200): void
 {
     if (PHP_SAPI !== 'cli') {
@@ -120,6 +185,14 @@ function respondBrowser(array $result): void
     }
 
     echo '<p>Source: <code>' . $source . '</code></p>';
+    if (!empty($result['sources']) && count($result['sources']) > 1) {
+        echo '<p>Processed ' . count($result['sources']) . ' source file(s):</p><ul>';
+        foreach ($result['sources'] as $sourceFile) {
+            $label = htmlspecialchars($sourceFile, ENT_QUOTES, 'UTF-8');
+            echo '<li><code>' . $label . '</code></li>';
+        }
+        echo '</ul>';
+    }
     echo '<p>Generated ' . count($files) . ' week file(s):</p><ul>';
     foreach ($files as $file) {
         $href = htmlspecialchars($file, ENT_QUOTES, 'UTF-8');
@@ -146,7 +219,10 @@ function respondBrowser(array $result): void
         foreach ($lintWarnings as $warning) {
             $code = htmlspecialchars($warning['code'], ENT_QUOTES, 'UTF-8');
             $message = htmlspecialchars($warning['message'], ENT_QUOTES, 'UTF-8');
-            echo '<li><code>' . $code . '</code> — ' . $message . '</li>';
+            $sourceLabel = isset($warning['source'])
+                ? '<code>' . htmlspecialchars((string) $warning['source'], ENT_QUOTES, 'UTF-8') . '</code> — '
+                : '';
+            echo '<li>' . $sourceLabel . '<code>' . $code . '</code> — ' . $message . '</li>';
         }
         echo '</ul>';
     }
@@ -171,9 +247,10 @@ function main(array $argv): int
     }
 
     if ($sourceArg === null || $sourceArg === '') {
-        $sourcePath = findLatestSourceFile($dataDir);
-        if ($sourcePath === null) {
-            $message = 'No source file found. Add data/YYYYMMDD-noTag.txt or pass a file path.';
+        try {
+            $result = generateAllWeekJson($dataDir, $outputDir, $venuesIndexPath);
+        } catch (RuntimeException $e) {
+            $message = $e->getMessage();
             if (PHP_SAPI === 'cli') {
                 fwrite(STDERR, $message . PHP_EOL);
                 fwrite(STDERR, "Usage: php generate.php [data/YYYYMMDD-noTag.txt]\n");
@@ -198,23 +275,30 @@ function main(array $argv): int
             respondBrowser(['ok' => false, 'message' => $message]);
             return 1;
         }
-    }
 
-    try {
-        $result = generateWeekJson($sourcePath, $outputDir, $venuesIndexPath);
-    } catch (Throwable $e) {
-        $message = $e->getMessage();
-        if (PHP_SAPI === 'cli') {
-            fwrite(STDERR, $message . PHP_EOL);
+        try {
+            $result = generateWeekJson($sourcePath, $outputDir, $venuesIndexPath);
+        } catch (Throwable $e) {
+            $message = $e->getMessage();
+            if (PHP_SAPI === 'cli') {
+                fwrite(STDERR, $message . PHP_EOL);
+                return 1;
+            }
+
+            respondBrowser(['ok' => false, 'message' => $message]);
             return 1;
         }
-
-        respondBrowser(['ok' => false, 'message' => $message]);
-        return 1;
     }
 
     if (PHP_SAPI === 'cli') {
-        echo "Generated " . count($result['files']) . " week file(s) from {$result['source']}\n";
+        if (!empty($result['sources']) && count($result['sources']) > 1) {
+            echo 'Generated ' . count($result['files']) . ' week file(s) from ' . count($result['sources']) . " source file(s)\n";
+            foreach ($result['sources'] as $sourceFile) {
+                echo "  {$sourceFile}\n";
+            }
+        } else {
+            echo "Generated " . count($result['files']) . " week file(s) from {$result['source']}\n";
+        }
         foreach ($result['files'] as $file) {
             echo "  {$file}\n";
         }
@@ -228,7 +312,8 @@ function main(array $argv): int
         if ($result['lintWarnings'] !== []) {
             fwrite(STDERR, "\nLint warnings (may be intentional):\n");
             foreach ($result['lintWarnings'] as $warning) {
-                fwrite(STDERR, "  [{$warning['code']}] {$warning['message']}\n");
+                $sourceLabel = isset($warning['source']) ? "[{$warning['source']}] " : '';
+                fwrite(STDERR, "  {$sourceLabel}[{$warning['code']}] {$warning['message']}\n");
             }
         }
         return 0;

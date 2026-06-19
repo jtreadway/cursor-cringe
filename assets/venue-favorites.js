@@ -25,7 +25,7 @@ class VenueFavorites {
 
         document.addEventListener('keydown', (event) => {
             const button = event.target.closest('[data-venue-favorite]');
-            if (!button) {
+            if (!button || button.tagName === 'BUTTON') {
                 return;
             }
 
@@ -80,20 +80,31 @@ class VenueFavorites {
     syncButtons() {
         document.querySelectorAll('.venue-block').forEach((venue) => {
             const slugs = CalendarPrefs.venueSlugs(venue);
-            const button = venue.querySelector('[data-venue-favorite]');
+            const button = venue.matches('[data-venue-favorite]')
+                ? venue
+                : venue.querySelector('[data-venue-favorite]');
             if (!button || slugs.length === 0) {
                 return;
             }
 
             const isFavorite = slugs.some((slug) => this.favorites.has(slug));
-            button.classList.toggle('is-favorite', isFavorite);
+            const favoriteVisual = button.querySelector('.venue-favorite') || button;
+            favoriteVisual.classList.toggle('is-favorite', isFavorite);
             const shape = button.querySelector('.venue-favorite__shape');
             if (shape) {
                 shape.setAttribute('fill', isFavorite ? '#ee0000' : '#cccccc');
             }
+
+            const venueName = venue.getAttribute('data-venue-name');
+            const label = venueName
+                ? (isFavorite ? `Remove ${venueName} from favorites` : `Add ${venueName} to favorites`)
+                : (isFavorite ? 'Remove from favorites' : 'Add to favorites');
+
             button.setAttribute('aria-pressed', isFavorite ? 'true' : 'false');
-            button.setAttribute('aria-label', isFavorite ? 'Remove from favorites' : 'Add to favorites');
-            button.setAttribute('title', isFavorite ? 'Remove from favorites' : 'Add to favorites');
+            button.setAttribute('aria-label', label);
+            if (button.tagName !== 'BUTTON') {
+                button.setAttribute('title', label);
+            }
         });
     }
 }

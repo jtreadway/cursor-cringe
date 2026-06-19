@@ -10,9 +10,11 @@
 /** @var string $prefsQuery */
 /** @var string $viewQuery */
 
-$navQuery = $tagsQuery . $findQueryParam . $scopeQuery . $prefsQuery;
-$dayHref = '?date=' . rawurlencode($selectedDate) . '&view=day' . $tagsQuery . $findQueryParam . $scopeQuery . $prefsQuery;
-$weekHref = '?date=' . rawurlencode($selectedDate) . '&view=week' . $tagsQuery . $findQueryParam . $scopeQuery . $prefsQuery;
+/** @var string $filterQuery */
+
+$navQuery = $tagsQuery . $findQueryParam . $scopeQuery . $prefsQuery . ($filterQuery ?? '');
+$dayHref = '?date=' . rawurlencode($selectedDate) . '&view=day' . $tagsQuery . $findQueryParam . $scopeQuery . $prefsQuery . ($filterQuery ?? '');
+$weekHref = '?date=' . rawurlencode($selectedDate) . '&view=week' . $tagsQuery . $findQueryParam . $scopeQuery . $prefsQuery . ($filterQuery ?? '');
 $prevHref = '?date=' . rawurlencode($prevWeekDate) . $viewQuery . $navQuery;
 $nextHref = '?date=' . rawurlencode($nextWeekDate) . $viewQuery . $navQuery;
 

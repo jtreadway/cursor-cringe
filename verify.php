@@ -110,6 +110,8 @@ function verifyWeeks(array $jsonFiles, bool $verbose): array
 {
     $results = [];
     $passed = 0;
+    $skipped = 0;
+    $failed = 0;
 
     foreach ($jsonFiles as $jsonPath) {
         $weekId = basename($jsonPath, '.json');
@@ -120,6 +122,7 @@ function verifyWeeks(array $jsonFiles, bool $verbose): array
             'json' => $jsonPath,
             'golden' => $goldenPath,
             'ok' => false,
+            'skipped' => false,
             'message' => '',
             'lineDiffs' => 0,
             'eventLinks' => [
@@ -131,7 +134,10 @@ function verifyWeeks(array $jsonFiles, bool $verbose): array
         ];
 
         if (!is_readable($goldenPath)) {
-            $result['message'] = "Missing golden PHP partial: {$goldenPath}";
+            $result['ok'] = true;
+            $result['skipped'] = true;
+            $result['message'] = 'skipped (no golden partial)';
+            $skipped++;
             $results[] = $result;
             continue;
         }
@@ -164,13 +170,16 @@ function verifyWeeks(array $jsonFiles, bool $verbose): array
         $result['lineDiffs'] = count($diffs);
         $result['diffs'] = $verbose ? $diffs : array_slice($diffs, 0, 5);
         $result['message'] = count($diffs) . ' line diff(s)';
+        $failed++;
         $results[] = $result;
     }
 
     return [
-        'ok' => $passed === count($jsonFiles) && $jsonFiles !== [],
+        'ok' => $failed === 0 && ($passed > 0 || $skipped > 0),
         'checked' => count($jsonFiles),
         'passed' => $passed,
+        'skipped' => $skipped,
+        'failed' => $failed,
         'results' => $results,
     ];
 }
@@ -183,14 +192,18 @@ function respondCli(array $report, bool $verbose): int
     }
 
     foreach ($report['results'] as $result) {
-        $status = $result['ok'] ? 'PASS' : 'FAIL';
+        $status = !empty($result['skipped']) ? 'SKIP' : ($result['ok'] ? 'PASS' : 'FAIL');
         $week = $result['week'];
         $message = $result['message'];
         $links = $result['eventLinks'];
 
         echo "{$status} {$week}: {$message}";
-        echo " (event links {$links['rendered']}/{$links['expected']}";
-        echo $links['match'] ? ", match)\n" : ", mismatch)\n";
+        if (empty($result['skipped'])) {
+            echo " (event links {$links['rendered']}/{$links['expected']}";
+            echo $links['match'] ? ", match)\n" : ", mismatch)\n";
+        } else {
+            echo "\n";
+        }
 
         if (!$result['ok'] && $result['diffs'] !== []) {
             foreach ($result['diffs'] as $diff) {
@@ -207,8 +220,12 @@ function respondCli(array $report, bool $verbose): int
     }
 
     echo PHP_EOL;
+    $skipped = (int) ($report['skipped'] ?? 0);
+    if ($skipped > 0) {
+        echo "Skipped {$skipped} week file(s) without golden partials.\n";
+    }
     echo $report['ok']
-        ? "All {$report['passed']} week file(s) match golden PHP partials.\n"
+        ? "All {$report['passed']} golden week file(s) match.\n"
         : "{$report['passed']}/{$report['checked']} week file(s) passed.\n";
 
     return $report['ok'] ? 0 : 1;

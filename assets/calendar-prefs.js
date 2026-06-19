@@ -187,6 +187,10 @@ class CalendarPrefs {
             out.set('prefs', 'neutral');
         }
 
+        if (params.get('filter') === 'open') {
+            out.set('filter', 'open');
+        }
+
         return out;
     }
 
@@ -208,7 +212,7 @@ class CalendarPrefs {
         out.set('view', CalendarPrefs.normalizeView(view));
         CalendarPrefs.appendFilterParams(out, src);
 
-        return `?${out.toString()}`;
+        return `index.php?${out.toString()}`;
     }
 
     static buildVenueHref(venueSlug, dateYmd, sourceParams = null) {

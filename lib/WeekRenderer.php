@@ -126,6 +126,7 @@ class WeekRenderer
         require_once __DIR__ . '/VenueUtils.php';
         require_once __DIR__ . '/EventDateRenderer.php';
         require_once __DIR__ . '/VenueFavorite.php';
+        require_once __DIR__ . '/VenueWeekRenderer.php';
 
         $name = (string) $venue['name'];
         $slug = (string) ($venue['slug'] ?? VenueUtils::slug($name));
@@ -155,7 +156,7 @@ class WeekRenderer
             $output .= "<br>{$note}";
         }
 
-        $output .= ' <a class="venue-week-link" href="' . $venueWeekHref . '">all week</a>';
+        $output .= VenueWeekRenderer::scheduleLinkMarkup($venueWeekHref, $name);
         $output .= "<br>\n";
 
         $events = $venue['events'] ?? [];
