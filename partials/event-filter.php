@@ -108,7 +108,7 @@ if ($filterHidden) {
             <?php if ($showFilterActions ?? false): ?>
             <div class="event-filter__actions" data-prefs-actions>
                 <button type="button" class="event-filter__action event-filter__action--clear" data-prefs-clear>clear</button>
-                <button type="button" class="event-filter__action event-filter__action--save" data-prefs-save>save</button>
+                <button type="button" class="event-filter__action event-filter__action--save" data-prefs-save>save filters</button>
             </div>
             <?php endif; ?>
         </div>

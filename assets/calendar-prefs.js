@@ -226,12 +226,56 @@ class CalendarPrefs {
 
     static saveAll(snapshot) {
         const normalized = CalendarPrefs.snapshotFromValues(snapshot);
+        CalendarPrefs.saveFavoritesOnly(normalized.favorites);
+        CalendarPrefs.saveFiltersOnly(normalized);
+    }
 
-        if (normalized.favorites === '') {
-            CalendarPrefs.delete(CalendarPrefs.COOKIE.favorites);
-        } else {
-            CalendarPrefs.write(CalendarPrefs.COOKIE.favorites, normalized.favorites);
+    static filterSnapshotFromValues({ view, tags, find, scope }) {
+        return {
+            view: CalendarPrefs.normalizeView(view || 'day'),
+            tags: CalendarPrefs.parseTags(Array.isArray(tags) ? tags.join(',') : tags || ''),
+            find: (find || '').trim(),
+            scope: CalendarPrefs.normalizeScope(scope || 'all'),
+        };
+    }
+
+    static loadSavedFilters() {
+        return CalendarPrefs.filterSnapshotFromValues({
+            view: CalendarPrefs.read(CalendarPrefs.COOKIE.view),
+            tags: CalendarPrefs.read(CalendarPrefs.COOKIE.tags),
+            find: CalendarPrefs.read(CalendarPrefs.COOKIE.find),
+            scope: CalendarPrefs.read(CalendarPrefs.COOKIE.scope),
+        });
+    }
+
+    static snapshotFiltersFromLocation() {
+        const params = new URLSearchParams(window.location.search);
+
+        return CalendarPrefs.filterSnapshotFromValues({
+            view: params.get('view') || 'day',
+            tags: params.get('tags') || '',
+            find: params.get('find') || '',
+            scope: params.get('scope') || 'all',
+        });
+    }
+
+    static filtersSnapshotsEqual(a, b) {
+        if (a.view !== b.view || a.find !== b.find || a.scope !== b.scope) {
+            return false;
         }
+
+        if (a.tags.length !== b.tags.length) {
+            return false;
+        }
+
+        const aTags = [...a.tags].sort();
+        const bTags = [...b.tags].sort();
+
+        return aTags.every((tag, index) => tag === bTags[index]);
+    }
+
+    static saveFiltersOnly(snapshot) {
+        const normalized = CalendarPrefs.filterSnapshotFromValues(snapshot);
 
         if (normalized.tags.length === 0) {
             CalendarPrefs.delete(CalendarPrefs.COOKIE.tags);
@@ -266,16 +310,6 @@ class CalendarPrefs {
             CalendarPrefs.write(CalendarPrefs.COOKIE.favorites, serialized);
             CalendarPrefs.saveEngaged(true);
         }
-    }
-
-    static currentFavoritesSerialized() {
-        const favorites = VenueFavorites.getInstance()?.favorites ?? CalendarPrefs.parseFavorites('');
-
-        return CalendarPrefs.serializeFavorites(favorites);
-    }
-
-    static favoritesDirty() {
-        return CalendarPrefs.currentFavoritesSerialized() !== CalendarPrefs.loadSaved().favorites;
     }
 
     static saveRecent(recent) {

@@ -66,16 +66,13 @@ $backLabel = $viewMode === 'week' ? '← Back to week view' : '← Back to calen
         <h1>Manage venues</h1>
         <p class="meta">
             <?= (int) $venueCount ?> venues in the directory.
-            Tap the heart to add or remove favorites, then save.
+            Tap the heart to add or remove favorites. Changes save automatically.
             <a href="<?= htmlspecialchars($backUrl, ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($backLabel, ENT_QUOTES, 'UTF-8') ?></a>
         </p>
     </header>
 
     <div class="venues-manage__toolbar">
         <p class="venues-manage__summary"><?= (int) $favoriteVenueCount ?> favorite<?= $favoriteVenueCount === 1 ? '' : 's' ?> selected</p>
-        <div class="event-filter__actions venues-manage__actions" data-prefs-actions data-prefs-favorites-only>
-            <button type="button" class="event-filter__action event-filter__action--save" data-prefs-save>save favorites</button>
-        </div>
     </div>
 
     <?= $venueListHtml ?>
@@ -83,7 +80,6 @@ $backLabel = $viewMode === 'week' ? '← Back to week view' : '← Back to calen
 
 <script src="assets/calendar-prefs.js" defer></script>
 <script src="assets/venue-favorites.js" defer></script>
-<script src="assets/preferences-ui.js" defer></script>
 <script src="assets/venues-manage.js" defer></script>
 </body>
 </html>

@@ -52,27 +52,23 @@ class VenueFavorites {
             slugs.forEach((slug) => this.favorites.add(slug));
         }
 
-        if (document.body.classList.contains('venue-page')) {
-            CalendarPrefs.saveFavoritesOnly(this.favorites);
-        } else {
-            CalendarPrefs.saveEngaged(this.favorites.size > 0);
-        }
-
+        CalendarPrefs.saveFavoritesOnly(this.favorites);
         this.syncButtons();
         document.dispatchEvent(
             new CustomEvent('calendar:favoriteschange', {
                 detail: { favorites: this.favorites },
             })
         );
-
-        if (!document.body.classList.contains('venue-page')) {
-            document.dispatchEvent(new CustomEvent('calendar:draftchange'));
-        }
+        document.dispatchEvent(
+            new CustomEvent('calendar:prefssaved', {
+                detail: { favoritesOnly: true, favorites: CalendarPrefs.serializeFavorites(this.favorites) },
+            })
+        );
     }
 
     setFavorites(favorites) {
         this.favorites = favorites instanceof Set ? new Set(favorites) : CalendarPrefs.parseFavorites(favorites);
-        CalendarPrefs.saveEngaged(this.favorites.size > 0);
+        CalendarPrefs.saveFavoritesOnly(this.favorites);
         this.syncButtons();
         document.dispatchEvent(
             new CustomEvent('calendar:favoriteschange', {
