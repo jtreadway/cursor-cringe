@@ -128,38 +128,6 @@ class VenueUtils
     }
 
     /**
-     * @param array<string, mixed> $week
-     * @return list<array{venue: array<string, mixed>, schedule: list<array{day: array<string, mixed>, venue: array<string, mixed>, events: list<array<string, mixed>>}>}>
-     */
-    public static function venuesForWeekSlugs(array $week, array $slugs): array
-    {
-        if ($slugs === []) {
-            return [];
-        }
-
-        $bySlug = [];
-
-        foreach (self::venuesForWeek($week) as $entry) {
-            if ($entry['schedule'] === []) {
-                continue;
-            }
-
-            $slug = (string) ($entry['venue']['slug'] ?? self::slug((string) $entry['venue']['name']));
-            $bySlug[$slug] = $entry;
-        }
-
-        $venues = [];
-
-        foreach ($slugs as $slug) {
-            if (isset($bySlug[$slug])) {
-                $venues[] = $bySlug[$slug];
-            }
-        }
-
-        return $venues;
-    }
-
-    /**
      * @param array<string, mixed> $existing
      * @param array<string, mixed> $incoming
      * @return array<string, mixed>

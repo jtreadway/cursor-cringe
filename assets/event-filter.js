@@ -7,7 +7,6 @@ class EventFilter {
         this.typesSection = root.querySelector('.event-filter__types');
         this.allVenuesButton = root.querySelector('[data-filter-all-venues]');
         this.myVenuesButton = root.querySelector('[data-filter-my-venues]');
-        this.manageVenuesButton = root.querySelector('[data-manage-venues]');
         this.allButton = root.querySelector('[data-filter-all]');
         this.findInput = root.querySelector('[data-filter-find]');
         this.toggleButton = root.querySelector('[data-filter-toggle]');
@@ -30,14 +29,11 @@ class EventFilter {
             : (this.findInput?.value || '').trim();
 
         if (urlParams.has('scope')) {
-            this.favoritesOnly = urlParams.get('scope') === 'favorites';
-        } else if (urlParams.get('favorites') === '1') {
-            this.favoritesOnly = true;
+            this.favoritesOnly = EventFilter.favoritesOnlyFromParams(urlParams);
         } else {
             this.favoritesOnly =
                 Boolean(this.myVenuesButton?.classList.contains('is-active'))
-                || saved.scope === 'favorites'
-                || CalendarPrefs.read('cringe_favorites_only') === '1';
+                || saved.scope === 'favorites';
         }
 
         if (this.findInput) {
@@ -54,6 +50,10 @@ class EventFilter {
         this.apply();
         this.updateUrl();
         this.syncToggleLabel();
+    }
+
+    static favoritesOnlyFromParams(params) {
+        return params.get('scope') === 'favorites';
     }
 
     static parseTagList(raw) {
@@ -173,11 +173,13 @@ class EventFilter {
             this.syncAvailableTags(event.detail?.panel ?? null);
         });
 
-        window.addEventListener('popstate', () => this.syncFromUrl(), true);
-        window.addEventListener('popstate', () => {
-            this.syncAvailableTags();
-            this.apply();
-        });
+        window.addEventListener('popstate', () => this.handlePopstate());
+    }
+
+    handlePopstate() {
+        this.syncFromUrl();
+        this.syncAvailableTags();
+        this.apply();
     }
 
     syncFromUrl() {
@@ -195,9 +197,7 @@ class EventFilter {
         }
 
         if (params.has('scope')) {
-            this.favoritesOnly = params.get('scope') === 'favorites';
-        } else if (params.get('favorites') === '1') {
-            this.favoritesOnly = true;
+            this.favoritesOnly = EventFilter.favoritesOnlyFromParams(params);
         } else {
             this.favoritesOnly = false;
         }
