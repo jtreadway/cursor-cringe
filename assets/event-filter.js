@@ -11,6 +11,8 @@ class EventFilter {
         this.findInput = root.querySelector('[data-filter-find]');
         this.toggleButton = document.querySelector('[data-filter-toggle]');
         this.panel = root.querySelector('[data-filter-panel]');
+        this.summaryEl = root.querySelector('[data-filter-summary]');
+        this.chipsEl = root.querySelector('[data-filter-chips]');
 
         const urlParams = new URLSearchParams(window.location.search);
         const saved = CalendarPrefs.loadSaved();
@@ -157,6 +159,17 @@ class EventFilter {
             this.toggleButton.addEventListener('click', () => this.togglePanel());
         }
 
+        if (this.chipsEl) {
+            this.chipsEl.addEventListener('click', (event) => {
+                const chip = event.target.closest('[data-filter-chip]');
+                if (!chip) {
+                    return;
+                }
+
+                this.removeFilterChip(chip.dataset.filterChip || '', chip.dataset.filterChipValue || '');
+            });
+        }
+
         document.addEventListener('calendar:favoriteschange', () => {
             this.favorites = CalendarPrefs.loadFavoritesSet();
             this.syncAvailableTags();
@@ -204,6 +217,95 @@ class EventFilter {
         }
     }
 
+    removeFilterChip(type, value) {
+        if (type === 'scope') {
+            this.favoritesOnly = false;
+            this.syncVenueScopeButtons();
+        } else if (type === 'tag' && value) {
+            this.activeTags.delete(value.toLowerCase());
+            this.syncTypeTagButtons();
+        } else if (type === 'find') {
+            this.findQuery = '';
+            if (this.findInput) {
+                this.findInput.value = '';
+            }
+        }
+
+        this.apply();
+        this.persistState();
+    }
+
+    countVisibleEventsInScope(scope) {
+        let count = 0;
+
+        scope.querySelectorAll('.event-line').forEach((line) => {
+            if (!line.classList.contains('is-filtered-out')) {
+                count += 1;
+            }
+        });
+
+        return count;
+    }
+
+    syncFilterSummary() {
+        if (!this.summaryEl) {
+            return;
+        }
+
+        const scope = this.getFilterScope();
+        const total = this.countEventsInScope(scope);
+        const visible = this.countVisibleEventsInScope(scope);
+        const hasActive = !this.filtersAreNeutral();
+        const open = this.root.classList.contains('is-open');
+
+        if (total === 0) {
+            this.summaryEl.textContent = '';
+        } else if (hasActive) {
+            this.summaryEl.textContent = `Showing ${visible} of ${total} events`;
+        } else {
+            this.summaryEl.textContent = `${total} events — filter or pick my venues`;
+        }
+
+        if (!this.chipsEl) {
+            return;
+        }
+
+        if (!hasActive || open) {
+            this.chipsEl.hidden = true;
+            this.chipsEl.replaceChildren();
+            return;
+        }
+
+        const chips = [];
+
+        if (this.favoritesOnly) {
+            chips.push(this.createFilterChip('scope', 'my venues', 'favorites'));
+        }
+
+        Array.from(this.activeTags).sort().forEach((tag) => {
+            chips.push(this.createFilterChip('tag', tag, tag));
+        });
+
+        if (this.effectiveFindQuery() !== '') {
+            chips.push(this.createFilterChip('find', `"${this.findQuery.trim()}"`, 'find'));
+        }
+
+        this.chipsEl.replaceChildren(...chips);
+        this.chipsEl.hidden = chips.length === 0;
+    }
+
+    createFilterChip(type, label, value) {
+        const chip = document.createElement('button');
+        chip.type = 'button';
+        chip.className = 'event-filter__chip';
+        chip.dataset.filterChip = type;
+        chip.dataset.filterChipValue = value;
+        chip.setAttribute('role', 'listitem');
+        chip.setAttribute('aria-label', `Remove ${label} filter`);
+        chip.textContent = label;
+        return chip;
+    }
+
     togglePanel(forceOpen = null) {
         if (!this.toggleButton || !this.panel) {
             return;
@@ -217,6 +319,7 @@ class EventFilter {
             this.toggleButton.setAttribute('aria-expanded', open ? 'true' : 'false');
         }
         this.syncToggleLabel();
+        this.syncFilterSummary();
         this.syncFilterOpenInUrl(open);
     }
 
@@ -452,6 +555,7 @@ class EventFilter {
         const favoriteVenueCount = this.countFavoriteVenuesInScope(scope);
         this.syncVenueScope(venueCount, favoriteVenueCount);
         this.rebuildTypeTagButtons(tagCounts, eventCount);
+        this.syncFilterSummary();
     }
 
     syncVenueScopeButtons() {
@@ -559,6 +663,7 @@ class EventFilter {
         });
 
         document.dispatchEvent(new CustomEvent('calendar:reflow'));
+        this.syncFilterSummary();
     }
 
     filtersAreNeutral() {

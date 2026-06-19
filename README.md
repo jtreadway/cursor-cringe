@@ -27,14 +27,19 @@ Browser:
 - [`generate.php`](generate.php) — generate week JSON
 - [`verify.php`](verify.php) — run regression checks
 - [`index.php`](index.php) — calendar viewer (see URL parameters below)
-- [`venue.php`](venue.php) — all events at one venue for the week (`?venue=ace-of-cups&date=YYYYMMDD`)
+- [`venue.php`](venue.php) — all events at one venue for 4 weeks (`?venue=ace-of-cups&date=YYYYMMDD`); venue names on the index link here
 
 ### Views
 
 - **By day** (`view=day`, default) — swipeable carousel of day panels
 - **By week** (`view=week`) — all venues grouped for the week
 
-Top nav: prev week · by day · by week · next week. Day-of-week links (Mo–Su) appear only in day view.
+Top nav in the filter card:
+
+- **Day view** — `‹` prev week · Mo–Su · next week `›`, plus a **week view** link
+- **Week view** — prev week · week range · next week, plus a **day view** link
+
+Filter summary under the nav shows event counts and active filter chips when the panel is closed.
 
 ### Filters
 

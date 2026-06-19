@@ -4,7 +4,7 @@ class WeekCarousel {
         this.viewport = root.querySelector('.week-carousel__viewport');
         this.track = root.querySelector('.week-carousel__track');
         this.panels = Array.from(root.querySelectorAll('.day-panel'));
-        this.navButtons = Array.from(document.querySelectorAll('.day-nav [data-day-index]'));
+        this.navButtons = Array.from(document.querySelectorAll('.calendar-nav__day[data-day-index], .day-nav [data-day-index]'));
         this.slideCount = this.panels.length;
         this.index = Math.min(
             Math.max(parseInt(root.dataset.startIndex || '0', 10), 0),

@@ -148,31 +148,10 @@ $showFilterToggle = $hasWeek && ($totalEventCount > 0 || $tagCounts !== []);
     </header>
 
     <?php
-    $navPartial = __DIR__ . '/partials/calendar-nav.php';
+    $navPartial = __DIR__ . '/partials/calendar-nav-index.php';
     $showFilterActions = true;
     include __DIR__ . '/partials/calendar-filter-card.php';
     ?>
-
-        <?php if ($hasWeek && $viewMode === 'day' && isset($weekData)): ?>
-        <nav class="day-nav" aria-label="Days this week">
-            <?php foreach ($weekData['days'] as $index => $day): ?>
-                <?php
-                $isActive = $index === $startDayIndex;
-                $dayDate = (string) $day['date'];
-                $dayHref = '?date=' . rawurlencode($dayDate) . $tagsQuery . $findQueryParam . $scopeQuery . $prefsQuery . $filterQuery . '&view=day';
-                ?>
-                <a
-                    href="<?= htmlspecialchars($dayHref, ENT_QUOTES, 'UTF-8') ?>"
-                    class="day-nav__day<?= $isActive ? ' is-active' : '' ?>"
-                    data-nav-sync
-                    data-nav-date="<?= htmlspecialchars($dayDate, ENT_QUOTES, 'UTF-8') ?>"
-                    data-nav-view="day"
-                    data-day-index="<?= (int) $index ?>"
-                    <?php if ($isActive): ?>aria-current="page"<?php endif; ?>
-                ><?= htmlspecialchars($dayLabels[$index] ?? '', ENT_QUOTES, 'UTF-8') ?></a>
-            <?php endforeach; ?>
-        </nav>
-        <?php endif; ?>
 
     <p class="pick">Proof of concept: week content is loaded from <code>weeks/<?= htmlspecialchars($thisWeek, ENT_QUOTES, 'UTF-8') ?>.json</code>. Generate fresh JSON with <code>php generate.php</code> or <a href="generate.php">generate.php</a>. Regression-test with <code>php verify.php</code> or <a href="verify.php">verify.php</a>.</p>
 

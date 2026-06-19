@@ -126,10 +126,121 @@ header p {
 .day-nav a:hover,
 .calendar-nav a.is-active,
 .day-nav a.is-active,
-.day-nav__day.is-active {
+.day-nav__day.is-active,
+.calendar-nav__day.is-active {
     background: #222;
     color: #fff;
     border-color: #222;
+}
+
+.calendar-nav__week--compact {
+    min-width: 2rem;
+    padding-left: 0.4rem;
+    padding-right: 0.4rem;
+    font-size: 1.15rem;
+    line-height: 1;
+}
+
+.calendar-nav__day {
+    min-width: 2rem;
+    padding-left: 0.35rem;
+    padding-right: 0.35rem;
+}
+
+.calendar-nav__label {
+    display: inline-block;
+    padding: 0.45rem 0.55rem;
+    font-size: 0.9rem;
+    color: #444;
+}
+
+.calendar-filter-card__nav .calendar-nav {
+    margin: 0;
+}
+
+.calendar-nav__mode {
+    margin: 0.35rem 0 0;
+    text-align: center;
+    font-size: 0.85rem;
+}
+
+.calendar-nav__mode a {
+    color: #555;
+    text-decoration: none;
+    border-bottom: 1px solid #bbb;
+}
+
+.calendar-nav__mode a:hover {
+    color: #222;
+    border-bottom-color: #222;
+}
+
+.calendar-filter-card__status {
+    padding: 0 0.85rem 0.65rem;
+}
+
+.calendar-filter-card.is-open .calendar-filter-card__status,
+.calendar-filter-card.has-active-filters .calendar-filter-card__status {
+    border-bottom: 1px solid #e8e8e8;
+}
+
+.event-filter__summary {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #555;
+    text-align: center;
+}
+
+.event-filter__chips {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.35rem;
+    margin-top: 0.45rem;
+}
+
+.event-filter__chip {
+    display: inline-block;
+    margin: 0;
+    padding: 0.2rem 0.5rem;
+    border: 1px solid #bbb;
+    border-radius: 999px;
+    background: #fff;
+    color: #333;
+    font-family: inherit;
+    font-size: 0.8rem;
+    line-height: 1.3;
+    cursor: pointer;
+}
+
+.event-filter__chip:hover {
+    border-color: #222;
+    background: #222;
+    color: #fff;
+}
+
+.calendar-filter-card.has-active-filters .calendar-filter-card__toggle::after {
+    content: '';
+    position: absolute;
+    top: 0.12rem;
+    right: 0.12rem;
+    width: 0.35rem;
+    height: 0.35rem;
+    border-radius: 50%;
+    background: #0066cc;
+}
+
+.venue-website-link {
+    font-size: 0.85rem;
+    font-weight: normal;
+    color: #555;
+    text-decoration: none;
+    border-bottom: 1px solid #ccc;
+}
+
+.venue-website-link:hover {
+    color: #222;
+    border-bottom-color: #222;
 }
 
 .pick {
@@ -256,29 +367,43 @@ header p {
 }
 
 .venue-schedule-link {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.2rem;
     box-sizing: content-box;
-    margin: -0.15em 0 -0.15em 0.1em;
-    padding: 0.15em;
-    line-height: 0;
-    vertical-align: -0.12em;
+    margin: 0 0 0 0.35rem;
+    padding: 0.1em 0;
+    line-height: 1.2;
+    vertical-align: baseline;
+    font-size: 0.85rem;
     color: #555;
     text-decoration: none;
     -webkit-tap-highlight-color: transparent;
 }
 
+.venue-schedule-link__label {
+    text-transform: lowercase;
+    border-bottom: 1px solid #ccc;
+}
+
 .venue-schedule-link__icon {
     display: block;
-    width: 1em;
-    height: 1em;
-    max-width: 1em;
-    max-height: 1em;
+    width: 0.95em;
+    height: 0.95em;
+    max-width: 0.95em;
+    max-height: 0.95em;
     opacity: 0.55;
+    flex: none;
 }
 
 .venue-schedule-link:hover,
 .venue-schedule-link:focus-visible {
     color: #222;
+}
+
+.venue-schedule-link:hover .venue-schedule-link__label,
+.venue-schedule-link:focus-visible .venue-schedule-link__label {
+    border-bottom-color: #222;
 }
 
 .venue-schedule-link:hover .venue-schedule-link__icon,

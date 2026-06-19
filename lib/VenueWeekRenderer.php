@@ -11,6 +11,28 @@ class VenueWeekRenderer
 {
     public const SCHEDULE_LINK_LABEL = '4-week schedule';
 
+    /**
+     * @param array<string, mixed> $venue
+     */
+    public static function venueNameMarkup(array $venue, string $scheduleHref = '', bool $linkName = true): string
+    {
+        $name = (string) ($venue['name'] ?? '');
+        $escapedName = htmlspecialchars($name, ENT_QUOTES, 'UTF-8');
+
+        if ($linkName && $scheduleHref !== '') {
+            $markup = '<b><a href="' . htmlspecialchars($scheduleHref, ENT_QUOTES, 'UTF-8') . '">' . $escapedName . '</a></b>';
+        } else {
+            $markup = '<b>' . $escapedName . '</b>';
+        }
+
+        if (!empty($venue['url'])) {
+            $url = (string) $venue['url'];
+            $markup .= ' <a href="' . htmlspecialchars($url, ENT_QUOTES, 'UTF-8') . '" target="_blank" rel="noopener" class="venue-website-link">website</a>';
+        }
+
+        return $markup;
+    }
+
     public static function scheduleLinkMarkup(string $href, string $venueName = ''): string
     {
         $label = $venueName !== ''
@@ -22,7 +44,9 @@ class VenueWeekRenderer
             . ' title="' . htmlspecialchars($label, ENT_QUOTES, 'UTF-8') . '">'
             . '<svg class="venue-schedule-link__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false">'
             . '<path fill="currentColor" d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 16H5V10h14v10zM5 8V6h14v2H5zm2 4h2v2H7v-2zm4 0h2v2h-2v-2zm4 0h2v2h-2v-2zm-8 4h2v2H7v-2zm4 0h2v2h-2v-2zm4 0h2v2h-2v-2z"/>'
-            . '</svg></a>';
+            . '</svg>'
+            . '<span class="venue-schedule-link__label">' . htmlspecialchars(self::SCHEDULE_LINK_LABEL, ENT_QUOTES, 'UTF-8') . '</span>'
+            . '</a>';
     }
 
     /**
@@ -34,17 +58,14 @@ class VenueWeekRenderer
         $name = (string) ($venue['name'] ?? '');
         $slug = (string) ($venue['slug'] ?? VenueUtils::slug((string) ($venue['name'] ?? '')));
         $tag = $weekStart !== '' ? 'div' : 'p';
+        $linkName = $weekStart !== '';
+        $venueWeekHref = $linkName
+            ? 'venue.php?venue=' . rawurlencode($slug) . '&date=' . rawurlencode($weekStart)
+            : '';
 
-        if (!empty($venue['url'])) {
-            $url = (string) $venue['url'];
-            $output = '<' . $tag . ' class="venue-block venue-week__block" data-venue-slug="' . htmlspecialchars($slug, ENT_QUOTES, 'UTF-8') . '">';
-            $output .= VenueFavorite::buttonMarkup();
-            $output .= '<b><a href="' . htmlspecialchars($url, ENT_QUOTES, 'UTF-8') . '" target="_blank">' . htmlspecialchars($name, ENT_QUOTES, 'UTF-8') . '</a></b>';
-        } else {
-            $output = '<' . $tag . ' class="venue-block venue-week__block" data-venue-slug="' . htmlspecialchars($slug, ENT_QUOTES, 'UTF-8') . '">';
-            $output .= VenueFavorite::buttonMarkup();
-            $output .= '<b>' . htmlspecialchars($name, ENT_QUOTES, 'UTF-8') . '</b>';
-        }
+        $output = '<' . $tag . ' class="venue-block venue-week__block" data-venue-slug="' . htmlspecialchars($slug, ENT_QUOTES, 'UTF-8') . '">';
+        $output .= VenueFavorite::buttonMarkup();
+        $output .= self::venueNameMarkup($venue, $venueWeekHref, $linkName);
 
         $hasPhone = !empty($venue['phone']);
         $hasNote = !empty($venue['note']);
@@ -59,6 +80,10 @@ class VenueWeekRenderer
         } elseif ($hasNote) {
             $note = (string) $venue['note'];
             $output .= '<br>' . htmlspecialchars($note, ENT_QUOTES, 'UTF-8');
+        }
+
+        if ($linkName) {
+            $output .= self::scheduleLinkMarkup($venueWeekHref, $name);
         }
 
         $output .= "<br>\n";

@@ -51,5 +51,13 @@ if ($filtersActive) {
         <?php include $navPartial; ?>
         <?php include __DIR__ . '/filter-nav-toggle.php'; ?>
     </div>
+    <div class="calendar-filter-card__status" data-filter-status>
+        <p class="event-filter__summary" data-filter-summary aria-live="polite">
+            <?php if ($totalEventCount > 0 && !$filtersActive): ?>
+                <?= (int) $totalEventCount ?> events — filter or pick my venues
+            <?php endif; ?>
+        </p>
+        <div class="event-filter__chips" data-filter-chips role="list" hidden></div>
+    </div>
     <?php include __DIR__ . '/event-filter-panel.php'; ?>
 </div>

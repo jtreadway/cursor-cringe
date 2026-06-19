@@ -132,14 +132,8 @@ class WeekRenderer
         $slug = (string) ($venue['slug'] ?? VenueUtils::slug($name));
         $venueWeekHref = 'venue.php?venue=' . rawurlencode($slug) . '&date=' . rawurlencode($weekStart);
 
-        if (!empty($venue['url'])) {
-            $url = (string) $venue['url'];
-            $output = "\t<p class=\"venue-block\" data-venue-slug=\"{$slug}\">" . VenueFavorite::buttonMarkup();
-            $output .= '<b><a href="' . $url . '" target="_blank">' . $name . '</a></b>';
-        } else {
-            $output = "\t<p class=\"venue-block\" data-venue-slug=\"{$slug}\">" . VenueFavorite::buttonMarkup();
-            $output .= '<b>' . $name . '</b>';
-        }
+        $output = "\t<p class=\"venue-block\" data-venue-slug=\"{$slug}\">" . VenueFavorite::buttonMarkup();
+        $output .= VenueWeekRenderer::venueNameMarkup($venue, $venueWeekHref, true);
 
         $hasPhone = !empty($venue['phone']);
         $hasNote = !empty($venue['note']);
