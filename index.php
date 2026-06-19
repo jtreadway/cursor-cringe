@@ -114,6 +114,10 @@ $prefsQuery = prefsQueryForRequest();
 $filterQuery = filterQueryForRequest();
 $viewQuery = viewQueryForMode($viewMode);
 $bodyClasses = bodyClassForViewMode($viewMode);
+$scopeActive = $scopeMode === 'favorites';
+$filtersActive = $activeTags !== [] || $findQuery !== '' || $scopeActive;
+$filterPanelOpen = $filtersActive || filterPanelOpenInRequest();
+$showFilterToggle = $hasWeek && ($totalEventCount > 0 || $tagCounts !== []);
 
 ?><!DOCTYPE html>
 <html lang="en">
@@ -143,7 +147,11 @@ $bodyClasses = bodyClassForViewMode($viewMode);
         <p class="meta">JSON proof of concept — <?= htmlspecialchars($weekHeader, ENT_QUOTES, 'UTF-8') ?></p>
     </header>
 
-    <?php include __DIR__ . '/partials/calendar-nav.php'; ?>
+    <?php
+    $navPartial = __DIR__ . '/partials/calendar-nav.php';
+    $showFilterActions = true;
+    include __DIR__ . '/partials/calendar-filter-card.php';
+    ?>
 
         <?php if ($hasWeek && $viewMode === 'day' && isset($weekData)): ?>
         <nav class="day-nav" aria-label="Days this week">
@@ -165,11 +173,6 @@ $bodyClasses = bodyClassForViewMode($viewMode);
             <?php endforeach; ?>
         </nav>
         <?php endif; ?>
-
-    <?php if ($hasWeek): ?>
-        <?php $showFilterActions = true; ?>
-        <?php include __DIR__ . '/partials/event-filter.php'; ?>
-    <?php endif; ?>
 
     <p class="pick">Proof of concept: week content is loaded from <code>weeks/<?= htmlspecialchars($thisWeek, ENT_QUOTES, 'UTF-8') ?>.json</code>. Generate fresh JSON with <code>php generate.php</code> or <a href="generate.php">generate.php</a>. Regression-test with <code>php verify.php</code> or <a href="verify.php">verify.php</a>.</p>
 

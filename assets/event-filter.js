@@ -9,9 +9,8 @@ class EventFilter {
         this.myVenuesButton = root.querySelector('[data-filter-my-venues]');
         this.allButton = root.querySelector('[data-filter-all]');
         this.findInput = root.querySelector('[data-filter-find]');
-        this.toggleButton = root.querySelector('[data-filter-toggle]');
+        this.toggleButton = document.querySelector('[data-filter-toggle]');
         this.panel = root.querySelector('[data-filter-panel]');
-        this.toggleLabel = root.querySelector('.event-filter__toggle-label');
 
         const urlParams = new URLSearchParams(window.location.search);
         const saved = CalendarPrefs.loadSaved();
@@ -213,7 +212,11 @@ class EventFilter {
         const open = forceOpen === null ? !this.root.classList.contains('is-open') : forceOpen;
         this.root.classList.toggle('is-open', open);
         this.panel.hidden = !open;
-        this.toggleButton.setAttribute('aria-expanded', open ? 'true' : 'false');
+        if (this.toggleButton) {
+            this.toggleButton.classList.toggle('is-open', open);
+            this.toggleButton.setAttribute('aria-expanded', open ? 'true' : 'false');
+        }
+        this.syncToggleLabel();
         this.syncFilterOpenInUrl(open);
     }
 
@@ -494,7 +497,7 @@ class EventFilter {
     }
 
     syncToggleLabel() {
-        if (!this.toggleLabel) {
+        if (!this.toggleButton) {
             return;
         }
 
@@ -512,8 +515,14 @@ class EventFilter {
             parts.push(`"${this.findQuery.trim()}"`);
         }
 
-        this.toggleLabel.textContent = parts.length > 0 ? `Filters · ${parts.join(' · ')}` : 'Filters';
-        this.root.classList.toggle('has-active-filters', parts.length > 0);
+        const hasActive = parts.length > 0;
+        const open = this.root.classList.contains('is-open');
+        const summary = parts.length > 0 ? `: ${parts.join(', ')}` : '';
+
+        this.toggleButton.classList.toggle('has-active-filters', hasActive);
+        this.root.classList.toggle('has-active-filters', hasActive);
+        this.toggleButton.setAttribute('aria-label', `${open ? 'Hide' : 'Show'} filters${summary}`);
+        this.toggleButton.title = parts.length > 0 ? `Filters · ${parts.join(' · ')}` : 'Filters';
     }
 
     venueInScope(venue) {

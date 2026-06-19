@@ -94,6 +94,10 @@ $prefsQuery = prefsQueryForRequest();
 $filterQuery = filterQueryForRequest();
 $viewQuery = viewQueryForMode($viewMode);
 $navQuery = $tagsQuery . $findQueryParam . $scopeQuery . $prefsQuery . $filterQuery;
+$scopeActive = $scopeMode === 'favorites';
+$filtersActive = $activeTags !== [] || $findQuery !== '' || $scopeActive;
+$filterPanelOpen = $filtersActive || filterPanelOpenInRequest();
+$showFilterToggle = $hasWeek && $venue !== null && ($totalEventCount > 0 || $tagCounts !== []);
 $backUrl = 'index.php?date=' . rawurlencode($selectedDate) . $viewQuery . $navQuery;
 $venueQuery = 'venue=' . rawurlencode($venueSlug) . '&date=';
 $prevVenueHref = 'venue.php?' . $venueQuery . rawurlencode($prevWeekDate) . $navQuery;
@@ -119,37 +123,12 @@ $backLabel = $viewMode === 'week' ? '← Back to week view' : '← Back to day v
         ><?= htmlspecialchars($backLabel, ENT_QUOTES, 'UTF-8') ?></a></p>
     </header>
 
-    <nav class="calendar-nav" aria-label="Week navigation">
-        <?php if ($prevWindowStart !== null): ?>
-        <a
-            href="<?= htmlspecialchars($prevVenueHref, ENT_QUOTES, 'UTF-8') ?>"
-            class="calendar-nav__week"
-            data-nav-sync
-            data-nav-date="<?= htmlspecialchars($prevWeekDate, ENT_QUOTES, 'UTF-8') ?>"
-            data-nav-venue="<?= htmlspecialchars($venueSlug, ENT_QUOTES, 'UTF-8') ?>"
-            rel="prev"
-        >prev</a>
-        <?php else: ?>
-        <span class="calendar-nav__week is-disabled" aria-hidden="true">prev</span>
-        <?php endif; ?>
-        <span class="calendar-nav__layout is-active"><?= htmlspecialchars($weekHeader, ENT_QUOTES, 'UTF-8') ?></span>
-        <?php if ($nextWindowStart !== null): ?>
-        <a
-            href="<?= htmlspecialchars($nextVenueHref, ENT_QUOTES, 'UTF-8') ?>"
-            class="calendar-nav__week"
-            data-nav-sync
-            data-nav-date="<?= htmlspecialchars($nextWeekDate, ENT_QUOTES, 'UTF-8') ?>"
-            data-nav-venue="<?= htmlspecialchars($venueSlug, ENT_QUOTES, 'UTF-8') ?>"
-            rel="next"
-        >next</a>
-        <?php else: ?>
-        <span class="calendar-nav__week is-disabled" aria-hidden="true">next</span>
-        <?php endif; ?>
-    </nav>
-
     <?php if ($hasWeek && $venue !== null): ?>
-        <?php include __DIR__ . '/partials/event-filter.php'; ?>
-        <?= $venueHtml ?>
+    <?php
+    $navPartial = __DIR__ . '/partials/venue-week-nav.php';
+    include __DIR__ . '/partials/calendar-filter-card.php';
+    ?>
+    <?= $venueHtml ?>
     <?php elseif ($venueSlug === ''): ?>
         <p class="error">Missing venue parameter.</p>
     <?php elseif (!$hasWeek): ?>
