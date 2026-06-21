@@ -255,21 +255,59 @@ header p {
     min-width: 0;
 }
 
-.calendar-nav__mode {
+.view-mode-strip {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.2rem;
     margin: 0.35rem 0 0;
-    text-align: center;
-    font-size: 0.85rem;
 }
 
-.calendar-nav__mode a {
-    color: #555;
+.view-mode-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.35rem;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    line-height: 0;
     text-decoration: none;
-    border-bottom: 1px solid #bbb;
 }
 
-.calendar-nav__mode a:hover {
-    color: #222;
-    border-bottom-color: #222;
+.view-mode-icon:hover {
+    border-color: #ccc;
+    background: #fafafa;
+}
+
+.view-mode-icon.is-active {
+    border-color: #888;
+    background: #f3f3f3;
+}
+
+.view-mode-icon__grid {
+    display: grid;
+    grid-template-columns: repeat(7, 2px);
+    grid-template-rows: repeat(4, 2px);
+    border: 1px solid #888;
+}
+
+.view-mode-icon__cell {
+    border-right: 1px solid #888;
+    border-bottom: 1px solid #888;
+    background: #fff;
+    box-sizing: border-box;
+}
+
+.view-mode-icon__cell:nth-child(7n) {
+    border-right: none;
+}
+
+.view-mode-icon__cell:nth-child(n+22) {
+    border-bottom: none;
+}
+
+.view-mode-icon__cell.is-on {
+    background: #333;
 }
 
 .calendar-filter-card__status {

@@ -36,8 +36,8 @@ Browser:
 
 Top nav in the filter card:
 
-- **Day view** — week strip (`prev week` · date range · `next week`), then Mo–Su day pills, plus a **week view** link
-- **Week view** — prev week · week range · next week, plus a **day view** link
+- **Day view** — week strip (`prev week` · date range · `next week`), then Mo–Su day pills, plus day/week grid icons
+- **Week view** — prev week · week range · next week, plus day/week grid icons
 
 Filter row: **Filter:** + find text field + venue/event pills; tap pills or funnel icon to expand. Find field stays in place and widens when open.
 

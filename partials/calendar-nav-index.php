@@ -20,8 +20,6 @@ $dayHref = '?date=' . rawurlencode($selectedDate) . '&view=day' . $tagsQuery . $
 $weekHref = '?date=' . rawurlencode($selectedDate) . '&view=week' . $tagsQuery . $findQueryParam . $scopeQuery . $prefsQuery . ($filterQuery ?? '');
 $prevHref = '?date=' . rawurlencode($prevWeekDate) . $viewQuery . $navQuery;
 $nextHref = '?date=' . rawurlencode($nextWeekDate) . $viewQuery . $navQuery;
-$modeHref = $viewMode === 'day' ? $weekHref : $dayHref;
-$modeLabel = $viewMode === 'day' ? 'week view' : 'day view';
 
 ?>
 <div class="calendar-filter-card__nav">
@@ -88,12 +86,5 @@ $modeLabel = $viewMode === 'day' ? 'week view' : 'day view';
         </div>
     </nav>
 <?php endif; ?>
-    <p class="calendar-nav__mode">
-        <a
-            href="<?= htmlspecialchars($modeHref, ENT_QUOTES, 'UTF-8') ?>"
-            data-nav-sync
-            data-nav-date="<?= htmlspecialchars($selectedDate, ENT_QUOTES, 'UTF-8') ?>"
-            data-nav-view="<?= $viewMode === 'day' ? 'week' : 'day' ?>"
-        ><?= htmlspecialchars($modeLabel, ENT_QUOTES, 'UTF-8') ?></a>
-    </p>
+    <?php include __DIR__ . '/view-mode-icons.php'; ?>
 </div>
