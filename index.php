@@ -18,9 +18,11 @@ $findQuery = parseFindParam(isset($_GET['find']) ? (string) $_GET['find'] : null
 $viewMode = isset($_GET['view'])
     ? parseViewParam((string) $_GET['view'])
     : 'day';
-$scopeMode = isset($_GET['scope'])
-    ? parseScopeParam((string) $_GET['scope'])
-    : 'all';
+$favoriteSlugs = parseSlugListCookie(isset($_COOKIE['cringe_favorites']) ? (string) $_COOKIE['cringe_favorites'] : null);
+$scopeMode = resolveScopeMode(
+    isset($_GET['scope']) ? (string) $_GET['scope'] : null,
+    $favoriteSlugs
+);
 
 $redirectDate = $today->format('Ymd');
 if (isset($_GET['date']) && preg_match('/^\d{8}$/', (string) $_GET['date'])) {
@@ -60,7 +62,6 @@ $totalEventCount = 0;
 $favoriteEventCount = 0;
 $totalVenueCount = 0;
 $favoriteVenueCount = 0;
-$favoriteSlugs = parseSlugListCookie(isset($_COOKIE['cringe_favorites']) ? (string) $_COOKIE['cringe_favorites'] : null);
 
 if ($hasWeek) {
     $weekData = WeekRenderer::loadWeek($weekPath);
@@ -116,8 +117,7 @@ $viewQuery = viewQueryForMode($viewMode);
 $bodyClasses = bodyClassForViewMode($viewMode);
 $scopeActive = $scopeMode === 'favorites';
 $filtersActive = $activeTags !== [] || $findQuery !== '' || $scopeActive;
-$filterPanelOpen = $filtersActive || filterPanelOpenInRequest();
-$showFilterToggle = $hasWeek && ($totalEventCount > 0 || $tagCounts !== []);
+$filterPanelOpen = $activeTags !== [] || $findQuery !== '' || filterPanelOpenInRequest();
 
 ?><!DOCTYPE html>
 <html lang="en">
@@ -144,7 +144,6 @@ $showFilterToggle = $hasWeek && ($totalEventCount > 0 || $tagCounts !== []);
 <div class="wrap">
     <header>
         <h1>Live Shows Calendar</h1>
-        <p class="meta">JSON proof of concept — <?= htmlspecialchars($weekHeader, ENT_QUOTES, 'UTF-8') ?></p>
     </header>
 
     <?php

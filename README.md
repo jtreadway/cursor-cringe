@@ -36,10 +36,10 @@ Browser:
 
 Top nav in the filter card:
 
-- **Day view** — `‹` prev week · Mo–Su · next week `›`, plus a **week view** link
+- **Day view** — week strip (`prev week` · date range · `next week`), then Mo–Su day pills, plus a **week view** link
 - **Week view** — prev week · week range · next week, plus a **day view** link
 
-Filter summary under the nav shows event counts and active filter chips when the panel is closed.
+Filter row: **Filter:** + find text field + venue/event pills; tap pills or funnel icon to expand. Find field stays in place and widens when open.
 
 ### Filters
 

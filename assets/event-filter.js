@@ -1,4 +1,6 @@
 class EventFilter {
+    static FIND_PLACEHOLDER = 'find text (2+ characters)';
+
     constructor(root) {
         EventFilter.activeInstance = this;
         this.root = root;
@@ -9,10 +11,15 @@ class EventFilter {
         this.myVenuesButton = root.querySelector('[data-filter-my-venues]');
         this.allButton = root.querySelector('[data-filter-all]');
         this.findInput = root.querySelector('[data-filter-find]');
-        this.toggleButton = document.querySelector('[data-filter-toggle]');
         this.panel = root.querySelector('[data-filter-panel]');
+        this.toggleButton = root.querySelector('[data-filter-toggle]');
+        this.filterCard = root.querySelector('[data-filter-card]');
         this.summaryEl = root.querySelector('[data-filter-summary]');
-        this.chipsEl = root.querySelector('[data-filter-chips]');
+        this.summaryVenuePill = root.querySelector('[data-summary-pill="venue"]');
+        this.summaryTypesPill = root.querySelector('[data-summary-pill="types"]');
+        this.hideVenueScope = root.dataset.hideVenueScope === 'true';
+        this.filterAlwaysOpen = root.dataset.filterAlwaysOpen === 'true';
+        this.totalEventCount = parseInt(root.dataset.totalEventCount ?? '', 10) || 0;
 
         const urlParams = new URLSearchParams(window.location.search);
         const saved = CalendarPrefs.loadSaved();
@@ -29,12 +36,12 @@ class EventFilter {
             ? (urlParams.get('find') || '').trim()
             : (this.findInput?.value || '').trim();
 
-        if (urlParams.has('scope')) {
+        if (this.hideVenueScope) {
+            this.favoritesOnly = false;
+        } else if (urlParams.has('scope')) {
             this.favoritesOnly = EventFilter.favoritesOnlyFromParams(urlParams);
         } else {
-            this.favoritesOnly =
-                Boolean(this.myVenuesButton?.classList.contains('is-active'))
-                || saved.scope === 'favorites';
+            this.favoritesOnly = EventFilter.resolveFavoritesOnly(urlParams, saved, this.favorites);
         }
 
         if (this.findInput) {
@@ -44,17 +51,37 @@ class EventFilter {
         this.totalVenueCount = 0;
         this.favoriteVenueCount = 0;
 
+        this.syncVenueScopeButtons();
         this.bindControls();
         if (this.tagsContainer || this.venueScopeContainer) {
             this.syncAvailableTags();
         }
+        if (this.filterAlwaysOpen) {
+            this.ensurePanelOpen();
+        }
         this.apply();
         this.updateUrl();
-        this.syncToggleLabel();
+        this.syncFilterState();
     }
 
     static favoritesOnlyFromParams(params) {
         return params.get('scope') === 'favorites';
+    }
+
+    static resolveFavoritesOnly(params, saved, favorites) {
+        if (params.has('scope')) {
+            return EventFilter.favoritesOnlyFromParams(params);
+        }
+
+        if (params.get('prefs') === 'neutral') {
+            return false;
+        }
+
+        if (saved.scope === 'favorites') {
+            return true;
+        }
+
+        return favorites.size > 0;
     }
 
     static parseTagList(raw) {
@@ -62,6 +89,18 @@ class EventFilter {
             .split(',')
             .map((tag) => tag.trim().toLowerCase())
             .filter(Boolean);
+    }
+
+    venueBlocksInScope(scope) {
+        if (!(scope instanceof Element)) {
+            return [];
+        }
+
+        if (scope.classList.contains('venue-block')) {
+            return [scope];
+        }
+
+        return Array.from(scope.querySelectorAll('.venue-block'));
     }
 
     static wordsFromText(text) {
@@ -153,25 +192,47 @@ class EventFilter {
                 this.apply();
                 this.persistState();
             });
-        }
-
-        if (this.toggleButton && this.panel) {
-            this.toggleButton.addEventListener('click', () => this.togglePanel());
-        }
-
-        if (this.chipsEl) {
-            this.chipsEl.addEventListener('click', (event) => {
-                const chip = event.target.closest('[data-filter-chip]');
-                if (!chip) {
-                    return;
+            this.findInput.addEventListener('focus', () => {
+                if (!this.root.classList.contains('is-open')) {
+                    this.togglePanel(true);
                 }
-
-                this.removeFilterChip(chip.dataset.filterChip || '', chip.dataset.filterChipValue || '');
+            });
+            this.findInput.addEventListener('click', (event) => {
+                event.stopPropagation();
             });
         }
 
+        if (this.filterCard && !this.filterAlwaysOpen) {
+            this.filterCard.addEventListener('click', () => {
+                if (!this.root.classList.contains('is-open')) {
+                    this.togglePanel(true);
+                }
+            });
+        }
+
+        if (this.toggleButton && !this.filterAlwaysOpen) {
+            this.toggleButton.addEventListener('click', (event) => {
+                event.stopPropagation();
+                this.togglePanel();
+            });
+        }
+
+        this.root.addEventListener('keydown', (event) => {
+            if (this.filterAlwaysOpen || event.key !== 'Escape' || !this.root.classList.contains('is-open')) {
+                return;
+            }
+
+            event.preventDefault();
+            this.togglePanel(false);
+            this.findInput?.focus();
+        });
+
         document.addEventListener('calendar:favoriteschange', () => {
             this.favorites = CalendarPrefs.loadFavoritesSet();
+            if (!this.hideVenueScope && this.favorites.size === 0 && this.favoritesOnly) {
+                this.favoritesOnly = false;
+                this.syncVenueScopeButtons();
+            }
             this.syncAvailableTags();
             this.apply();
         });
@@ -192,8 +253,24 @@ class EventFilter {
         this.syncFromUrl();
         this.syncAvailableTags();
         this.apply();
+        if (this.filterAlwaysOpen) {
+            this.ensurePanelOpen();
+            return;
+        }
+
         const params = new URLSearchParams(window.location.search);
         this.togglePanel(params.get('filter') === 'open');
+    }
+
+    ensurePanelOpen() {
+        if (!this.panel) {
+            return;
+        }
+
+        this.root.classList.add('is-open');
+        this.panel.hidden = false;
+        this.syncFilterState();
+        this.syncFilterSummary();
     }
 
     syncFromUrl() {
@@ -210,41 +287,37 @@ class EventFilter {
             this.findInput.value = this.findQuery;
         }
 
-        if (params.has('scope')) {
+        if (this.hideVenueScope) {
+            this.favoritesOnly = false;
+        } else if (params.has('scope')) {
             this.favoritesOnly = EventFilter.favoritesOnlyFromParams(params);
         } else {
-            this.favoritesOnly = false;
-        }
-    }
-
-    removeFilterChip(type, value) {
-        if (type === 'scope') {
-            this.favoritesOnly = false;
-            this.syncVenueScopeButtons();
-        } else if (type === 'tag' && value) {
-            this.activeTags.delete(value.toLowerCase());
-            this.syncTypeTagButtons();
-        } else if (type === 'find') {
-            this.findQuery = '';
-            if (this.findInput) {
-                this.findInput.value = '';
-            }
+            this.favoritesOnly = EventFilter.resolveFavoritesOnly(
+                params,
+                CalendarPrefs.loadSaved(),
+                this.favorites
+            );
         }
 
-        this.apply();
-        this.persistState();
+        this.syncVenueScopeButtons();
     }
 
-    countVisibleEventsInScope(scope) {
-        let count = 0;
+    buildTypesSummaryLabel(eventCount) {
+        const tags = Array.from(this.activeTags).sort();
 
-        scope.querySelectorAll('.event-line').forEach((line) => {
-            if (!line.classList.contains('is-filtered-out')) {
-                count += 1;
-            }
-        });
+        if (tags.length === 0) {
+            return `all events ${eventCount}`;
+        }
 
-        return count;
+        const shown = tags.slice(0, 3);
+        let label = shown.join(', ');
+        const extra = tags.length - shown.length;
+
+        if (extra > 0) {
+            label += ` +${extra}`;
+        }
+
+        return label;
     }
 
     syncFilterSummary() {
@@ -252,62 +325,61 @@ class EventFilter {
             return;
         }
 
-        const scope = this.getFilterScope();
-        const total = this.countEventsInScope(scope);
-        const visible = this.countVisibleEventsInScope(scope);
-        const hasActive = !this.filtersAreNeutral();
-        const open = this.root.classList.contains('is-open');
+        const eventCount = this.totalEventCount;
 
-        if (total === 0) {
-            this.summaryEl.textContent = '';
-        } else if (hasActive) {
-            this.summaryEl.textContent = `Showing ${visible} of ${total} events`;
-        } else {
-            this.summaryEl.textContent = `${total} events — filter or pick my venues`;
+        if (this.summaryVenuePill && !this.hideVenueScope) {
+            const venueCount = this.favoritesOnly ? (this.favoriteVenueCount ?? 0) : (this.totalVenueCount ?? 0);
+            const venueClass = this.favoritesOnly ? 'event-filter__tag--my-venues' : 'event-filter__tag--all-venues';
+            this.summaryVenuePill.className = `event-filter__summary-pill event-filter__summary-pill--venue event-filter__tag ${venueClass} is-active`;
+            this.summaryVenuePill.textContent = `${this.favoritesOnly ? 'my venues' : 'all venues'} ${venueCount}`;
         }
 
-        if (!this.chipsEl) {
-            return;
+        if (this.summaryTypesPill) {
+            const tags = Array.from(this.activeTags).sort();
+            const allEventsActive = tags.length === 0;
+
+            if (this.hideVenueScope && this.summaryEl.querySelector('[data-summary-pill^="type-"]')) {
+                this.summaryTypesPill.className = `event-filter__summary-pill event-filter__summary-pill--types event-filter__tag event-filter__tag--all${allEventsActive ? ' is-active' : ''}`;
+                this.summaryTypesPill.textContent = `all events ${eventCount}`;
+
+                this.summaryEl.querySelectorAll('[data-summary-pill^="type-"]').forEach((pill) => {
+                    const tag = (pill.dataset.summaryPill || '').replace(/^type-/, '').toLowerCase();
+                    pill.classList.toggle('is-active', tag !== '' && this.activeTags.has(tag));
+                });
+            } else {
+                this.summaryTypesPill.className = `event-filter__summary-pill event-filter__summary-pill--types event-filter__tag${allEventsActive ? ' event-filter__tag--all' : ''} is-active`;
+                this.summaryTypesPill.textContent = this.buildTypesSummaryLabel(eventCount);
+            }
         }
 
-        if (!hasActive || open) {
-            this.chipsEl.hidden = true;
-            this.chipsEl.replaceChildren();
-            return;
+        if (this.filterCard) {
+            const open = this.root.classList.contains('is-open');
+            this.filterCard.setAttribute('aria-expanded', open ? 'true' : 'false');
+            if (open) {
+                this.filterCard.removeAttribute('aria-label');
+            } else {
+                this.filterCard.setAttribute(
+                    'aria-label',
+                    this.hideVenueScope ? 'Edit event filters' : 'Edit venue and event filters'
+                );
+            }
         }
 
-        const chips = [];
-
-        if (this.favoritesOnly) {
-            chips.push(this.createFilterChip('scope', 'my venues', 'favorites'));
+        if (this.toggleButton) {
+            const open = this.root.classList.contains('is-open');
+            this.toggleButton.setAttribute('aria-expanded', open ? 'true' : 'false');
+            this.toggleButton.setAttribute('aria-label', open ? 'Close filters' : 'Show filters');
+            this.toggleButton.setAttribute('title', open ? 'Close filters' : 'Filters');
         }
-
-        Array.from(this.activeTags).sort().forEach((tag) => {
-            chips.push(this.createFilterChip('tag', tag, tag));
-        });
-
-        if (this.effectiveFindQuery() !== '') {
-            chips.push(this.createFilterChip('find', `"${this.findQuery.trim()}"`, 'find'));
-        }
-
-        this.chipsEl.replaceChildren(...chips);
-        this.chipsEl.hidden = chips.length === 0;
-    }
-
-    createFilterChip(type, label, value) {
-        const chip = document.createElement('button');
-        chip.type = 'button';
-        chip.className = 'event-filter__chip';
-        chip.dataset.filterChip = type;
-        chip.dataset.filterChipValue = value;
-        chip.setAttribute('role', 'listitem');
-        chip.setAttribute('aria-label', `Remove ${label} filter`);
-        chip.textContent = label;
-        return chip;
     }
 
     togglePanel(forceOpen = null) {
-        if (!this.toggleButton || !this.panel) {
+        if (this.filterAlwaysOpen) {
+            this.ensurePanelOpen();
+            return;
+        }
+
+        if (!this.panel) {
             return;
         }
 
@@ -315,15 +387,18 @@ class EventFilter {
         this.root.classList.toggle('is-open', open);
         this.panel.hidden = !open;
         if (this.toggleButton) {
-            this.toggleButton.classList.toggle('is-open', open);
             this.toggleButton.setAttribute('aria-expanded', open ? 'true' : 'false');
         }
-        this.syncToggleLabel();
+        this.syncFilterState();
         this.syncFilterSummary();
         this.syncFilterOpenInUrl(open);
     }
 
     syncFilterOpenInUrl(open) {
+        if (this.filterAlwaysOpen) {
+            open = true;
+        }
+
         const url = new URL(window.location.href);
 
         if (open) {
@@ -392,7 +467,7 @@ class EventFilter {
     collectTagCounts(scope) {
         const counts = new Map();
 
-        scope.querySelectorAll('.venue-block').forEach((venue) => {
+        this.venueBlocksInScope(scope).forEach((venue) => {
             venue.querySelectorAll('.event-line').forEach((line) => {
                 EventFilter.parseTagList(line.dataset.tags || '').forEach((tag) => {
                     counts.set(tag, (counts.get(tag) || 0) + 1);
@@ -406,7 +481,7 @@ class EventFilter {
     countEventsInScope(scope) {
         let count = 0;
 
-        scope.querySelectorAll('.venue-block').forEach((venue) => {
+        this.venueBlocksInScope(scope).forEach((venue) => {
             count += venue.querySelectorAll('.event-line').length;
         });
 
@@ -417,7 +492,7 @@ class EventFilter {
         const slugs = new Set();
         let anonymous = 0;
 
-        scope.querySelectorAll('.venue-block').forEach((venue) => {
+        this.venueBlocksInScope(scope).forEach((venue) => {
             if (venue.querySelectorAll('.event-line').length === 0) {
                 return;
             }
@@ -436,7 +511,7 @@ class EventFilter {
     countFavoriteVenuesInScope(scope) {
         const slugs = new Set();
 
-        scope.querySelectorAll('.venue-block').forEach((venue) => {
+        this.venueBlocksInScope(scope).forEach((venue) => {
             if (venue.querySelectorAll('.event-line').length === 0) {
                 return;
             }
@@ -457,7 +532,7 @@ class EventFilter {
     venueSearchText(venue) {
         const meta = venue.cloneNode(true);
         meta.querySelectorAll('.event-line').forEach((line) => line.remove());
-        meta.querySelectorAll('.venue-schedule-link').forEach((link) => link.remove());
+        meta.querySelectorAll('.venue-details-link, .venue-profile-extras').forEach((node) => node.remove());
         meta.querySelectorAll('.venue-favorite').forEach((button) => button.remove());
 
         return meta.textContent.toLowerCase();
@@ -539,7 +614,9 @@ class EventFilter {
         });
 
         if (this.typesSection) {
-            const isEmpty = eventCount === 0 && tagCounts.size === 0 && this.filtersAreNeutral();
+            const isEmpty = this.hideVenueScope
+                ? false
+                : eventCount === 0 && tagCounts.size === 0 && this.filtersAreNeutral();
             this.typesSection.classList.toggle('is-empty', isEmpty);
             this.root.classList.toggle('is-empty', isEmpty);
         }
@@ -550,11 +627,11 @@ class EventFilter {
     syncAvailableTags(panel = null) {
         const scope = this.getFilterScope(panel);
         const tagCounts = this.collectTagCounts(scope);
-        const eventCount = this.countEventsInScope(scope);
+        this.totalEventCount = this.countEventsInScope(scope) || this.totalEventCount;
         const venueCount = this.countVenuesInScope(scope);
         const favoriteVenueCount = this.countFavoriteVenuesInScope(scope);
         this.syncVenueScope(venueCount, favoriteVenueCount);
-        this.rebuildTypeTagButtons(tagCounts, eventCount);
+        this.rebuildTypeTagButtons(tagCounts, this.totalEventCount);
         this.syncFilterSummary();
     }
 
@@ -575,7 +652,7 @@ class EventFilter {
             this.myVenuesButton.setAttribute('aria-pressed', this.favoritesOnly ? 'true' : 'false');
         }
 
-        this.syncToggleLabel();
+        this.syncFilterState();
     }
 
     syncTypeTagButtons() {
@@ -597,39 +674,18 @@ class EventFilter {
             button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
         });
 
-        this.syncToggleLabel();
+        this.syncFilterState();
     }
 
-    syncToggleLabel() {
-        if (!this.toggleButton) {
-            return;
-        }
-
-        const parts = [];
-
-        if (this.activeTags.size > 0) {
-            parts.push(Array.from(this.activeTags).sort().join(', '));
-        }
-
-        if (this.favoritesOnly) {
-            parts.push('my venues');
-        }
-
-        if (this.effectiveFindQuery() !== '') {
-            parts.push(`"${this.findQuery.trim()}"`);
-        }
-
-        const hasActive = parts.length > 0;
-        const open = this.root.classList.contains('is-open');
-        const summary = parts.length > 0 ? `: ${parts.join(', ')}` : '';
-
-        this.toggleButton.classList.toggle('has-active-filters', hasActive);
-        this.root.classList.toggle('has-active-filters', hasActive);
-        this.toggleButton.setAttribute('aria-label', `${open ? 'Hide' : 'Show'} filters${summary}`);
-        this.toggleButton.title = parts.length > 0 ? `Filters · ${parts.join(' · ')}` : 'Filters';
+    syncFilterState() {
+        this.root.classList.toggle('has-active-filters', !this.filtersAreNeutral());
     }
 
     venueInScope(venue) {
+        if (this.hideVenueScope) {
+            return true;
+        }
+
         if (!this.favoritesOnly) {
             return true;
         }
@@ -664,10 +720,13 @@ class EventFilter {
 
         document.dispatchEvent(new CustomEvent('calendar:reflow'));
         this.syncFilterSummary();
+        this.syncFilterState();
     }
 
     filtersAreNeutral() {
-        return this.activeTags.size === 0 && this.effectiveFindQuery() === '' && !this.favoritesOnly;
+        const scopeNeutral = this.hideVenueScope || !this.favoritesOnly;
+
+        return this.activeTags.size === 0 && this.effectiveFindQuery() === '' && scopeNeutral;
     }
 
     clearFilters() {
@@ -676,9 +735,11 @@ class EventFilter {
         if (this.findInput) {
             this.findInput.value = '';
         }
-        this.favoritesOnly = false;
+        if (!this.hideVenueScope) {
+            this.favoritesOnly = false;
+            this.syncVenueScopeButtons();
+        }
         this.syncTypeTagButtons();
-        this.syncVenueScopeButtons();
         this.apply();
         this.persistState();
         this.togglePanel(true);
@@ -699,7 +760,7 @@ class EventFilter {
             url.searchParams.set('find', this.findQuery);
         }
 
-        if (this.favoritesOnly) {
+        if (!this.hideVenueScope && this.favoritesOnly) {
             url.searchParams.set('scope', 'favorites');
         } else {
             url.searchParams.delete('scope');
@@ -713,7 +774,7 @@ class EventFilter {
 
         if (this.root.classList.contains('is-open')) {
             url.searchParams.set('filter', 'open');
-        } else {
+        } else if (!this.filterAlwaysOpen) {
             url.searchParams.delete('filter');
         }
 

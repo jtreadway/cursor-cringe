@@ -64,14 +64,12 @@ header p {
 
 .calendar-filter-card {
     margin: 1rem 0;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    background: #f7f7f7;
 }
 
 .calendar-filter-card__header {
     position: relative;
-    padding: 0.45rem 2.1rem 0.45rem 0.45rem;
+    padding: 0;
+    margin-bottom: 0.5rem;
 }
 
 .calendar-filter-card__header .calendar-nav {
@@ -79,10 +77,8 @@ header p {
 }
 
 .calendar-filter-card__toggle {
-    position: absolute;
-    top: 0.35rem;
-    right: 0.35rem;
     display: inline-flex;
+    flex: none;
     align-items: center;
     justify-content: center;
     box-sizing: border-box;
@@ -103,14 +99,22 @@ header p {
     height: 1.125rem;
 }
 
-.calendar-filter-card__toggle:hover,
-.calendar-filter-card__toggle.is-open {
-    color: #222;
-    background: rgba(0, 0, 0, 0.06);
+.calendar-filter-card__toggle-icon--close {
+    display: none;
 }
 
-.calendar-filter-card.has-active-filters .calendar-filter-card__toggle:not(.is-open) {
+.calendar-filter-card.is-open .calendar-filter-card__toggle-icon--filter {
+    display: none;
+}
+
+.calendar-filter-card.is-open .calendar-filter-card__toggle-icon--close {
+    display: block;
+}
+
+.calendar-filter-card__toggle:hover,
+.calendar-filter-card__toggle:focus-visible {
     color: #222;
+    background: rgba(0, 0, 0, 0.06);
 }
 
 .calendar-filter-card__toggle:focus {
@@ -120,6 +124,27 @@ header p {
 .calendar-filter-card__toggle:focus-visible {
     outline: 2px solid #0066cc;
     outline-offset: 2px;
+}
+
+.calendar-filter-card.has-active-filters .calendar-filter-card__toggle {
+    color: #222;
+}
+
+.calendar-filter-card__filter {
+    box-sizing: border-box;
+    margin-bottom: 0.5rem;
+    padding: 0.65rem 0.85rem;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: #f7f7f7;
+}
+
+.calendar-filter-card:not(.is-open) .calendar-filter-card__filter {
+    cursor: pointer;
+}
+
+.calendar-filter-card:not(.is-open) .event-filter__find--summary {
+    cursor: text;
 }
 
 .calendar-nav a:hover,
@@ -141,10 +166,57 @@ header p {
     line-height: 1;
 }
 
+.calendar-nav--day,
+.calendar-nav--week {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin: 0;
+    width: 100%;
+}
+
+.calendar-nav__week-strip {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.35rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.calendar-nav__week-strip .calendar-nav__week {
+    flex: 0 1 auto;
+    min-width: 0;
+    font-size: 0.78rem;
+    padding: 0.3rem 0.4rem;
+}
+
+.calendar-nav__week-strip .calendar-nav__label {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: 0.25rem 0.15rem;
+    border: none;
+    background: transparent;
+    font-size: 0.78rem;
+    line-height: 1.25;
+    text-align: center;
+    text-transform: none;
+}
+
+.calendar-nav__days {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.2rem;
+    flex-wrap: nowrap;
+    width: 100%;
+    box-sizing: border-box;
+}
+
 .calendar-nav__day {
-    min-width: 2rem;
-    padding-left: 0.35rem;
-    padding-right: 0.35rem;
+    flex: 1 1 0;
+    min-width: 0;
+    padding: 0.3rem 0.1rem;
+    font-size: 0.78rem;
 }
 
 .calendar-nav__label {
@@ -154,8 +226,33 @@ header p {
     color: #444;
 }
 
+@media (max-width: 360px) {
+    .calendar-nav__week-strip .calendar-nav__week {
+        font-size: 0.7rem;
+        padding: 0.28rem 0.3rem;
+    }
+
+    .calendar-nav__week-strip .calendar-nav__label {
+        font-size: 0.7rem;
+    }
+
+    .calendar-nav__day {
+        padding-left: 0.05rem;
+        padding-right: 0.05rem;
+        font-size: 0.72rem;
+    }
+}
+
+.calendar-filter-card__nav {
+    width: 100%;
+}
+
 .calendar-filter-card__nav .calendar-nav {
     margin: 0;
+}
+
+.calendar-filter-card__nav .calendar-nav__day {
+    min-width: 0;
 }
 
 .calendar-nav__mode {
@@ -176,71 +273,192 @@ header p {
 }
 
 .calendar-filter-card__status {
-    padding: 0 0.85rem 0.65rem;
-}
-
-.calendar-filter-card.is-open .calendar-filter-card__status,
-.calendar-filter-card.has-active-filters .calendar-filter-card__status {
-    border-bottom: 1px solid #e8e8e8;
-}
-
-.event-filter__summary {
+    padding: 0;
     margin: 0;
-    font-size: 0.85rem;
-    color: #555;
-    text-align: center;
 }
 
-.event-filter__chips {
+.calendar-filter-card.is-open .calendar-filter-card__status {
+    margin-bottom: 0.65rem;
+}
+
+.calendar-filter-card.is-open .event-filter__summary-pills-wrap {
+    display: none;
+}
+
+.event-filter__summary-row {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    flex-wrap: wrap;
+}
+
+.event-filter__summary-controls {
+    display: flex;
+    align-items: center;
+    flex: 1 1 auto;
+    gap: 0.45rem;
+    box-sizing: border-box;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+}
+
+.event-filter__summary-pills-wrap {
+    flex: 0 1 auto;
+    min-width: 0;
+}
+
+@media (max-width: 480px) {
+    .calendar-filter-card:not(.is-open) .event-filter__summary-row {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        grid-template-areas:
+            "controls toggle"
+            "pills pills";
+        align-items: center;
+        column-gap: 0.35rem;
+        row-gap: 0.4rem;
+    }
+
+    .calendar-filter-card:not(.is-open) .event-filter__summary-controls {
+        grid-area: controls;
+    }
+
+    .calendar-filter-card:not(.is-open) .calendar-filter-card__toggle {
+        grid-area: toggle;
+        align-self: center;
+    }
+
+    .calendar-filter-card:not(.is-open) .event-filter__summary-pills-wrap {
+        grid-area: pills;
+    }
+
+    .calendar-filter-card:not(.is-open) .event-filter__find--summary {
+        flex: 1 1 auto;
+        width: auto;
+        min-width: 0;
+        max-width: none;
+    }
+}
+
+.event-filter__summary-label {
+    flex: none;
+    color: #666;
+}
+
+.event-filter__find--summary {
+    flex: none;
+    width: 25ch;
+    max-width: 100%;
+    box-sizing: border-box;
+    padding: 0.3rem 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-family: inherit;
+    line-height: 1.35;
+}
+
+.calendar-filter-card.is-open .event-filter__find--summary {
+    flex: 1 1 auto;
+    width: auto;
+    min-width: 25ch;
+}
+
+.event-filter__find--summary:focus {
+    outline: 2px solid #222;
+    outline-offset: 1px;
+}
+
+.event-filter__summary-pills {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
+    align-items: center;
     gap: 0.35rem;
-    margin-top: 0.45rem;
 }
 
-.event-filter__chip {
+.event-filter__summary-pill {
     display: inline-block;
-    margin: 0;
-    padding: 0.2rem 0.5rem;
-    border: 1px solid #bbb;
-    border-radius: 999px;
-    background: #fff;
-    color: #333;
-    font-family: inherit;
-    font-size: 0.8rem;
-    line-height: 1.3;
-    cursor: pointer;
+    flex: none;
+    width: auto;
+    max-width: none;
+    pointer-events: none;
+    text-transform: lowercase;
 }
 
-.event-filter__chip:hover {
-    border-color: #222;
-    background: #222;
+.event-filter__summary-pill--venue.event-filter__tag--all-venues,
+.event-filter__summary-pill--venue.event-filter__tag--my-venues {
+    border-color: #0284c7;
+    background: #0284c7;
     color: #fff;
 }
 
-.calendar-filter-card.has-active-filters .calendar-filter-card__toggle::after {
-    content: '';
-    position: absolute;
-    top: 0.12rem;
-    right: 0.12rem;
-    width: 0.35rem;
-    height: 0.35rem;
-    border-radius: 50%;
-    background: #0066cc;
+.event-filter__summary-pill--types.event-filter__tag--all,
+.event-filter__summary-pill--types:not(.event-filter__tag--all),
+.event-filter__summary-pill--type.event-filter__tag {
+    border-color: #b45309;
+    background: #b45309;
+    color: #fff;
 }
 
-.venue-website-link {
-    font-size: 0.85rem;
-    font-weight: normal;
+.event-filter__summary-pill--type.event-filter__tag:not(.is-active) {
+    background: #fff;
+    color: #5c4a32;
+}
+
+.venue-profile-contact,
+.venue-profile-address {
+    display: block;
+    margin: 0.35rem 0 0;
+    line-height: 1.45;
+}
+
+.venue-profile-address {
+    color: #444;
+}
+
+.venue-url-link,
+.venue-phone-link {
+    font-size: inherit;
     color: #555;
     text-decoration: none;
     border-bottom: 1px solid #ccc;
 }
 
-.venue-website-link:hover {
+.venue-url-link {
+    word-break: break-all;
+}
+
+.venue-url-link:hover,
+.venue-url-link:focus-visible,
+.venue-phone-link:hover,
+.venue-phone-link:focus-visible {
     color: #222;
     border-bottom-color: #222;
+}
+
+.venue-profile-extras {
+    display: block;
+    margin: 0.35rem 0 0;
+}
+
+.venue-map-preview {
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
+    margin: 0.35rem 0 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    overflow: hidden;
+    background: #eee;
+}
+
+.venue-map-preview__embed {
+    display: block;
+    width: 100%;
+    height: 11.5rem;
+    border: 0;
 }
 
 .pick {
@@ -366,56 +584,46 @@ header p {
     }
 }
 
-.venue-schedule-link {
+.venue-details-link {
     display: inline-flex;
     align-items: center;
-    gap: 0.2rem;
+    justify-content: center;
     box-sizing: content-box;
-    margin: 0 0 0 0.35rem;
-    padding: 0.1em 0;
-    line-height: 1.2;
-    vertical-align: baseline;
-    font-size: 0.85rem;
-    color: #555;
+    margin: 0 0 0 0.2rem;
+    padding: 0.15em;
+    line-height: 0;
+    vertical-align: -0.12em;
+    color: #666;
     text-decoration: none;
+    cursor: pointer;
     -webkit-tap-highlight-color: transparent;
 }
 
-.venue-schedule-link__label {
-    text-transform: lowercase;
-    border-bottom: 1px solid #ccc;
-}
-
-.venue-schedule-link__icon {
+.venue-details-link__icon {
     display: block;
-    width: 0.95em;
-    height: 0.95em;
-    max-width: 0.95em;
-    max-height: 0.95em;
+    width: 1em;
+    height: 1em;
+    max-width: 1em;
+    max-height: 1em;
     opacity: 0.55;
     flex: none;
 }
 
-.venue-schedule-link:hover,
-.venue-schedule-link:focus-visible {
+.venue-details-link:hover,
+.venue-details-link:focus-visible {
     color: #222;
 }
 
-.venue-schedule-link:hover .venue-schedule-link__label,
-.venue-schedule-link:focus-visible .venue-schedule-link__label {
-    border-bottom-color: #222;
+.venue-details-link:hover .venue-details-link__icon,
+.venue-details-link:focus-visible .venue-details-link__icon {
+    opacity: 0.85;
 }
 
-.venue-schedule-link:hover .venue-schedule-link__icon,
-.venue-schedule-link:focus-visible .venue-schedule-link__icon {
-    opacity: 1;
-}
-
-.venue-schedule-link:focus {
+.venue-details-link:focus {
     outline: none;
 }
 
-.venue-schedule-link:focus-visible {
+.venue-details-link:focus-visible {
     outline: 2px solid #0066cc;
     outline-offset: 2px;
     border-radius: 2px;
@@ -433,8 +641,42 @@ header p {
     margin: 0;
 }
 
-.venue-page .calendar-nav {
-    margin: 0.5rem 0 0.75rem;
+.venue-page .venue-week__block .calendar-nav {
+    margin: 0.75rem 0 0.35rem;
+}
+
+.venue-page .venue-week__block .calendar-filter-card {
+    margin: 0.75rem 0 0.5rem;
+}
+
+.venue-page .venue-week__block .calendar-filter-card__filter {
+    margin-bottom: 0;
+}
+
+.calendar-filter-card--always-open .calendar-filter-card__filter {
+    cursor: default;
+}
+
+.calendar-filter-card--always-open:not(.is-open) .event-filter__panel,
+.calendar-filter-card--always-open .event-filter__panel {
+    display: block;
+}
+
+.calendar-filter-card__status--always-open {
+    margin-bottom: 0.65rem;
+}
+
+.event-filter__find-row {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    flex-wrap: wrap;
+}
+
+.event-filter__find-row .event-filter__find--summary {
+    flex: 1 1 12rem;
+    min-width: 0;
+    max-width: none;
 }
 
 .venue-week__block {
@@ -446,8 +688,13 @@ header p {
 }
 
 .event-filter__panel {
-    padding: 0.75rem 0.85rem 0.85rem;
-    border-top: 1px solid #e0e0e0;
+    position: relative;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    background: transparent;
 }
 
 .calendar-filter-card:not(.is-open) .event-filter__panel {
@@ -509,26 +756,6 @@ header p {
 
 .event-filter__types.is-empty {
     display: none;
-}
-
-.event-filter__find-wrap {
-    margin-bottom: 0.75rem;
-}
-
-.event-filter__find {
-    display: block;
-    width: 100%;
-    box-sizing: border-box;
-    padding: 0.45rem 0.65rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 1rem;
-    font-family: inherit;
-}
-
-.event-filter__find:focus {
-    outline: 2px solid #222;
-    outline-offset: 1px;
 }
 
 .event-filter__venue-scope {

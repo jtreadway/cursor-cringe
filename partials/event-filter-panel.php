@@ -21,7 +21,7 @@ $totalVenueCount = $totalVenueCount ?? 0;
 $scopeMode = $scopeMode ?? 'all';
 $allActive = ($activeTags ?? []) === [];
 $scopeActive = $scopeMode === 'favorites';
-$findPlaceholder = 'Find text (2+ characters)';
+$hideVenueScope = $hideVenueScope ?? false;
 $filterOpen = $filterOpen ?? false;
 
 ?>
@@ -32,19 +32,7 @@ $filterOpen = $filterOpen ?? false;
     <?php if (!$filterOpen): ?>hidden<?php endif; ?>
 >
     <div class="event-filter__types">
-        <div class="event-filter__find-wrap">
-            <input
-                type="text"
-                id="event-filter-find"
-                class="event-filter__find"
-                data-filter-find
-                value="<?= htmlspecialchars($findQuery, ENT_QUOTES, 'UTF-8') ?>"
-                placeholder="<?= htmlspecialchars($findPlaceholder, ENT_QUOTES, 'UTF-8') ?>"
-                aria-label="<?= htmlspecialchars($findPlaceholder, ENT_QUOTES, 'UTF-8') ?>"
-                autocomplete="off"
-                enterkeyhint="go"
-            >
-        </div>
+        <?php if (!$hideVenueScope): ?>
         <div class="event-filter__venue-scope">
             <div class="event-filter__venue-scope-pills" role="group" aria-label="Venue scope">
                 <button
@@ -64,6 +52,7 @@ $filterOpen = $filterOpen ?? false;
             </div>
             <button type="button" class="event-filter__manage-venues" data-manage-venues>manage venues</button>
         </div>
+        <?php endif; ?>
         <div class="event-filter__tags event-filter__type-tags" role="group" aria-label="Event types">
             <button
                 type="button"

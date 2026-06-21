@@ -128,6 +128,98 @@ class VenueUtils
     }
 
     /**
+     * @param list<array<string, mixed>> $venueRecords
+     * @return array{
+     *     contacts: list<array{phone: string, url: string}>,
+     *     addresses: list<string>
+     * }
+     */
+    public static function profileContactInfo(array $venueRecords): array
+    {
+        $contacts = [];
+        $addresses = [];
+
+        foreach ($venueRecords as $venue) {
+            $phone = trim((string) ($venue['phone'] ?? ''));
+            $url = trim((string) ($venue['url'] ?? ''));
+            $note = trim((string) ($venue['note'] ?? ''));
+
+            if ($phone !== '' || $url !== '') {
+                $key = self::normalizePhone($phone) . '|' . self::normalizeUrl($url);
+                $contacts[$key] = [
+                    'phone' => $phone,
+                    'url' => $url,
+                ];
+            }
+
+            if ($note !== '' && self::isStreetAddress($note)) {
+                $addresses[$note] = $note;
+            }
+        }
+
+        $contactList = array_values($contacts);
+        usort(
+            $contactList,
+            static function (array $a, array $b): int {
+                $phoneCompare = strcasecmp($a['phone'], $b['phone']);
+                if ($phoneCompare !== 0) {
+                    return $phoneCompare;
+                }
+
+                return strcasecmp($a['url'], $b['url']);
+            }
+        );
+
+        $addressList = array_values($addresses);
+        sort($addressList, SORT_NATURAL | SORT_FLAG_CASE);
+
+        return [
+            'contacts' => $contactList,
+            'addresses' => $addressList,
+        ];
+    }
+
+    public static function normalizePhone(string $phone): string
+    {
+        return preg_replace('/[^\d+]/', '', $phone) ?? '';
+    }
+
+    public static function normalizeUrl(string $url): string
+    {
+        $url = trim($url);
+        if ($url === '') {
+            return '';
+        }
+
+        return rtrim(strtolower($url), '/');
+    }
+
+    public static function isStreetAddress(string $note): bool
+    {
+        $note = trim($note);
+        if ($note === '') {
+            return false;
+        }
+
+        if (strpos($note, '@') !== false) {
+            return false;
+        }
+
+        if (preg_match('/^https?:\/\//i', $note) === 1) {
+            return false;
+        }
+
+        if (preg_match(
+            '/\b(st|street|ave|avenue|blvd|boulevard|rd|road|dr|drive|ln|lane|ct|court|pl|place|way|pkwy|parkway|hwy|highway|suite|ste|unit)\b\.?/i',
+            $note
+        ) === 1) {
+            return true;
+        }
+
+        return preg_match('/^\d+\s+\S/', $note) === 1;
+    }
+
+    /**
      * @param array<string, mixed> $existing
      * @param array<string, mixed> $incoming
      * @return array<string, mixed>

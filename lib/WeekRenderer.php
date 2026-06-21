@@ -133,7 +133,7 @@ class WeekRenderer
         $venueWeekHref = 'venue.php?venue=' . rawurlencode($slug) . '&date=' . rawurlencode($weekStart);
 
         $output = "\t<p class=\"venue-block\" data-venue-slug=\"{$slug}\">" . VenueFavorite::buttonMarkup();
-        $output .= VenueWeekRenderer::venueNameMarkup($venue, $venueWeekHref, true);
+        $output .= VenueWeekRenderer::venueNameMarkupListing($venue);
 
         $hasPhone = !empty($venue['phone']);
         $hasNote = !empty($venue['note']);
@@ -141,16 +141,14 @@ class WeekRenderer
         if ($hasPhone && $hasNote) {
             $phone = (string) $venue['phone'];
             $note = (string) $venue['note'];
-            $output .= " - {$phone}<br>{$note}";
+            $output .= ' - ' . VenueWeekRenderer::phoneMarkup($phone) . '<br>' . htmlspecialchars($note, ENT_QUOTES, 'UTF-8');
         } elseif ($hasPhone) {
-            $phone = (string) $venue['phone'];
-            $output .= " - {$phone}";
+            $output .= ' - ' . VenueWeekRenderer::phoneMarkup((string) $venue['phone']);
         } elseif ($hasNote) {
-            $note = (string) $venue['note'];
-            $output .= "<br>{$note}";
+            $output .= '<br>' . htmlspecialchars((string) $venue['note'], ENT_QUOTES, 'UTF-8');
         }
 
-        $output .= VenueWeekRenderer::scheduleLinkMarkup($venueWeekHref, $name);
+        $output .= VenueWeekRenderer::venueDetailsLinkMarkup($venueWeekHref, $name);
         $output .= "<br>\n";
 
         $events = $venue['events'] ?? [];

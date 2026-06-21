@@ -26,7 +26,6 @@ $prevWeekDate = $prevWindowStart ?? $windowStart;
 $nextWeekDate = $nextWindowStart ?? $windowStart;
 $lastWeekMonday = $weekMondays !== [] ? $weekMondays[array_key_last($weekMondays)] : $thisWeek;
 $weekHeader = weekRangeHeader($windowStart, $lastWeekMonday);
-$venueHtml = '';
 $pageTitle = 'Venue calendar';
 $availableTags = [];
 $tagCounts = [];
@@ -36,6 +35,7 @@ $totalVenueCount = 0;
 $favoriteVenueCount = 0;
 $venue = null;
 $schedule = [];
+$venueRecordsForProfile = [];
 $hasWeek = $venueSlug !== '' && $weekMondays !== [];
 $favoriteSlugs = parseSlugListCookie(isset($_COOKIE['cringe_favorites']) ? (string) $_COOKIE['cringe_favorites'] : null);
 $activeTags = parseTagsParam(isset($_GET['tags']) ? (string) $_GET['tags'] : null);
@@ -43,9 +43,10 @@ $findQuery = parseFindParam(isset($_GET['find']) ? (string) $_GET['find'] : null
 $viewMode = isset($_GET['view'])
     ? parseViewParam((string) $_GET['view'])
     : parseViewParam(isset($_COOKIE['cringe_view']) ? (string) $_COOKIE['cringe_view'] : null);
-$scopeMode = isset($_GET['scope'])
-    ? parseScopeParam((string) $_GET['scope'])
-    : 'all';
+$scopeMode = resolveScopeMode(
+    isset($_GET['scope']) ? (string) $_GET['scope'] : null,
+    $favoriteSlugs
+);
 
 if (!preferencesExplicitInRequest()) {
     $savedPrefs = loadSavedPreferencesFromCookies();
@@ -63,17 +64,18 @@ if ($hasWeek) {
 
         if ($foundVenue !== null) {
             $venue = $foundVenue;
+            $venueRecordsForProfile[] = $foundVenue;
         }
 
         foreach (VenueUtils::weekScheduleForVenue($weekData, $venueSlug) as $entry) {
             $schedule[] = $entry;
+            $venueRecordsForProfile[] = $entry['venue'];
         }
     }
 }
 
 if ($venue !== null) {
     $venueName = (string) ($venue['name'] ?? $venueSlug);
-    $venueHtml = VenueWeekRenderer::render($venue, $schedule);
     $pageTitle = $venueName . ' — ' . $weekHeader;
     $tagCounts = EventClassifier::tagCountsForSchedule($schedule);
     $availableTags = array_keys($tagCounts);
@@ -91,13 +93,15 @@ $tagsQuery = $activeTags !== [] ? '&tags=' . rawurlencode(implode(',', $activeTa
 $findQueryParam = $findQuery !== '' ? '&find=' . rawurlencode($findQuery) : '';
 $scopeQuery = scopeQueryForMode($scopeMode);
 $prefsQuery = prefsQueryForRequest();
-$filterQuery = filterQueryForRequest();
+$filterQuery = '&filter=open';
 $viewQuery = viewQueryForMode($viewMode);
 $navQuery = $tagsQuery . $findQueryParam . $scopeQuery . $prefsQuery . $filterQuery;
+$hideVenueScope = true;
+$filterAlwaysOpen = true;
+$filterNavSeparate = true;
 $scopeActive = $scopeMode === 'favorites';
-$filtersActive = $activeTags !== [] || $findQuery !== '' || $scopeActive;
-$filterPanelOpen = $filtersActive || filterPanelOpenInRequest();
-$showFilterToggle = $hasWeek && $venue !== null && ($totalEventCount > 0 || $tagCounts !== []);
+$filtersActive = $activeTags !== [] || $findQuery !== '';
+$filterPanelOpen = true;
 $backUrl = 'index.php?date=' . rawurlencode($selectedDate) . $viewQuery . $navQuery;
 $venueQuery = 'venue=' . rawurlencode($venueSlug) . '&date=';
 $prevVenueHref = 'venue.php?' . $venueQuery . rawurlencode($prevWeekDate) . $navQuery;
@@ -124,11 +128,13 @@ $backLabel = $viewMode === 'week' ? '← Back to week view' : '← Back to day v
     </header>
 
     <?php if ($hasWeek && $venue !== null): ?>
+    <?= VenueWeekRenderer::renderProfileIntro($venue, $venueRecordsForProfile) ?>
     <?php
-    $navPartial = __DIR__ . '/partials/venue-week-nav.php';
+    $showFilterActions = true;
     include __DIR__ . '/partials/calendar-filter-card.php';
+    include __DIR__ . '/partials/venue-week-nav.php';
     ?>
-    <?= $venueHtml ?>
+    <?= VenueWeekRenderer::renderSchedule($venue, $schedule) ?>
     <?php elseif ($venueSlug === ''): ?>
         <p class="error">Missing venue parameter.</p>
     <?php elseif (!$hasWeek): ?>
@@ -145,6 +151,7 @@ $backLabel = $viewMode === 'week' ? '← Back to week view' : '← Back to day v
 <?php endif; ?>
 <?php if ($hasWeek && $venue !== null): ?>
 <script src="assets/venue-favorites.js" defer></script>
+<script src="assets/preferences-ui.js" defer></script>
 <script src="assets/event-filter.js" defer></script>
 <?php endif; ?>
 </body>

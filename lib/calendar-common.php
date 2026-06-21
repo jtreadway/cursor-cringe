@@ -240,6 +240,31 @@ function parseScopeParam(?string $raw): string
     return $raw === 'favorites' ? 'favorites' : 'all';
 }
 
+/**
+ * @param list<string> $favoriteSlugs
+ * @return 'all'|'favorites'
+ */
+function resolveScopeMode(?string $getScope, array $favoriteSlugs): string
+{
+    if ($getScope !== null) {
+        return parseScopeParam($getScope);
+    }
+
+    if (isset($_COOKIE['cringe_scope'])) {
+        return parseScopeParam((string) $_COOKIE['cringe_scope']);
+    }
+
+    if (isset($_GET['prefs']) && (string) $_GET['prefs'] === 'neutral') {
+        return 'all';
+    }
+
+    if ($favoriteSlugs !== []) {
+        return 'favorites';
+    }
+
+    return 'all';
+}
+
 function viewQueryForMode(string $viewMode): string
 {
     if ($viewMode === 'week') {
@@ -272,6 +297,11 @@ function filterPanelOpenInRequest(): bool
 function filterQueryForRequest(): string
 {
     return filterPanelOpenInRequest() ? '&filter=open' : '';
+}
+
+function findFilterPlaceholder(): string
+{
+    return 'find text (2+ characters)';
 }
 
 function preferencesExplicitInRequest(): bool
