@@ -37,25 +37,12 @@ $venue = null;
 $schedule = [];
 $venueRecordsForProfile = [];
 $hasWeek = $venueSlug !== '' && $weekMondays !== [];
-$favoriteSlugs = parseSlugListCookie(isset($_COOKIE['cringe_favorites']) ? (string) $_COOKIE['cringe_favorites'] : null);
 $activeTags = parseTagsParam(isset($_GET['tags']) ? (string) $_GET['tags'] : null);
 $findQuery = parseFindParam(isset($_GET['find']) ? (string) $_GET['find'] : null);
 $viewMode = isset($_GET['view'])
     ? parseViewParam((string) $_GET['view'])
-    : parseViewParam(isset($_COOKIE['cringe_view']) ? (string) $_COOKIE['cringe_view'] : null);
-$scopeMode = resolveScopeMode(
-    isset($_GET['scope']) ? (string) $_GET['scope'] : null,
-    $favoriteSlugs
-);
-
-if (!preferencesExplicitInRequest()) {
-    $savedPrefs = loadSavedPreferencesFromCookies();
-    if (hasSavedPreferencesFromCookies($savedPrefs)) {
-        $activeTags = $savedPrefs['tags'];
-        $findQuery = $savedPrefs['find'];
-        $scopeMode = $savedPrefs['scope'];
-    }
-}
+    : 'day';
+$scopeMode = parseScopeParam(isset($_GET['scope']) ? (string) $_GET['scope'] : null);
 
 if ($hasWeek) {
     foreach ($weekMondays as $monday) {
@@ -84,14 +71,12 @@ if ($venue !== null) {
         $totalEventCount += count($entry['events']);
     }
 
-    $favoriteEventCount = in_array($venueSlug, $favoriteSlugs, true) ? $totalEventCount : 0;
     $totalVenueCount = $totalEventCount > 0 ? 1 : 0;
-    $favoriteVenueCount = ($totalEventCount > 0 && in_array($venueSlug, $favoriteSlugs, true)) ? 1 : 0;
 }
 
 $tagsQuery = $activeTags !== [] ? '&tags=' . rawurlencode(implode(',', $activeTags)) : '';
 $findQueryParam = $findQuery !== '' ? '&find=' . rawurlencode($findQuery) : '';
-$scopeQuery = scopeQueryForMode($scopeMode);
+$scopeQuery = scopeQueryForRequest();
 $prefsQuery = prefsQueryForRequest();
 $filterQuery = '&filter=open';
 $viewQuery = viewQueryForMode($viewMode);
@@ -99,14 +84,23 @@ $navQuery = $tagsQuery . $findQueryParam . $scopeQuery . $prefsQuery . $filterQu
 $hideVenueScope = true;
 $filterAlwaysOpen = true;
 $filterNavSeparate = true;
-$scopeActive = $scopeMode === 'favorites';
-$filtersActive = $activeTags !== [] || $findQuery !== '';
+$scopeActive = isset($_GET['scope']) && (string) $_GET['scope'] !== '';
+$filtersActive = $activeTags !== [] || $findQuery !== '' || $scopeActive;
 $filterPanelOpen = true;
 $backUrl = 'index.php?date=' . rawurlencode($selectedDate) . $viewQuery . $navQuery;
 $venueQuery = 'venue=' . rawurlencode($venueSlug) . '&date=';
 $prevVenueHref = 'venue.php?' . $venueQuery . rawurlencode($prevWeekDate) . $navQuery;
 $nextVenueHref = 'venue.php?' . $venueQuery . rawurlencode($nextWeekDate) . $navQuery;
-$backLabel = $viewMode === 'week' ? '← Back to week view' : '← Back to day view';
+$backLabel = $viewMode === 'week'
+    ? '← Back to week view'
+    : ($viewMode === '4week' ? '← Back to 4 week view' : '← Back to day view');
+$viewModeIconData = viewModeIconLinks($selectedDate, '4week', $navQuery, 'venue', $venueSlug);
+$dayHref = $viewModeIconData['dayHref'];
+$weekHref = $viewModeIconData['weekHref'];
+$fourWeekHref = $viewModeIconData['fourWeekHref'];
+$viewModeIconsActive = $viewModeIconData['viewMode'];
+$viewModeVenueSlug = $venueSlug;
+$showViewModeStrip = $hasWeek && $venue !== null;
 
 ?><!DOCTYPE html>
 <html lang="en">
@@ -114,9 +108,10 @@ $backLabel = $viewMode === 'week' ? '← Back to week view' : '← Back to day v
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8') ?></title>
+    <script src="assets/calendar-prefs.js?v=<?= (int) filemtime(__DIR__ . '/assets/calendar-prefs.js') ?>"></script>
     <link rel="stylesheet" href="assets/week-view.css?v=<?= (int) filemtime(__DIR__ . '/assets/week-view.css') ?>">
 </head>
-<body class="venue-page"<?php if ($venueSlug !== ''): ?> data-track-venue="<?= htmlspecialchars($venueSlug, ENT_QUOTES, 'UTF-8') ?>"<?php endif; ?>>
+<body class="venue-page view-4week"<?php if ($venueSlug !== ''): ?> data-track-venue="<?= htmlspecialchars($venueSlug, ENT_QUOTES, 'UTF-8') ?>"<?php endif; ?>>
 <div class="wrap">
     <header class="venue-page__header">
         <p class="meta"><a
@@ -144,8 +139,8 @@ $backLabel = $viewMode === 'week' ? '← Back to week view' : '← Back to day v
     <?php endif; ?>
 </div>
 
-<script src="assets/calendar-prefs.js" defer></script>
 <script src="assets/calendar-nav-sync.js" defer></script>
+<script src="assets/view-mode-picker.js" defer></script>
 <?php if ($venueSlug !== ''): ?>
 <script src="assets/venue-recent.js" defer></script>
 <?php endif; ?>

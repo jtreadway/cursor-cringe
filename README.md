@@ -36,34 +36,35 @@ Browser:
 
 Top nav in the filter card:
 
-- **Day view** — week strip (`prev week` · date range · `next week`), then Mo–Su day pills, plus day/week grid icons
-- **Week view** — prev week · week range · next week, plus day/week grid icons
+- **Day view** — week strip with view picker (date + grid + caret) and Mo–Su day pills; chevron expands refine options
+- **Week view** — prev/next week and view picker in the date row
+- **4 week view** — prev/next 4-week window and view picker; all venues grouped by week
+- **Venue page** — view picker in date row with **4 wk** active; day/week return to index
 
-Filter row: **Filter:** + find text field + venue/event pills; tap pills or funnel icon to expand. Find field stays in place and widens when open.
+Filter row: **Filter:** + find text field + venue/event pills; tap pills or expand/chevron icon to open refine options.
 
 ### Filters
 
 Collapsible filter card on index and venue pages:
 
 - **Find** — text search (2+ characters)
-- **All N / My venues N** — scope toggle (`scope=favorites` for my venues)
+- **all venues / my venues** — venue scope toggle
+- **manage venues** — link to venue list for favorites
 - **Type pills** — tag filters (`tags=karaoke,comedy`, comma-separated)
-- **clear** — reset filters client-side (sets `prefs=neutral`, does not write cookies)
-- **save** (index only) — commit current filters, view, scope, and favorites to cookies
+- **clear** — reset filters client-side (sets `prefs=neutral`, does not write localStorage)
+- **save** (index only) — commit current filters and view to localStorage
 
-### Saved preferences (cookies)
+### Saved preferences (localStorage)
 
-| Cookie | Purpose |
-|--------|---------|
-| `cringe_view` | `day` or `week` |
-| `cringe_tags` | Comma-separated tag slugs |
-| `cringe_find` | Find text |
-| `cringe_scope` | `favorites` when my-venues scope is saved |
-| `cringe_favorites` | Comma-separated favorite venue slugs |
-| `cringe_favorites_engaged` | User has used favorites |
-| `cringe_recent` | Recently viewed venues (auto-tracked) |
+| Key | Format | Purpose |
+|-----|--------|---------|
+| `cringe-favorites` | JSON | `venues` favorite list |
+| `cringe-filters` | JSON | `view`, `tags`, `find`, `personalScope.venues` |
+| `cringe-recent` | comma-separated slugs | Recently viewed venues (auto-tracked) |
 
-On first visit with no filter params in the URL, the server redirects to saved cookie preferences. Add `prefs=neutral` to skip that redirect and browse with no saved filters applied.
+Favorite venues auto-save on heart toggle. Filters save when you click **save filters**.
+
+On first visit with no filter params in the URL, the client restores saved filters from localStorage (same role as comfest). Add `prefs=neutral` to browse without applying saved filters. Legacy `cringe_*` cookies are migrated once on load, then cleared.
 
 ### URL parameters
 
@@ -73,8 +74,8 @@ On first visit with no filter params in the URL, the server redirects to saved c
 | `view` | `day`, `week` | Layout mode |
 | `tags` | comma-separated slugs | Event type filters |
 | `find` | text | Search (2+ chars) |
-| `scope` | `favorites` | My venues only |
-| `prefs` | `neutral` | Skip saved-prefs redirect; mark intentional neutral browse |
+| `scope` | `favorites` | My venues filter |
+| `prefs` | `neutral` | Skip saved-prefs restore; mark intentional neutral browse |
 | `venue` | slug | Venue page only |
 
 Nav links stay in sync when filters change client-side (`calendar-nav-sync.js` rebuilds hrefs from the current URL).

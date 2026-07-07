@@ -1,7 +1,7 @@
 class VenueFavorites {
     constructor() {
-        const saved = CalendarPrefs.loadSaved();
-        this.favorites = CalendarPrefs.parseFavorites(saved.favorites);
+        const saved = CalendarPrefs.loadFavoritesData();
+        this.favorites = new Set(saved.venues);
         this.bindControls();
         this.syncButtons();
         VenueFavorites.instance = this;
