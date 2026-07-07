@@ -77,7 +77,7 @@ class EventFilter {
             return false;
         }
 
-        if (CalendarPrefs.personalScopeVenuesActive(saved)) {
+        if (saved.scope === 'favorites') {
             return true;
         }
 

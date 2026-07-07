@@ -73,7 +73,7 @@ if ($filterAlwaysOpen) {
         data-filter-card
         aria-expanded="<?= $filterOpen ? 'true' : 'false' ?>"
         aria-controls="event-filter-panel"
-        <?php if (!$filterOpen && !$filterAlwaysOpen): ?>aria-label="<?= $hideVenueScope ? 'Edit event refine options' : 'Edit venue and event refine options' ?>"<?php endif; ?>
+        <?php if (!$filterOpen && !$filterAlwaysOpen): ?>aria-label="<?= $hideVenueScope ? 'Edit event filters' : 'Edit venue and event filters' ?>"<?php endif; ?>
     >
         <?php if (!$filterAlwaysOpen): ?>
         <div class="calendar-filter-card__status" data-filter-status>

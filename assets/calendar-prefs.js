@@ -1,11 +1,5 @@
 class CalendarPrefs {
-    static STORAGE = {
-        favorites: 'cringe-favorites',
-        filters: 'cringe-filters',
-        recent: 'cringe-recent',
-    };
-
-    static LEGACY_COOKIE = {
+    static COOKIE = {
         favorites: 'cringe_favorites',
         recent: 'cringe_recent',
         tags: 'cringe_tags',
@@ -15,174 +9,29 @@ class CalendarPrefs {
         engaged: 'cringe_favorites_engaged',
     };
 
+    static MAX_AGE_DAYS = 365;
     static MAX_RECENT = 5;
-    static SCHEMA_VERSION = 1;
 
-    static readCookie(name) {
-        const match = document.cookie.match(
-            new RegExp('(?:^|; )' + name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '=([^;]*)')
-        );
+    static read(name) {
+        const match = document.cookie.match(new RegExp('(?:^|; )' + name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '=([^;]*)'));
 
         return match ? decodeURIComponent(match[1]) : '';
     }
 
-    static deleteCookie(name) {
+    static write(name, value) {
+        const maxAge = CalendarPrefs.MAX_AGE_DAYS * 24 * 60 * 60;
+        const secure = window.location.protocol === 'https:' ? '; Secure' : '';
+
+        document.cookie = `${name}=${encodeURIComponent(value)}; Path=/; Max-Age=${maxAge}; SameSite=Lax${secure}`;
+    }
+
+    static delete(name) {
         document.cookie = `${name}=; Path=/; Max-Age=0; SameSite=Lax`;
-    }
-
-    static storageAvailable() {
-        try {
-            const key = '__cringe_storage_test__';
-            window.localStorage.setItem(key, '1');
-            window.localStorage.removeItem(key);
-
-            return true;
-        } catch (error) {
-            return false;
-        }
-    }
-
-    static readStorageJson(key, fallback) {
-        if (!CalendarPrefs.storageAvailable()) {
-            return fallback;
-        }
-
-        try {
-            const raw = window.localStorage.getItem(key);
-            if (!raw) {
-                return fallback;
-            }
-
-            const parsed = JSON.parse(raw);
-
-            return parsed && typeof parsed === 'object' ? parsed : fallback;
-        } catch (error) {
-            return fallback;
-        }
-    }
-
-    static writeStorageJson(key, value) {
-        if (!CalendarPrefs.storageAvailable()) {
-            return;
-        }
-
-        try {
-            window.localStorage.setItem(key, JSON.stringify(value));
-        } catch (error) {
-            // Ignore quota / privacy errors.
-        }
-    }
-
-    static removeStorage(key) {
-        if (!CalendarPrefs.storageAvailable()) {
-            return;
-        }
-
-        try {
-            window.localStorage.removeItem(key);
-        } catch (error) {
-            // Ignore storage errors.
-        }
-    }
-
-    static emptyFavoritesData() {
-        return {
-            v: CalendarPrefs.SCHEMA_VERSION,
-            venues: [],
-        };
-    }
-
-    static emptyPersonalScope() {
-        return {
-            venues: false,
-        };
-    }
-
-    static normalizePersonalScope(raw) {
-        const scope = raw && typeof raw === 'object' ? raw : {};
-
-        return {
-            venues: scope.venues === true,
-        };
-    }
-
-    static personalScopeFromLegacyScope(scope) {
-        return {
-            venues: scope === 'favorites',
-        };
-    }
-
-    static personalScopeVenuesActive(snapshot) {
-        if (!snapshot) {
-            return false;
-        }
-
-        if (snapshot.personalScope) {
-            return snapshot.personalScope.venues === true;
-        }
-
-        return snapshot.scope === 'favorites';
-    }
-
-    static personalScopeAnyActive(personalScope) {
-        return CalendarPrefs.normalizePersonalScope(personalScope).venues;
-    }
-
-    static normalizeFavoritesData(raw) {
-        const data = raw && typeof raw === 'object' ? raw : {};
-
-        return {
-            v: CalendarPrefs.SCHEMA_VERSION,
-            venues: Array.isArray(data.venues)
-                ? data.venues.map((slug) => String(slug).trim()).filter(Boolean)
-                : [],
-        };
-    }
-
-    static normalizeFiltersSnapshot(raw) {
-        const data = raw && typeof raw === 'object' ? raw : {};
-        const personalScope = data.personalScope
-            ? CalendarPrefs.normalizePersonalScope(data.personalScope)
-            : CalendarPrefs.personalScopeFromLegacyScope(data.scope);
-
-        return {
-            v: CalendarPrefs.SCHEMA_VERSION,
-            view: CalendarPrefs.normalizeView(data.view),
-            tags: CalendarPrefs.parseTags(Array.isArray(data.tags) ? data.tags.join(',') : data.tags || ''),
-            find: String(data.find ?? '').trim(),
-            personalScope,
-        };
-    }
-
-    static loadFavoritesData() {
-        return CalendarPrefs.normalizeFavoritesData(
-            CalendarPrefs.readStorageJson(CalendarPrefs.STORAGE.favorites, CalendarPrefs.emptyFavoritesData())
-        );
-    }
-
-    static saveFavoritesData(data) {
-        const normalized = CalendarPrefs.normalizeFavoritesData(data);
-
-        if (normalized.venues.length === 0) {
-            CalendarPrefs.removeStorage(CalendarPrefs.STORAGE.favorites);
-            return;
-        }
-
-        CalendarPrefs.writeStorageJson(CalendarPrefs.STORAGE.favorites, normalized);
-    }
-
-    static loadVenueFavoritesSet() {
-        const live = VenueFavorites.getInstance()?.favorites;
-        if (live instanceof Set) {
-            return new Set(live);
-        }
-
-        return new Set(CalendarPrefs.loadFavoritesData().venues);
     }
 
     static parseFavorites(raw) {
         return new Set(
-            String(raw ?? '')
+            raw
                 .split(',')
                 .map((slug) => slug.trim())
                 .filter(Boolean)
@@ -190,30 +39,12 @@ class CalendarPrefs {
     }
 
     static loadFavoritesSet() {
-        return CalendarPrefs.loadVenueFavoritesSet();
-    }
+        const live = VenueFavorites.getInstance()?.favorites;
+        if (live instanceof Set) {
+            return new Set(live);
+        }
 
-    static serializeVenueFavorites(favorites) {
-        const list = favorites instanceof Set ? Array.from(favorites) : Array.from(favorites || []);
-
-        return list.map((slug) => String(slug).trim()).filter(Boolean).sort().join(',');
-    }
-
-    static serializeFavorites(favorites) {
-        return CalendarPrefs.serializeVenueFavorites(favorites);
-    }
-
-    static saveVenueFavorites(favorites) {
-        CalendarPrefs.saveFavoritesData({
-            v: CalendarPrefs.SCHEMA_VERSION,
-            venues: Array.from(
-                favorites instanceof Set ? favorites : CalendarPrefs.parseFavorites(favorites || '')
-            ).sort(),
-        });
-    }
-
-    static saveFavoritesOnly(favorites) {
-        CalendarPrefs.saveVenueFavorites(favorites);
+        return CalendarPrefs.parseFavorites(CalendarPrefs.loadSaved().favorites);
     }
 
     static venueSlug(element) {
@@ -242,8 +73,12 @@ class CalendarPrefs {
         return slug !== '' ? [slug] : [];
     }
 
+    static serializeFavorites(favorites) {
+        return Array.from(favorites).sort().join(',');
+    }
+
     static parseRecent(raw) {
-        return String(raw ?? '')
+        return raw
             .split(',')
             .map((slug) => slug.trim())
             .filter(Boolean)
@@ -254,323 +89,51 @@ class CalendarPrefs {
         return recent.slice(0, CalendarPrefs.MAX_RECENT).join(',');
     }
 
-    static loadRecent() {
-        if (!CalendarPrefs.storageAvailable()) {
-            return [];
-        }
-
-        try {
-            const raw = window.localStorage.getItem(CalendarPrefs.STORAGE.recent);
-
-            return CalendarPrefs.parseRecent(raw || '');
-        } catch (error) {
-            return [];
-        }
-    }
-
-    static saveRecent(recent) {
-        const serialized = CalendarPrefs.serializeRecent(recent);
-
-        if (serialized === '') {
-            CalendarPrefs.removeStorage(CalendarPrefs.STORAGE.recent);
-            return;
-        }
-
-        if (!CalendarPrefs.storageAvailable()) {
-            return;
-        }
-
-        try {
-            window.localStorage.setItem(CalendarPrefs.STORAGE.recent, serialized);
-        } catch (error) {
-            // Ignore storage errors.
-        }
-    }
-
-    static addRecent(slug) {
-        if (!slug) {
-            return;
-        }
-
-        const recent = CalendarPrefs.loadRecent();
-        const next = [slug, ...recent.filter((entry) => entry !== slug)].slice(0, CalendarPrefs.MAX_RECENT);
-        CalendarPrefs.saveRecent(next);
-    }
-
     static parseTags(raw) {
-        return String(raw ?? '')
+        return raw
             .split(',')
             .map((tag) => tag.trim().toLowerCase())
             .filter(Boolean);
     }
 
     static normalizeView(raw) {
-        if (raw === 'week') {
-            return 'week';
-        }
-
-        if (raw === '4week') {
-            return '4week';
-        }
-
-        return 'day';
+        return raw === 'week' ? 'week' : 'day';
     }
 
     static normalizeScope(raw) {
         return raw === 'favorites' ? 'favorites' : 'all';
     }
 
-    static loadSavedFilters() {
-        const stored = CalendarPrefs.readStorageJson(CalendarPrefs.STORAGE.filters, null);
-
-        if (!stored) {
-            return CalendarPrefs.normalizeFiltersSnapshot({});
-        }
-
-        return CalendarPrefs.normalizeFiltersSnapshot(stored);
-    }
-
-    static filtersAreEmpty(snapshot) {
-        const normalized = CalendarPrefs.normalizeFiltersSnapshot(snapshot);
-
-        return (
-            normalized.view === 'day'
-            && normalized.tags.length === 0
-            && normalized.find.length < 2
-            && !CalendarPrefs.personalScopeAnyActive(normalized.personalScope)
-        );
-    }
-
-    static saveFiltersOnly(snapshot) {
-        const normalized = CalendarPrefs.normalizeFiltersSnapshot(snapshot);
-
-        if (CalendarPrefs.filtersAreEmpty(normalized)) {
-            CalendarPrefs.removeStorage(CalendarPrefs.STORAGE.filters);
-            return;
-        }
-
-        CalendarPrefs.writeStorageJson(CalendarPrefs.STORAGE.filters, normalized);
-    }
-
-    static filterSnapshotFromValues({ view, tags, find, scope, personalScope }) {
-        return CalendarPrefs.normalizeFiltersSnapshot({
-            view,
-            tags,
-            find,
-            scope,
-            personalScope,
-        });
-    }
-
-    static snapshotFiltersFromLocation() {
-        const params = new URLSearchParams(window.location.search);
-        const saved = CalendarPrefs.loadSavedFilters();
-        const personalScope = { ...saved.personalScope };
-
-        if (params.get('scope') === 'favorites') {
-            personalScope.venues = true;
-        } else if (params.has('scope')) {
-            personalScope.venues = false;
-        }
-
-        return CalendarPrefs.filterSnapshotFromValues({
-            view: params.get('view') || saved.view,
-            tags: params.has('tags') ? params.get('tags') || '' : saved.tags.join(','),
-            find: params.has('find') ? params.get('find') || '' : saved.find,
-            personalScope,
-        });
-    }
-
-    static filtersSnapshotsEqual(a, b) {
-        const left = CalendarPrefs.normalizeFiltersSnapshot(a);
-        const right = CalendarPrefs.normalizeFiltersSnapshot(b);
-
-        if (left.view !== right.view || left.find !== right.find) {
-            return false;
-        }
-
-        if (left.tags.length !== right.tags.length) {
-            return false;
-        }
-
-        const leftTags = [...left.tags].sort();
-        const rightTags = [...right.tags].sort();
-
-        if (!leftTags.every((tag, index) => tag === rightTags[index])) {
-            return false;
-        }
-
-        return (
-            left.personalScope.venues === right.personalScope.venues
-        );
-    }
-
-    static snapshotFromValues({ view, tags, find, favorites, scope, personalScope }) {
-        const filters = CalendarPrefs.filterSnapshotFromValues({ view, tags, find, scope, personalScope });
-
+    static snapshotFromValues({ view, tags, find, favorites, scope }) {
         return {
-            view: filters.view,
-            tags: filters.tags,
-            find: filters.find,
-            personalScope: filters.personalScope,
-            scope: CalendarPrefs.personalScopeVenuesActive(filters) ? 'favorites' : 'all',
-            favorites: CalendarPrefs.serializeVenueFavorites(
+            view: CalendarPrefs.normalizeView(view || 'day'),
+            tags: CalendarPrefs.parseTags(Array.isArray(tags) ? tags.join(',') : tags || ''),
+            find: (find || '').trim(),
+            favorites: CalendarPrefs.serializeFavorites(
                 favorites instanceof Set ? favorites : CalendarPrefs.parseFavorites(favorites || '')
             ),
+            scope: CalendarPrefs.normalizeScope(scope || 'all'),
         };
     }
 
     static loadSaved() {
-        const filters = CalendarPrefs.loadSavedFilters();
-        const favorites = CalendarPrefs.loadFavoritesData();
-
         return CalendarPrefs.snapshotFromValues({
-            view: filters.view,
-            tags: filters.tags,
-            find: filters.find,
-            personalScope: filters.personalScope,
-            favorites: favorites.venues,
+            view: CalendarPrefs.read(CalendarPrefs.COOKIE.view),
+            tags: CalendarPrefs.read(CalendarPrefs.COOKIE.tags),
+            find: CalendarPrefs.read(CalendarPrefs.COOKIE.find),
+            favorites: CalendarPrefs.read(CalendarPrefs.COOKIE.favorites),
+            scope: CalendarPrefs.read(CalendarPrefs.COOKIE.scope),
         });
-    }
-
-    static hasSavedFilters(saved = CalendarPrefs.loadSavedFilters()) {
-        const normalized = CalendarPrefs.normalizeFiltersSnapshot(saved);
-
-        return (
-            normalized.view !== 'day'
-            || normalized.tags.length > 0
-            || normalized.find.length >= 2
-            || CalendarPrefs.personalScopeAnyActive(normalized.personalScope)
-        );
     }
 
     static hasSavedPreferences(saved = CalendarPrefs.loadSaved()) {
-        return CalendarPrefs.hasSavedFilters(saved) || saved.favorites !== '';
-    }
-
-    static preferencesExplicitInUrl(params = new URLSearchParams(window.location.search)) {
-        if (params.get('prefs') === 'neutral') {
-            return true;
-        }
-
-        return params.has('tags') || params.has('find') || params.has('scope') || params.has('view');
-    }
-
-    static resolvePersonalScopeForVisit(saved, venueFavorites) {
-        const personalScope = CalendarPrefs.normalizePersonalScope(saved.personalScope);
-
-        if (CalendarPrefs.personalScopeAnyActive(personalScope)) {
-            return personalScope;
-        }
-
-        if (venueFavorites.size > 0) {
-            return { venues: true };
-        }
-
-        return personalScope;
-    }
-
-    static shouldHydratePage() {
-        const path = window.location.pathname;
-
-        return path.endsWith('/index.php') || path.endsWith('index.php') || path.endsWith('venue.php');
-    }
-
-    static hydrateUrlFromStorageIfNeeded() {
-        if (!CalendarPrefs.shouldHydratePage()) {
-            return;
-        }
-
-        const params = new URLSearchParams(window.location.search);
-        if (CalendarPrefs.preferencesExplicitInUrl(params)) {
-            return;
-        }
-
-        const saved = CalendarPrefs.loadSavedFilters();
-        const venueFavorites = CalendarPrefs.loadVenueFavoritesSet();
-        const personalScope = CalendarPrefs.resolvePersonalScopeForVisit(saved, venueFavorites);
-        const url = new URL(window.location.href);
-        let changed = false;
-
-        if (saved.view !== 'day') {
-            url.searchParams.set('view', saved.view);
-            changed = true;
-        }
-
-        if (saved.tags.length > 0) {
-            url.searchParams.set('tags', saved.tags.sort().join(','));
-            changed = true;
-        }
-
-        if (saved.find.length >= 2) {
-            url.searchParams.set('find', saved.find);
-            changed = true;
-        }
-
-        if (personalScope.venues) {
-            url.searchParams.set('scope', 'favorites');
-            changed = true;
-        }
-
-        if (!changed) {
-            return;
-        }
-
-        window.location.replace(url.toString());
-    }
-
-    static migrateFromCookies() {
-        if (CalendarPrefs._migrationDone) {
-            return;
-        }
-
-        CalendarPrefs._migrationDone = true;
-
-        if (!CalendarPrefs.storageAvailable()) {
-            return;
-        }
-
-        try {
-            const legacyFavorites = CalendarPrefs.readCookie(CalendarPrefs.LEGACY_COOKIE.favorites);
-            const hasFavoritesStorage = window.localStorage.getItem(CalendarPrefs.STORAGE.favorites);
-
-            if (!hasFavoritesStorage && legacyFavorites !== '') {
-                CalendarPrefs.saveFavoritesData({
-                    v: CalendarPrefs.SCHEMA_VERSION,
-                    venues: Array.from(CalendarPrefs.parseFavorites(legacyFavorites)),
-                });
-            }
-
-            const hasFiltersStorage = window.localStorage.getItem(CalendarPrefs.STORAGE.filters);
-            if (!hasFiltersStorage) {
-                const legacyView = CalendarPrefs.readCookie(CalendarPrefs.LEGACY_COOKIE.view);
-                const legacyTags = CalendarPrefs.readCookie(CalendarPrefs.LEGACY_COOKIE.tags);
-                const legacyFind = CalendarPrefs.readCookie(CalendarPrefs.LEGACY_COOKIE.find);
-                const legacyScope = CalendarPrefs.readCookie(CalendarPrefs.LEGACY_COOKIE.scope);
-                const hasLegacyFilters =
-                    legacyView !== '' || legacyTags !== '' || legacyFind !== '' || legacyScope !== '';
-
-                if (hasLegacyFilters) {
-                    CalendarPrefs.saveFiltersOnly({
-                        view: legacyView || 'day',
-                        tags: legacyTags,
-                        find: legacyFind,
-                        scope: legacyScope === 'favorites' ? 'favorites' : 'all',
-                    });
-                }
-            }
-
-            const legacyRecent = CalendarPrefs.readCookie(CalendarPrefs.LEGACY_COOKIE.recent);
-            if (legacyRecent !== '' && !window.localStorage.getItem(CalendarPrefs.STORAGE.recent)) {
-                CalendarPrefs.saveRecent(CalendarPrefs.parseRecent(legacyRecent));
-            }
-        } catch (error) {
-            // Ignore migration errors.
-        }
-
-        Object.values(CalendarPrefs.LEGACY_COOKIE).forEach((name) => {
-            CalendarPrefs.deleteCookie(name);
-        });
+        return (
+            saved.view !== 'day'
+            || saved.tags.length > 0
+            || saved.find.length >= 2
+            || saved.favorites !== ''
+            || saved.scope === 'favorites'
+        );
     }
 
     static snapshotFromLocation(favoritesOverride = null) {
@@ -590,18 +153,18 @@ class CalendarPrefs {
     }
 
     static snapshotsEqual(a, b) {
-        const left = CalendarPrefs.snapshotFromValues(a);
-        const right = CalendarPrefs.snapshotFromValues(b);
-
-        if (left.view !== right.view || left.find !== right.find || left.favorites !== right.favorites) {
+        if (a.view !== b.view || a.find !== b.find || a.scope !== b.scope || a.favorites !== b.favorites) {
             return false;
         }
 
-        if (!CalendarPrefs.filtersSnapshotsEqual(left, right)) {
+        if (a.tags.length !== b.tags.length) {
             return false;
         }
 
-        return true;
+        const aTags = [...a.tags].sort();
+        const bTags = [...b.tags].sort();
+
+        return aTags.every((tag, index) => tag === bTags[index]);
     }
 
     static filterParamsFromSearchParams(sourceParams) {
@@ -667,8 +230,118 @@ class CalendarPrefs {
 
     static saveAll(snapshot) {
         const normalized = CalendarPrefs.snapshotFromValues(snapshot);
-        CalendarPrefs.saveVenueFavorites(CalendarPrefs.parseFavorites(normalized.favorites));
+        CalendarPrefs.saveFavoritesOnly(normalized.favorites);
         CalendarPrefs.saveFiltersOnly(normalized);
+    }
+
+    static filterSnapshotFromValues({ view, tags, find, scope }) {
+        return {
+            view: CalendarPrefs.normalizeView(view || 'day'),
+            tags: CalendarPrefs.parseTags(Array.isArray(tags) ? tags.join(',') : tags || ''),
+            find: (find || '').trim(),
+            scope: CalendarPrefs.normalizeScope(scope || 'all'),
+        };
+    }
+
+    static loadSavedFilters() {
+        return CalendarPrefs.filterSnapshotFromValues({
+            view: CalendarPrefs.read(CalendarPrefs.COOKIE.view),
+            tags: CalendarPrefs.read(CalendarPrefs.COOKIE.tags),
+            find: CalendarPrefs.read(CalendarPrefs.COOKIE.find),
+            scope: CalendarPrefs.read(CalendarPrefs.COOKIE.scope),
+        });
+    }
+
+    static snapshotFiltersFromLocation() {
+        const params = new URLSearchParams(window.location.search);
+
+        return CalendarPrefs.filterSnapshotFromValues({
+            view: params.get('view') || 'day',
+            tags: params.get('tags') || '',
+            find: params.get('find') || '',
+            scope: params.get('scope') || 'all',
+        });
+    }
+
+    static filtersSnapshotsEqual(a, b) {
+        if (a.view !== b.view || a.find !== b.find || a.scope !== b.scope) {
+            return false;
+        }
+
+        if (a.tags.length !== b.tags.length) {
+            return false;
+        }
+
+        const aTags = [...a.tags].sort();
+        const bTags = [...b.tags].sort();
+
+        return aTags.every((tag, index) => tag === bTags[index]);
+    }
+
+    static saveFiltersOnly(snapshot) {
+        const normalized = CalendarPrefs.filterSnapshotFromValues(snapshot);
+
+        if (normalized.tags.length === 0) {
+            CalendarPrefs.delete(CalendarPrefs.COOKIE.tags);
+        } else {
+            CalendarPrefs.write(CalendarPrefs.COOKIE.tags, normalized.tags.sort().join(','));
+        }
+
+        if (normalized.find === '' || normalized.find.length < 2) {
+            CalendarPrefs.delete(CalendarPrefs.COOKIE.find);
+        } else {
+            CalendarPrefs.write(CalendarPrefs.COOKIE.find, normalized.find);
+        }
+
+        CalendarPrefs.write(CalendarPrefs.COOKIE.view, normalized.view);
+
+        if (normalized.scope === 'all') {
+            CalendarPrefs.delete(CalendarPrefs.COOKIE.scope);
+        } else {
+            CalendarPrefs.write(CalendarPrefs.COOKIE.scope, normalized.scope);
+        }
+    }
+
+    static saveFavoritesOnly(favorites) {
+        const serialized = CalendarPrefs.serializeFavorites(
+            favorites instanceof Set ? favorites : CalendarPrefs.parseFavorites(favorites || '')
+        );
+
+        if (serialized === '') {
+            CalendarPrefs.delete(CalendarPrefs.COOKIE.favorites);
+            CalendarPrefs.delete(CalendarPrefs.COOKIE.engaged);
+        } else {
+            CalendarPrefs.write(CalendarPrefs.COOKIE.favorites, serialized);
+            CalendarPrefs.saveEngaged(true);
+        }
+    }
+
+    static saveRecent(recent) {
+        const serialized = CalendarPrefs.serializeRecent(recent);
+
+        if (serialized === '') {
+            CalendarPrefs.delete(CalendarPrefs.COOKIE.recent);
+        } else {
+            CalendarPrefs.write(CalendarPrefs.COOKIE.recent, serialized);
+        }
+    }
+
+    static addRecent(slug) {
+        if (!slug) {
+            return;
+        }
+
+        const recent = CalendarPrefs.parseRecent(CalendarPrefs.read(CalendarPrefs.COOKIE.recent));
+        const next = [slug, ...recent.filter((entry) => entry !== slug)].slice(0, CalendarPrefs.MAX_RECENT);
+        CalendarPrefs.saveRecent(next);
+    }
+
+    static saveEngaged(active = true) {
+        if (active) {
+            CalendarPrefs.write(CalendarPrefs.COOKIE.engaged, '1');
+        } else {
+            CalendarPrefs.delete(CalendarPrefs.COOKIE.engaged);
+        }
     }
 
     static buildUrlFromSnapshot(snapshot, dateYmd) {
@@ -683,7 +356,7 @@ class CalendarPrefs {
             filterParams.set('find', normalized.find);
         }
 
-        if (CalendarPrefs.personalScopeVenuesActive(normalized)) {
+        if (normalized.scope === 'favorites') {
             filterParams.set('scope', 'favorites');
         }
 
@@ -697,6 +370,3 @@ class CalendarPrefs {
         return date && /^\d{8}$/.test(date) ? date : '';
     }
 }
-
-CalendarPrefs.migrateFromCookies();
-CalendarPrefs.hydrateUrlFromStorageIfNeeded();

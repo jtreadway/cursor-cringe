@@ -228,19 +228,11 @@ function parseFindParam(?string $raw): string
 }
 
 /**
- * @return 'day'|'week'|'4week'
+ * @return 'day'|'week'
  */
 function parseViewParam(?string $raw): string
 {
-    if ($raw === 'week') {
-        return 'week';
-    }
-
-    if ($raw === '4week') {
-        return '4week';
-    }
-
-    return 'day';
+    return $raw === 'week' ? 'week' : 'day';
 }
 
 function parseScopeParam(?string $raw): string
@@ -249,12 +241,25 @@ function parseScopeParam(?string $raw): string
 }
 
 /**
+ * @param list<string> $favoriteSlugs
  * @return 'all'|'favorites'
  */
-function resolveScopeMode(?string $getScope, array $favoriteSlugs = []): string
+function resolveScopeMode(?string $getScope, array $favoriteSlugs): string
 {
     if ($getScope !== null) {
         return parseScopeParam($getScope);
+    }
+
+    if (isset($_COOKIE['cringe_scope'])) {
+        return parseScopeParam((string) $_COOKIE['cringe_scope']);
+    }
+
+    if (isset($_GET['prefs']) && (string) $_GET['prefs'] === 'neutral') {
+        return 'all';
+    }
+
+    if ($favoriteSlugs !== []) {
+        return 'favorites';
     }
 
     return 'all';
@@ -266,72 +271,17 @@ function viewQueryForMode(string $viewMode): string
         return '&view=week';
     }
 
-    if ($viewMode === '4week') {
-        return '&view=4week';
-    }
-
     return '&view=day';
 }
 
 function bodyClassForViewMode(string $viewMode): string
 {
-    if ($viewMode === 'week') {
-        return 'view-week';
-    }
-
-    if ($viewMode === '4week') {
-        return 'view-4week';
-    }
-
-    return 'view-day';
-}
-
-/**
- * @return array{
- *     dayHref: string,
- *     weekHref: string,
- *     fourWeekHref: string,
- *     viewMode: 'day'|'week'|'4week'
- * }
- */
-function viewModeIconLinks(
-    string $selectedDate,
-    string $viewMode,
-    string $navQuery,
-    string $context = 'index',
-    string $venueSlug = ''
-): array {
-    if ($context === 'venue' && $venueSlug !== '') {
-        return [
-            'dayHref' => 'index.php?date=' . rawurlencode($selectedDate) . '&view=day' . $navQuery,
-            'weekHref' => 'index.php?date=' . rawurlencode($selectedDate) . '&view=week' . $navQuery,
-            'fourWeekHref' => 'venue.php?venue=' . rawurlencode($venueSlug) . '&date=' . rawurlencode($selectedDate) . $navQuery,
-            'viewMode' => '4week',
-        ];
-    }
-
-    $prefix = 'index.php';
-
-    return [
-        'dayHref' => $prefix . '?date=' . rawurlencode($selectedDate) . '&view=day' . $navQuery,
-        'weekHref' => $prefix . '?date=' . rawurlencode($selectedDate) . '&view=week' . $navQuery,
-        'fourWeekHref' => $prefix . '?date=' . rawurlencode($selectedDate) . '&view=4week' . $navQuery,
-        'viewMode' => $viewMode,
-    ];
+    return $viewMode === 'week' ? 'view-week' : 'view-day';
 }
 
 function scopeQueryForMode(string $scopeMode): string
 {
     return $scopeMode === 'favorites' ? '&scope=favorites' : '';
-}
-
-function scopeQueryForRequest(): string
-{
-    if (!isset($_GET['scope']) || (string) $_GET['scope'] === '') {
-        return '';
-    }
-
-    return '&scope=' . rawurlencode((string) $_GET['scope']);
 }
 
 function prefsQueryForRequest(): string
@@ -364,30 +314,31 @@ function preferencesExplicitInRequest(): bool
 }
 
 /**
- * Legacy cookie helpers retained for reference; preferences now live in browser localStorage.
- *
- * @return array{view: 'day'|'week'|'4week', tags: list<string>, find: string, scope: 'all'|'favorites'}
+ * @return array{view: 'day'|'week', tags: list<string>, find: string, scope: 'all'|'favorites'}
  */
 function loadSavedPreferencesFromCookies(): array
 {
     return [
-        'view' => 'day',
-        'tags' => [],
-        'find' => '',
-        'scope' => 'all',
+        'view' => parseViewParam(isset($_COOKIE['cringe_view']) ? (string) $_COOKIE['cringe_view'] : null),
+        'tags' => parseTagsParam(isset($_COOKIE['cringe_tags']) ? (string) $_COOKIE['cringe_tags'] : null),
+        'find' => parseFindParam(isset($_COOKIE['cringe_find']) ? (string) $_COOKIE['cringe_find'] : null),
+        'scope' => parseScopeParam(isset($_COOKIE['cringe_scope']) ? (string) $_COOKIE['cringe_scope'] : null),
     ];
 }
 
 /**
- * @param array{view: 'day'|'week'|'4week', tags: list<string>, find: string, scope: 'all'|'favorites'} $saved
+ * @param array{view: 'day'|'week', tags: list<string>, find: string, scope: 'all'|'favorites'} $saved
  */
 function hasSavedPreferencesFromCookies(array $saved): bool
 {
-    return false;
+    return $saved['view'] !== 'day'
+        || $saved['tags'] !== []
+        || $saved['find'] !== ''
+        || $saved['scope'] === 'favorites';
 }
 
 /**
- * @param array{view: 'day'|'week'|'4week', tags: list<string>, find: string, scope: 'all'|'favorites'} $saved
+ * @param array{view: 'day'|'week', tags: list<string>, find: string, scope: 'all'|'favorites'} $saved
  */
 function buildPreferencesQuery(array $saved): string
 {
@@ -410,7 +361,17 @@ function buildPreferencesQuery(array $saved): string
 
 function redirectToSavedPreferencesIfNeeded(string $dateYmd): void
 {
-    // Saved filters and favorites are restored client-side from localStorage.
+    if (preferencesExplicitInRequest()) {
+        return;
+    }
+
+    $saved = loadSavedPreferencesFromCookies();
+    if (!hasSavedPreferencesFromCookies($saved)) {
+        return;
+    }
+
+    header('Location: index.php?date=' . rawurlencode($dateYmd) . '&' . buildPreferencesQuery($saved), true, 302);
+    exit;
 }
 
 /**

@@ -1,6 +1,6 @@
 <?php
 
-/** @var 'day'|'week'|'4week' $viewMode */
+/** @var 'day'|'week' $viewMode */
 /** @var string $selectedDate */
 /** @var string $prevWeekDate */
 /** @var string $nextWeekDate */
@@ -14,15 +14,12 @@
 /** @var string $prefsQuery */
 /** @var string $filterQuery */
 /** @var string $viewQuery */
-/** @var string|null $prevWindowStart */
-/** @var string|null $nextWindowStart */
 
 $navQuery = $tagsQuery . $findQueryParam . $scopeQuery . $prefsQuery . ($filterQuery ?? '');
+$dayHref = '?date=' . rawurlencode($selectedDate) . '&view=day' . $tagsQuery . $findQueryParam . $scopeQuery . $prefsQuery . ($filterQuery ?? '');
+$weekHref = '?date=' . rawurlencode($selectedDate) . '&view=week' . $tagsQuery . $findQueryParam . $scopeQuery . $prefsQuery . ($filterQuery ?? '');
 $prevHref = '?date=' . rawurlencode($prevWeekDate) . $viewQuery . $navQuery;
 $nextHref = '?date=' . rawurlencode($nextWeekDate) . $viewQuery . $navQuery;
-$isFourWeekView = $viewMode === '4week';
-$prevNavLabel = $isFourWeekView ? 'prev' : 'prev week';
-$nextNavLabel = $isFourWeekView ? 'next' : 'next week';
 
 ?>
 <div class="calendar-filter-card__nav">
@@ -37,11 +34,7 @@ $nextNavLabel = $isFourWeekView ? 'next' : 'next week';
                 data-nav-view="day"
                 rel="prev"
             >prev week</a>
-            <?php if ($showViewModeStrip ?? false): ?>
-            <?php include __DIR__ . '/view-mode-picker.php'; ?>
-            <?php else: ?>
             <span class="calendar-nav__label"><?= htmlspecialchars($weekHeader, ENT_QUOTES, 'UTF-8') ?></span>
-            <?php endif; ?>
             <a
                 href="<?= htmlspecialchars($nextHref, ENT_QUOTES, 'UTF-8') ?>"
                 class="calendar-nav__week"
@@ -71,38 +64,27 @@ $nextNavLabel = $isFourWeekView ? 'next' : 'next week';
         </div>
     </nav>
 <?php else: ?>
-    <nav class="calendar-nav calendar-nav--<?= $isFourWeekView ? '4week' : 'week' ?>" aria-label="Calendar navigation">
+    <nav class="calendar-nav calendar-nav--week" aria-label="Calendar navigation">
         <div class="calendar-nav__week-strip">
-            <?php if ($isFourWeekView && ($prevWindowStart ?? null) === null): ?>
-            <span class="calendar-nav__week is-disabled" aria-hidden="true"><?= htmlspecialchars($prevNavLabel, ENT_QUOTES, 'UTF-8') ?></span>
-            <?php else: ?>
             <a
                 href="<?= htmlspecialchars($prevHref, ENT_QUOTES, 'UTF-8') ?>"
                 class="calendar-nav__week"
                 data-nav-sync
                 data-nav-date="<?= htmlspecialchars($prevWeekDate, ENT_QUOTES, 'UTF-8') ?>"
-                data-nav-view="<?= htmlspecialchars($viewMode, ENT_QUOTES, 'UTF-8') ?>"
+                data-nav-view="week"
                 rel="prev"
-            ><?= htmlspecialchars($prevNavLabel, ENT_QUOTES, 'UTF-8') ?></a>
-            <?php endif; ?>
-            <?php if ($showViewModeStrip ?? false): ?>
-            <?php include __DIR__ . '/view-mode-picker.php'; ?>
-            <?php else: ?>
+            >prev week</a>
             <span class="calendar-nav__label"><?= htmlspecialchars($weekHeader, ENT_QUOTES, 'UTF-8') ?></span>
-            <?php endif; ?>
-            <?php if ($isFourWeekView && ($nextWindowStart ?? null) === null): ?>
-            <span class="calendar-nav__week is-disabled" aria-hidden="true"><?= htmlspecialchars($nextNavLabel, ENT_QUOTES, 'UTF-8') ?></span>
-            <?php else: ?>
             <a
                 href="<?= htmlspecialchars($nextHref, ENT_QUOTES, 'UTF-8') ?>"
                 class="calendar-nav__week"
                 data-nav-sync
                 data-nav-date="<?= htmlspecialchars($nextWeekDate, ENT_QUOTES, 'UTF-8') ?>"
-                data-nav-view="<?= htmlspecialchars($viewMode, ENT_QUOTES, 'UTF-8') ?>"
+                data-nav-view="week"
                 rel="next"
-            ><?= htmlspecialchars($nextNavLabel, ENT_QUOTES, 'UTF-8') ?></a>
-            <?php endif; ?>
+            >next week</a>
         </div>
     </nav>
 <?php endif; ?>
+    <?php include __DIR__ . '/view-mode-icons.php'; ?>
 </div>
